@@ -1,0 +1,64 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+/* https://www.w3schools.com/Css/tryit.asp?filename=trycss_navbar_horizontal_black  */
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+  }
+  
+  li {
+    float: left;
+  }
+  
+  li a {
+    display: block;
+    color: rgb(8, 130, 252);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+  
+  li a:hover {
+    background-color: #111;
+  }
+
+  img {
+        margin: 0 auto;
+        display: block;
+  }
+
+  body {
+    background-color: black;
+  }
+
+  p {
+    color: rgb(8, 130, 252);
+  }
+
+  h1{
+    color: rgb(7, 140, 255);
+     
+  }
+
+  img {
+        width: 1530px;
+        height: 400px;
+        margin: auto;
+        border: 3px solid #7dd1db;
+    }
+    
+    ul {
+        background-color: #333;
+    }
+
+    ul:hover {
+        background-color: rgb(255, 255, 255);
+    }
+
+    
