@@ -1,0 +1,34 @@
+/* #M{
+    background-image: url("background.jpg");
+} */
+
+img {
+    width: 200px;
+    height: 200px;
+}
+
+div {
+    justify-content: center;
+}
+
+#stein:hover {
+    width: 250px;
+    height: 250px;
+}
+
+#saks:hover {
+    width: 250px;
+    height: 250px;
+}
+
+#papir:hover {
+    width: 250px;
+    height: 250px;
+}
+
+#spillvalg {
+    margin: auto;
+    margin-top: 20%;
+    height: 100%;
+    width: 50%;
+}

@@ -1,0 +1,29 @@
+html , body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: black;
+}
+
+div {
+    background-color: antiquewhite;
+    width: 500px;
+    padding: 1 rem;
+}
+
+input {
+    display: block;
+    width: 90%;
+}
+
+input [type="color"] {
+    width: 50px;
+    border: none;
+}

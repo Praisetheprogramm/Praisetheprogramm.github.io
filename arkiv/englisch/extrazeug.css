@@ -1,0 +1,236 @@
+<<<<<<< HEAD
+html,body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+}
+.item1 { grid-area: header;}
+.item2 { grid-area: meny  ;}
+.item3 { grid-area: main  ;}
+.item4 { grid-area: footer;}
+
+.grid-container {
+    display: grid;
+
+    grid-template-areas:
+        'header header  header  header  header  header'
+        'meny   meny    meny    meny   meny    meny'
+        'main   main    main    main   main    main'
+        'footer   footer  footer  footer  footer  footer';
+    /* gap: 10px; */
+    /* background-color: #2196F3; */
+    /* padding: 10px; */
+}
+
+#headerbild {
+    width: 200px;
+    height: 200px;
+}
+
+.grid-container > div { /* Alle barna til div-containeren av typen div */
+    font-size: 1.5rem;
+    /* padding: 1rem; */
+}
+
+.item1 { /* header */
+    background: linear-gradient(270deg, #334a94, #050609);
+    color: white;
+    text-align: center;
+
+    /* Bruker flexbox for å plassere bildet/logoen og teksten i midten av headeren */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.item2 {
+    
+}
+
+.item3 {
+    background-image: url("Unbenannt-3.png");
+    /* opacity: 40; */
+    color: rgb(92, 200, 227);
+    background-repeat: no-repeat;
+}
+
+.flyt {
+    float: left;
+}
+
+/* Menyen sitt design */
+nav ul{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(270deg, #334a94, #050609);
+    justify-content: space-around;
+    /* border:black;
+    padding: 20px */
+}
+
+nav ul li a{
+    text-decoration: none;
+    color:white;
+    padding:1.5rem;
+    display: block;
+}
+
+nav ul li a:hover{
+    background-color:#3f72d6;
+}
+
+.unteritem3 {
+    background-color: #153382;
+      opacity: 60%;
+    padding: 10px;
+    height: 100%;
+}
+
+.item4 {
+    background: linear-gradient(270deg, #334a94, #050609);
+    width: 100%;
+    color: white;
+}
+
+.bilditem3 {
+    float: right;
+    opacity: 100%;
+}
+
+#unterbild3 {
+    opacity: 100%;
+    width: 500px;
+    height: 350px;
+}
+
+#unteritem31 {
+    background: linear-gradient(270deg, #334a94, #050609);
+}
+
+.unterbildk {
+    width: 300px;
+    height: 200px;
+=======
+html,body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+}
+.item1 { grid-area: header;}
+.item2 { grid-area: meny  ;}
+.item3 { grid-area: main  ;}
+.item4 { grid-area: footer;}
+
+.grid-container {
+    display: grid;
+
+    grid-template-areas:
+        'header header  header  header  header  header'
+        'meny   meny    meny    meny   meny    meny'
+        'main   main    main    main   main    main'
+        'footer   footer  footer  footer  footer  footer';
+    /* gap: 10px; */
+    /* background-color: #2196F3; */
+    /* padding: 10px; */
+}
+
+#headerbild {
+    width: 200px;
+    height: 200px;
+}
+
+.grid-container > div { /* Alle barna til div-containeren av typen div */
+    font-size: 1.5rem;
+    /* padding: 1rem; */
+}
+
+.item1 { /* header */
+    background: linear-gradient(270deg, #334a94, #050609);
+    color: white;
+    text-align: center;
+
+    /* Bruker flexbox for å plassere bildet/logoen og teksten i midten av headeren */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.item2 {
+    
+}
+
+.item3 {
+    background-image: url("Unbenannt-3.png");
+    /* opacity: 40; */
+    color: rgb(92, 200, 227);
+    background-repeat: no-repeat;
+}
+
+.flyt {
+    float: left;
+}
+
+/* Menyen sitt design */
+nav ul{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(270deg, #334a94, #050609);
+    justify-content: space-around;
+    /* border:black;
+    padding: 20px */
+}
+
+nav ul li a{
+    text-decoration: none;
+    color:white;
+    padding:1.5rem;
+    display: block;
+}
+
+nav ul li a:hover{
+    background-color:#3f72d6;
+}
+
+.unteritem3 {
+    background-color: #153382;
+      opacity: 60%;
+    padding: 10px;
+    height: 100%;
+}
+
+.item4 {
+    background: linear-gradient(270deg, #334a94, #050609);
+    width: 100%;
+    color: white;
+}
+
+.bilditem3 {
+    float: right;
+    opacity: 100%;
+}
+
+#unterbild3 {
+    opacity: 100%;
+    width: 500px;
+    height: 350px;
+}
+
+#unteritem31 {
+    background: linear-gradient(270deg, #334a94, #050609);
+}
+
+.unterbildk {
+    width: 300px;
+    height: 200px;
+>>>>>>> 538653081777558697a3e05299061278f675bcc2
+}

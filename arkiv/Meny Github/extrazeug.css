@@ -1,0 +1,28 @@
+html,body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+}
+.item1 { grid-area: header;}
+.item2 { grid-area: meny  ;}
+.item3 { grid-area: main  ;}
+.item4 { grid-area: footer;}
+
+.grid-container {
+    display: grid;
+
+    grid-template-areas:
+        'header header  header  header  header  header'
+        'meny   meny    meny    meny   meny    meny'
+        'main   main    main    main   main    main'
+        'footer   footer  footer  footer  footer  footer';
+    /* gap: 10px; */
+    /* background-color: #2196F3; */
+    /* padding: 10px; */
+}
+
+.grid-container > div { /* Alle barna til div-containeren av typen div */
+    font-size: 1.5rem;
+    /* padding: 1rem; */
+}
