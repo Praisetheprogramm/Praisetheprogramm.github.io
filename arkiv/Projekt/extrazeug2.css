@@ -1,0 +1,43 @@
+body, html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    background-image: url(Backgroundimgside2.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#bottonside2 {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    display: flex;
+    align-items:flex-end;
+}
+.größe {
+    width: 450px;
+    height: 450px;
+    /* justify-content: space-around; */
+}
+
+#unsichtbar {
+    width: 320px;
+    height: 320px;
+    opacity: 0%;
+}
+
+.position {
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    opacity: 0%;
+    height: 800px;
+    width: 400px;
+}
