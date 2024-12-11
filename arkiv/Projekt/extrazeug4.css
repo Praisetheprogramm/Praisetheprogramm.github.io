@@ -3,6 +3,9 @@ body , html {
     height: 100%;
     padding: 0;
     margin: 0;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 body {
@@ -10,3 +13,16 @@ body {
     /* background-size: cover; */
     background-repeat: no-repeat;
 }
+
+ /* The animation code */
+ @keyframes example {
+    from {opacity:0;}
+    to {opacity: 100;}
+  }
+  
+  /* The element to apply the animation to */
+#animation {
+    color: white;
+    animation-name: example;
+    animation-duration: 20s;
+  } 
