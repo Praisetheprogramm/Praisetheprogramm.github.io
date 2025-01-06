@@ -95,3 +95,8 @@ body {
     background-image: url(Seule2.png));
     /* background-size: cover; */
 }
+
+a {
+    width: 250px;
+    justify-content: center;
+}

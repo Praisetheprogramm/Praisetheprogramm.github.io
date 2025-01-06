@@ -12,3 +12,8 @@ body {
     background-image: url(Straße.png);
     background-size: cover;
 }
+
+#1 {
+    justify-content: center;
+    align-items: center;
+}

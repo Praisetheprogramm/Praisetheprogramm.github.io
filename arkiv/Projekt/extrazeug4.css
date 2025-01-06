@@ -9,7 +9,7 @@ body , html {
 }
 
 body {
-    background-image: url(über_dem_nebelmeer.jpg);
+    background-image: url(überdemnebelmeer2.png);
     /* background-size: cover; */
     background-repeat: no-repeat;
 }
@@ -24,5 +24,7 @@ body {
 #animation {
     color: white;
     animation-name: example;
-    animation-duration: 20s;
+    animation-duration: 15s;
+    justify-content: center;
+    align-items: center;
   } 
