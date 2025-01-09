@@ -8,7 +8,7 @@ body , html {
     text-align: center;
 }
 
-.item1 { grid-area: ckarackter;}
+/* .item1 { grid-area: ckarackter;}
 .item2 { grid-area: leben ;}
 .item3 { grid-area: botton;}
 .item4 { grid-area: nix;}
@@ -21,7 +21,7 @@ body , html {
     'name , nix , nix , nix , nix , nix'
     'leben , nix , nix , nix , nix , leben2'
     'ckarackter , nix , nix , nix , nix , böse'
-    'ckarackter , botton , nix , nix , nix , böse'    
+    'ckarackter , botton , nix , nix , nix , böse'     */
     /* gap: 10px; */
     /* background-color: #2196F3; */
     /* padding: 10px; */
@@ -29,7 +29,7 @@ body , html {
 
 .grid-container > div { /* Alle barna til div-containeren av typen div */
     font-size: 1.5rem;
-    paddi'ng: 1rem; 
+    padding: 1rem; 
 }
 
 body {
@@ -42,4 +42,18 @@ body {
     width: 100px;
     height: 50px;
     color: darkslategray;
+    
+}
+
+#böse {
+    width: 450px;
+    height: 450px;
+    align-items:flex-end;
+    justify-content:flex-end;
+}
+
+.health-bar {
+    width: 200px;
+    height: 20px;
+    background-color: red;
 }

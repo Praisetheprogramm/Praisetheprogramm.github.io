@@ -17,3 +17,21 @@ body {
     justify-content: center;
     align-items: center;
 }
+
+#text {
+    text-shadow: darkslategray;
+    width: 100px;
+    height: 20px;
+}
+
+.unsichtbar {
+    opacity: 0%;
+height: 150px;
+width: 10000px;
+}
+
+.unsichtbar2 {
+    opacity: 0%;
+    height: 100px;
+    width: 10000px;
+}

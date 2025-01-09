@@ -90,6 +90,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 .item4 {
     background-image: url(Seule2.png));

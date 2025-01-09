@@ -22,9 +22,14 @@ body {
   
   /* The element to apply the animation to */
 #animation {
-    color: white;
+    color: darkcyan;
     animation-name: example;
     animation-duration: 15s;
     justify-content: center;
     align-items: center;
   } 
+
+#unsichtbar {
+  height: 200px;
+  opacity: 0%;
+}

@@ -7,3 +7,10 @@ function changepage() {
     window.location.href="kampf.html"
 }
 
+window.addEventListener('load', function() {
+    var audio = document.getElementById('myAudio');
+    audio.play();
+});
+
+
+
