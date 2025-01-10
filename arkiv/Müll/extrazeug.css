@@ -79,12 +79,9 @@ nav ul li a:hover{
     
 }
 
-var image = document.getElementById('image');
-
-image.addEventListener('mousover', function() {
-    image.src = 'Logo.png';
-});
-
-image.addEventListener('mouseout', function() {
-    image.src = 'radio.png';
-});
+.rotate {
+    transition: transform 0.5s ease;
+}
+.rotate:hover {
+    transform: rotate(360deg);
+}

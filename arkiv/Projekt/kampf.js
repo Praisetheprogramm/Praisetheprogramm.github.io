@@ -60,10 +60,10 @@
 // console.log(Ckarackter)
 // console.log(Bot)
 
-// window.addEventListener('load', function() {
-//     var audio = document.getElementById('myAudio');
-//     audio.play();
-// });
+window.addEventListener('load', function() {
+    var audio = document.getElementById('myAudio');
+    audio.play();
+});
 
 var playerHealth = 100;
 var enemyHealth = 100;
@@ -73,41 +73,55 @@ function updateHealthBars() {
     document.getElementById('enemyHealth').style.width = enemyHealth + 'px';
 }
 
-function checkGameOver() {
-    if (playerHealth <= 0) {
-        alert('Du hast verloren! Das Spiel ist vorbei.');
-        document.getElementById('attackButton').disabled = true;
-    } else if (enemyHealth <= 0) {
-        alert('Du hast gewonnen! Das Spiel ist vorbei.');
-        document.getElementById('attackButton').disabled = true;
-    }
-}
-
 
 function attack() {
+    let hitchance = Math.random();
+    let hitchanceenemy = Math.random();
+    console.log(hitchance);
+
     // Spieler greift an
-    if (Math.random() < 0.5) {
+    if (hitchance < 0.5) {
         enemyHealth -= 30;
-        alert('Treffer! Der Gegner verliert 10 Lebenspunkte.');
+        alert('Treffer! Der Gegner verliert 30 Lebenspunkte.');
     } else {
         alert('Daneben! Kein Schaden am Gegner.');
     }
 
     updateHealthBars();
-
-   // Gegner greift an, wenn das Spiel noch nicht vorbei ist
+    
+//    Gegner greift an, wenn das Spiel noch nicht vorbei ist
    if (enemyHealth > 0) {
-    if (Math.random() < 0.5) {
+    if (hitchanceenemy < 0.5) {
         playerHealth -= 20;
-        alert('Der Gegner trifft! Du verlierst 10 Lebenspunkte.');
+        alert('Der Gegner trifft! Du verlierst 20 Lebenspunkte.');
     } else {
         alert('Der Gegner verfehlt! Kein Schaden an dir.');
     }
 
     updateHealthBars();
+    }
     checkGameOver();
 }
 
-document.getElementById('attackButton').addEventListener('click', attack);
+// function checkEnemyHealth(enemyHealth) {
+//     if (enemyHealth <= 0) {
+//         // Weiterleitung zu einer anderen Seite
+//         window.location.href = "side6.html";
+//     }
+// }
 
-updateHealthBars();
+function checkGameOver() {
+    if (playerHealth <= 0) {
+        alert('Du hast verloren! Das Spiel ist vorbei.');
+        document.getElementById('attackButton').disabled = true;
+        console.log("Tapt")
+        document.getElementById("text").innerText = 'Du hast verloren! Das Spiel ist vorbei.';
+    } else if (enemyHealth <= 0) {
+        alert('Du hast gewonnen! Das Spiel ist vorbei.');
+        document.getElementById('attackButton').disabled = true;
+        console.log("Vunnet")
+        document.getElementById("text").innerText = 'Du hast gewonnen! Das Spiel ist vorbei.';
+   }
+}
+
+document.getElementById('attackButton').addEventListener('click', attack);
