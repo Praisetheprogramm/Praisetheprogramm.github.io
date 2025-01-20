@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramm mit Eingabefeld</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="kode.js" defer></script>
+    <link rel="stylesheet" href="extrazeug.css">
+</head>
+<body>
+    <div class="input-container">
+        <label for="userInput">Geben Sie eine Zahl ein:</label>
+        <input type="number" id="userInput">
+        <button onclick="updateChart()">Diagramm anzeigen</button>
+    </div>
+    <canvas id="myChart" width="400" height="200"></canvas>
+</body>
+</html>

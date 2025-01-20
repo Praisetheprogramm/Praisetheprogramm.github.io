@@ -5,31 +5,82 @@
     <meta name="viewport" content="width=, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="extrazeug.css">
-    <script src=""></script>
+    <script src="kode.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="grid-container">
-        <div class="item1">
-            <a href="side2.html">
-                <img class="rotate" id="Logo" src="Logo.png" alt="Bild 1">
-             </a>
-            <h1>Hva er søppel?</h1>
+        <div class="item1" class="video-container">
+             <a href="side2.html">
+            <img class="rotate" id="Logo" src="Logo.png" alt="Bild 1">
+            </a>
+         <div class="glowing-outline">
+            <video id="background-video" autoplay muted loop>
+                <source src="DER WILDE WALD Trailer deutsch german [HD].mp4" type="video/mp4">
+            </video> 
+         </div>
+            <p id="hvaErSoppel"><h1>Hva er søppel?</h1></p>
+            <!-- <div class="filter">
+                <div class="video-container">
+                <video id="background-video" autoplay muted loop>
+                    <source src="DER WILDE WALD Trailer deutsch german [HD].mp4" type="video/mp4">
+                    Dein Browser unterstützt kein HTML5-Video.
+                </video>
+                </div>
+            </div> -->
+            
         </div>
         <div class="item2">
             <nav>
                 <ul>
                     <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
+                    <li><a href="Spiel.html">About</a></li>
                     <li><a href="#">Contact</a></li>
                 </ul>
             </nav>
         </div>
         <div class="item3">
-            <h1>Nettsider er kjekt!</h1>
-            <p>lor sit amet consectetur adipisicing elit. Doloribus tempora dolor maiores, soluta voluptatibus a impedit quam molestias quis minima voluptatem earum ea fugiat rem consectetur laboriosam ab veritatis ipsa?
-            </p>
-            <img class="flyt" src="bilder/shape-8401083_640.png" alt="">
-            <h2>Lissom, lorem?</h2>
+            <div id="animert">
+                <div id="firkant">
+                    <img id="wackelndes-objekt" src="tonne.png" alt="">
+                </div>  
+            </div>
+            <div id="textbox">
+                <p>Søppel er et stort problem, men for å kunne bekjempe et så stort problem på riktig måte, må vi først vite hva søppel faktisk er. Søppel kan være alt som en person har brukt en gang og nå ikke lenger For å opprettholde plassering deler vi søppel inn i ulike søppeltyper som restavfall, organisk avfall og papiravfall. Men hvorfor skiller vi søppelet vårt? Vel, vi bruker det fordi vi ønsker å bruke det igjen. Resirkulering blir viktigere og viktigere i samfunnet vårt. Tiden har lært oss at det ikke er lurt å bare bruke nye ting hver dag og bare kaste de gamle i sjøen og for å kunne resirkulere skikkelig må avfallet først sorteres av forbrukeren, selv grovt. Hvis for eksempel plast brytes opp på en fabrikk slik at den kan bearbeides til nye flasker, så ville det vært ukjølig om det plutselig dukket opp en ødelagt sild i den nye flasken</p>
+            </div>
+            <div class="box">
+                <canvas id="myPieChart" width="100px"></canvas>
+            </div>
+            <img src="" alt="">
+            <div id="hover">
+                <div id="Textbox2po">
+                    <div id="textbox2">
+                        <p>Dette diagrammet viser prosentandelen av ulike typer søppel i normale gjennomsnittlige husholdninger</p>
+                    </div>
+                </div>
+            </div>
+            <div class="input-container">
+                <label for="userInput">Geben Sie eine Zahl ein:</label>
+                <input type="number" id="userInput">
+                <button onclick="updateChart()">Diagramm anzeigen</button>
+            </div>
+            <canvas id="myChart" width="400" height="200"></canvas>
+            <h1>Hvilke typer søppel er det?</h1>
+            <img src="müll.jpg" alt="">
+            <div id="textbox3">
+                <p>Det finnes mange typer avfall, selvfølgelig er det hverdagstypene som papir, plast, restavfall og organisk avfall. Men det finnes også noe mer spesifikke typer avfall, for eksempel er det avfall som kan være farlig som motorer, kjemikalier og forskningsinstrumenter Dette er spesial- eller kjemisk avfall og skal samles inn og deponeres på en organisert måte av opplært personell eller. gjenbrukt. En annen kjent type kommersielt avfall er kjernefysisk avfall, brenselstavene til et atomkraftverk fortsetter å avgi farlige utslipp i mange år om ikke tiår etter at de har blitt kastet. Dette er grunnen til at disse stengene må kastes enda mer forsiktig , for å være presis har vi ikke noe superavfall ennå. God måte å kaste dette avfallet på, som først må vente til materialet ikke avgir noen stråling. Noen ganger kan det skje store ulykker på grunn av slikt søppel, for eksempel hvis du parkerer en motor på et stykke skitt, kan oljen i motoren sive ned i bakken og forgifte og skitne til bakken. Da må du snu eller grave opp hele greia. Derfor er det strenge lover angående slikt spesialavfall slik at det ikke skjer noe. Like dødelig hvis du ikke føler deg trygg ved å la elektronisk avfall ligge, 1. kan det oppstå brann og du kaster bort mye verdifulle ressurser. Så søppel i søppelbøtta og alt som ikke får plass i dine vanlige skuffer legges i det farlige avfallet</p>
+            </div>
+            <!-- <div class="chart">
+                <div class="bar" data-info="Information über Spalte 1"></div>
+                <div class="bar" data-info="Information über Spalte 2"></div>
+                <div class="bar" data-info="Information über Spalte 3"></div>
+            </div>
+            <div id="info-box" class="info-box"></div> -->
+            <p>
+            <div id="text">
+                <h2></h2>
+            </div>
+            <h2></h2>
             <p>
             </p>
             <h2>Lorem, lissom</h2>

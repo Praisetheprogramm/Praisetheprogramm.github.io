@@ -26,19 +26,33 @@ html,body {
 }
 
 .item1 { /* header */
-    background: linear-gradient(270deg, #45f757, #050609);
+    background-image: url('Zeichenfläche\ 1.png');
     color: white;
     text-align: center;
+    height: 600px;
 
     /* Bruker flexbox for å plassere bildet/logoen og teksten i midten av headeren */
     display: flex;
     justify-content: center;
     align-items: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 
+    overflow: hidden;
 }
 
 .item2 { /* menu */
-    /* background-color:#334a94; */
+    background-color: #72cc6c;
+    border: #02790a;
+    border-top: 5px;
+}
+
+.item3 {
+    background-image: url(hintergrund.jpg);
+}
+
+.item4 {
+    background-color: #72cc6c;
 }
 
 .flyt {
@@ -84,4 +98,189 @@ nav ul li a:hover{
 }
 .rotate:hover {
     transform: rotate(360deg);
+}
+
+#text {
+    background-color: #45f757;
+}
+
+.box {
+    width: 450px;
+    height: 450px;
+    padding-left: 320px;
+}
+
+#textbox {
+    justify-content: center;
+    align-items: center;
+    width: 1350px;
+    height: 250px;
+    border-color: darkred;
+    border-radius: 75px;
+    border-color: #02790a;
+    border-top-left-radius: 0%;
+    background-color: #45f757;
+}
+
+#textbox2 {
+    justify-content: center;
+    align-items: center;
+    width: 350px;
+    height: 170px;
+    border-color: darkred;
+    border-radius: 75px;
+    border-top-left-radius: 0%;
+    background-color: #45f757;
+    opacity: 0;
+}
+
+#textbox3 {
+    justify-content: center;
+    align-items: center;
+    width: 1050px;
+    height: 270px;
+    border-top-left-radius: 0%;
+    background-color: #45f757;
+    opacity: 0;
+}
+
+#Textbox2po {
+    padding-left: 700px;
+}
+
+#myPieChart:hover.textbox2 {
+        opacity: 100;
+}
+ 
+.video-container { 
+    position: absolute; 
+    top: 0;
+    left: 0; 
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;  
+}
+/* 
+.video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+} */
+
+.filter {
+    background-color: #45f757;
+    opacity: 70;
+    z-index: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+#background-video {
+    width: 800px;
+    height: 600px;
+    z-index: 0;
+    padding-top: 180px;
+}
+
+#hvaErSoppel {
+    color: #45f757;
+}
+
+#animert {
+    border: 3px solid rgb(21, 100, 5);
+    height: 50px;
+    position: relative;
+    width: 1400px;
+}
+
+#firkant {
+    position: absolute;
+    height: 50px;
+    width: 50px;
+}
+
+@keyframes flyttFirkant {
+    0% {
+        left: 0px;
+    }
+    50% {
+        left: 1350px;
+    }
+    100% {
+        left: 0px;
+    }
+}
+
+#firkant {
+    animation: flyttFirkant 8s linear infinite;
+}
+
+@keyframes wackeln {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(-5deg);
+    }
+    75% {
+        transform: rotate(5deg);
+    }
+    100% {
+        transform: rotate (0deg);
+    }
+}
+
+#wackelndes-objekt {
+    animation: wackeln 0.5s linear infinite;
+    height: 50px;
+    position: relative;
+    width: 50px;
+}
+
+.glowing-outline {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffffff;
+    padding: 20px 40px;
+    text-align: center;
+    border: 3px solid transparent;
+    border-radius: 10px;
+    position: relative;
+    /* background-color: #2a2a2a; */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+    transition: 0.5s;
+   }
+   
+   
+   .glowing-outline:before, .glowing-outline:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    border: 3px solid #bbe83e;
+    box-shadow: 0 0 20px #56f76b, 0 0 40px #2cd22c, 0 0 60px #18ac0d, 0 0 80px #02790a;
+    opacity: 0;
+    transition: 0.5s;
+   }
+   
+   
+   .glowing-outline:before {
+    filter: blur(10px);
+   }
+   
+   
+   .glowing-outline:hover:before, .glowing-outline:hover:after {
+    opacity: 1;
+   }
+
+.input-container {
+     margin-bottom: 20px;
 }
