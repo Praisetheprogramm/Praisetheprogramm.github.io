@@ -33,9 +33,11 @@
         <div class="item2">
             <nav>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="Spiel.html">About</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="https://de.wikipedia.org/wiki/Recycling">Wiki: recycling</a></li>
+                    <li><a href="https://www.epa.gov/recycle/recycling-basics-and-benefits">Tips til recycling</a></li>
+                    <li><a href="https://www.oslo.kommune.no/english/waste-and-recycling/recycling-in-oslo/">recycling i Oslo</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=cNPEH0GOhRw">Recycling Process</a></li>
+                    <li><a href="https://www.bund.net/themen/atomkraft/atommuell/">Radioaktivt avfall og recycling</a></li>
                 </ul>
             </nav>
         </div>
@@ -60,13 +62,15 @@
                 </div>
             </div>
             <div class="input-container">
-                <label for="userInput">Geben Sie eine Zahl ein:</label>
+                <label for="userInput">Hvor mange kg avfall tror du du produserer per uke:</label>
                 <input type="number" id="userInput">
                 <button onclick="updateChart()">Diagramm anzeigen</button>
             </div>
             <canvas id="myChart" width="400" height="200"></canvas>
-            <h1>Hvilke typer søppel er det?</h1>
-            <img src="müll.jpg" alt="">
+            <h1 id="typermüll">Hvilke typer søppel er det?</h1>
+            <div id="müllbildbox">
+                <img id="müllbild" src="müll.jpg" alt=""> 
+            </div>
             <div id="textbox3">
                 <p>Det finnes mange typer avfall, selvfølgelig er det hverdagstypene som papir, plast, restavfall og organisk avfall. Men det finnes også noe mer spesifikke typer avfall, for eksempel er det avfall som kan være farlig som motorer, kjemikalier og forskningsinstrumenter Dette er spesial- eller kjemisk avfall og skal samles inn og deponeres på en organisert måte av opplært personell eller. gjenbrukt. En annen kjent type kommersielt avfall er kjernefysisk avfall, brenselstavene til et atomkraftverk fortsetter å avgi farlige utslipp i mange år om ikke tiår etter at de har blitt kastet. Dette er grunnen til at disse stengene må kastes enda mer forsiktig , for å være presis har vi ikke noe superavfall ennå. God måte å kaste dette avfallet på, som først må vente til materialet ikke avgir noen stråling. Noen ganger kan det skje store ulykker på grunn av slikt søppel, for eksempel hvis du parkerer en motor på et stykke skitt, kan oljen i motoren sive ned i bakken og forgifte og skitne til bakken. Da må du snu eller grave opp hele greia. Derfor er det strenge lover angående slikt spesialavfall slik at det ikke skjer noe. Like dødelig hvis du ikke føler deg trygg ved å la elektronisk avfall ligge, 1. kan det oppstå brann og du kaster bort mye verdifulle ressurser. Så søppel i søppelbøtta og alt som ikke får plass i dine vanlige skuffer legges i det farlige avfallet</p>
             </div>
@@ -83,24 +87,8 @@
             <h2></h2>
             <p>
             </p>
-            <h2>Lorem, lissom</h2>
-            <p>
-                s maxime delectus cum, quia minima, debitis fugit nisi modi dolore. Quam explicabo laborum accusantium placeat! Accusamus tenetur molestias, quod veniam corporis dolorem dolore! Expedita ipsum qui odio.
-            </p>
-            <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum, ducimus? Porro esse in corrupti dicta modi ipsam, animi alias dolore pariatur suscipit, temporibus, aliquid nesciunt omnis ea ratione doloremque exercitationem.
-                Commodi laudantium officia nisi quo dignissimos consequatur minus quos cupiditate perspiciatis, sunt quasi numquam, consectetur modi sequi quis vel, et inventore. Nam aliquam doloribus pariatur dolorem tempora asperiores non dolore!
-            </p>
-            <h2>Jo Bjørnar Hausnes</h2>
-            <p>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Magnam illum aperiam odio ipsa fuga in vel at dicta quos perferendis odit exercitationem, maxime quaerat inventore eaque sequi architecto earum perspiciatis?
-                Repudiandae nulla esse sed dolor saepe tempora ipsa quisquam in quis doloremque! Praesentium deserunt sapiente beatae pariatur earum adipisci saepe ex iure, error commodi fugiat architecto molestiae. Pariatur, quidem corrupti.
-                Error natus expedita harum delectus iure quas eveniet, quasi corporis ea deleniti dolorum atque. Aperiam similique recusandae, porro dolores minus iste deleniti ipsa nihil cupiditate expedita illo fuga perspiciatis laboriosam!
-                Quod quibusdam excepturi nam sed rerum corrupti ab ipsa beatae impedit, recusandae id aspernatur debitis cum vero tempore odit quia aut ex officiis obcaecati dolor exercitationem asperiores? Nobis, laborum illum!
-            </p>
         </div>  
         <div class="item4">
-            <p>Copyright 2024 Jo Bjørnar Hausnes</p>
         </div>
     </div>
 </body>

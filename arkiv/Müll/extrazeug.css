@@ -195,9 +195,29 @@ nav ul li a:hover{
     border: 3px solid rgb(21, 100, 5);
     height: 50px;
     position: relative;
-    width: 1400px;
+    width: 1200px;
+    padding-bottom: 75px;
 }
 
+#müllbild {
+    width: 1000px;
+    height: 600px;
+    padding-left: 100px;
+}
+
+#typermüll {
+    color: #000000;
+    padding-left: 200px;
+}
+
+#müllbildbox {
+    width: 1200px;
+    height: 650px;
+    border-top-left-radius: 0%;
+    background-color: #45f757;
+    border-color: #02790a;
+    border-radius: 4px;
+}
 #firkant {
     position: absolute;
     height: 50px;
@@ -209,7 +229,7 @@ nav ul li a:hover{
         left: 0px;
     }
     50% {
-        left: 1350px;
+        left: 1150px;
     }
     100% {
         left: 0px;
