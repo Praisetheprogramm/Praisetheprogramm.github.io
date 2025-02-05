@@ -169,3 +169,16 @@ h1 {
    .glowing-outline:hover:before, .glowing-outline:hover:after {
     opacity: 1;
    }
+
+.hover {
+    width: 100px;
+    height: 25px;
+    background-color: #8d0606;
+    border-color: #f75656;
+    color: #ffffff;
+}
+
+.hover:hover {
+    border-color: orangered;
+    background-color: #2a2a2a;
+}

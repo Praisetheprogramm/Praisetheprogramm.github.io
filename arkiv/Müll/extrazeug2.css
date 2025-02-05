@@ -1,3 +1,9 @@
+html {
+    background-image: url("Grass.webp");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
 .container {
     display: flex;
     justify-content: space-around;
@@ -21,3 +27,13 @@
     width: 100px;
 }
 
+.hover {
+    background-color: darkolivegreen;
+    border-color: limegreen;
+    color: darkseagreen;
+}
+
+.hover:hover {
+    background-color: darkgreen;
+    color: #fff;
+}

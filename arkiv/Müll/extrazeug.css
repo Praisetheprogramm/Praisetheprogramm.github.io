@@ -138,10 +138,10 @@ nav ul li a:hover{
     justify-content: center;
     align-items: center;
     width: 1050px;
-    height: 270px;
+    height: 370px;
     border-top-left-radius: 0%;
     background-color: #45f757;
-    opacity: 0;
+    border-color: #02790a;
 }
 
 #Textbox2po {

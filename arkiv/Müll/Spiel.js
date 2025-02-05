@@ -43,6 +43,6 @@ function dragDrop(e) {
     const draggable = document.getElementById(id);
     e.target.appendChild(draggable);
     if (e.target.id === correctTargetId) {
-        alert('Richtiges Ziel!');
+        alert('korrekt');
     }
 }

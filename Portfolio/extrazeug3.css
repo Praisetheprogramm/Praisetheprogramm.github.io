@@ -1,0 +1,16 @@
+body , html{
+    min-height: 100vh;
+    background-color: rgb(15, 15, 15);
+    height: 100%;
+    width: 100%;
+}
+
+#Text1 {
+    background-color: darkslategray;
+    width: 100%;
+    color: #fff ;
+} 
+
+.Überschriften {
+    color: firebrick;
+}
