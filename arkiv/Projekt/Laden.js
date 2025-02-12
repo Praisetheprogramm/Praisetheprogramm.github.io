@@ -1,16 +1,19 @@
-function attack() {
-    let hitchance = Math.random();
-    let hitchanceenemy = Math.random();
-    console.log(hitchance);
+document.getElementById('selectButton').addEventListener('click', function() {
+    const images = document.querySelectorAll('.image');
+    const selectedImages = [];
 
-    // Spieler greift an
-    if (hitchance < 0.1) {
-        enemyHealth -= 30;
-        alert('Treffer! Der Gegner verliert 30 Lebenspunkte.');
-    } else {
-        alert('Daneben! Kein Schaden am Gegner.');
+
+    images.forEach(image => image.classList.remove('show'));
+
+    while (selectedImages.length < 3) {
+        const randomIndex = Math.floor(Math.random() * images.length);
+        if (!selectedImages.includes(images[randomIndex])) {
+            selectedImages.push(images[randomIndex]);
+        }
     }
-}
+
+    selectedImages.forEach(image => image.classList.add('show'));
+});
 
 window.addEventListener('load', function() {
     var audio = document.getElementById('myAudio');

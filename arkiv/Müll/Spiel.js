@@ -45,4 +45,7 @@ function dragDrop(e) {
     if (e.target.id === correctTargetId) {
         alert('korrekt');
     }
+    else {
+        alert('uriktig')
+    }
 }
