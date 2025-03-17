@@ -1,0 +1,30 @@
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    /* https://cssgradient.io/ */
+
+    /* background: rgb(57,46,255);
+    background: linear-gradient(0deg, rgba(57,46,255,1) 0%, rgba(0,212,255,1) 100%); */
+
+    background: rgb(63,94,251);
+    background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+
+    text-align: center;
+}
+
+p {
+    font-size: 1.5em;
+    color: white;
+}
+
+h1 {
+    font-size: 2em;
+    color: rgb(213, 255, 74);
+}
