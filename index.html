@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio</title>
     <link rel="stylesheet" href="extrazeug.css">
+    <script src="kode.js"></script>
 </head>
 <body>
     <header>
@@ -12,24 +13,24 @@
         <div class="container">
             <h1 id="Überschrift">Rick D. K. Bauer</h1>
             <h1 id="Schrift">Student at the Amalie Skram School</h1>
-            <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quaerat doloremque, quidem, modi inventore harum maxime corrupti porro explicabo officiis repellendus alias excepturi id reprehenderit consectetur neque, voluptatibus nulla totam laboriosam.</p>
+            <p>Jeg studerer informasjonsteknologi og media Jeg er født i Meißen, Tyskland, har vært i Norge i 2 år og snakker tysk, engelsk og norsk. Jeg er punktlig og gleder meg til å lære nye ting</p>
             <br/>
             <form action="side2.html">
-                <button class="read-more">read-more</button>
+                <button class="read-more">My-Thinks</button>
             </form>
 
         </div>
     </header>
     <section id="skill-section">
         <h1 id="Überschrift2">My Skills</h1>
-        <div class="wrapper">
+        <div class="wrapper" id="platz">
             <div class="skill-container">
                 <h1 id="Überschrift3">Program</h1>
                 <ul class="skill">
                     <li>adobe Photoshop<progress max="100" value="80"></progress></li>
                     <li>Html, Css<progress max="100" value="90"></progress></li>  
-                    <li>JavaScript<progress max="100" value="35"></progress></li>
-                    <li>adobe Pixelart<progress max="100" value="100"></progress></li>
+                    <li>JavaScript<progress max="100" value="45"></progress></li>
+                    <li>adobe Pixelart<progress max="100" value="60"></progress></li>
                 </ul>
             </div>
             <div class="skill-container">
@@ -37,11 +38,75 @@
                 <ul class="skill">
                     <li>mirror reflex camera<progress max="100" value="90"></progress></li>
                     <li>Story telling<progress max="100" value="100"></progress></li>  
-                    <li>acting<progress max="100" value="15"></progress></li>
-                    <li>Film camera<progress max="100" value="0"></progress></li>
+                    <li>acting<progress max="100" value="35"></progress></li>
+                    <li>Film camera<progress max="100" value="90"></progress></li>
                 </ul>
+            </div>
+            <div>
+                <a href="side3.html">
+                    <button class="hover">
+                        <p>mer om meg</p>
+                    </button>
+                </a>
+            </div>
+        </div>
+        <div id="Hintergrund">
+            <div id="Plazirung">
+                <div id="grau">
+                    <p>I have already used several programming languages. I have most of the experience with CSS, HTML and Java Script, but I also learned Python and worked with 3D game studios. Thanks to my training at the Amalie Skram School, I also have quite good experience with Adobe programs such as Ilustrator, Photoshop, Indesign and OBS.  I also have very limited experience with Unity.</p>
+                </div>
             </div>
         </div>
     </section>
+    <div id="schwarz">
+        <div>
+            <div id="bild-Programiren">
+                <a href="side2.html">
+                <div  class="durchsichtig">
+                    <p>
+                       Programmering og Kode
+                    </p>
+                </div>
+                </a>
+                <p id="bild-Programiren-text">Her kan du se alle nettsidene mine og se mine programmeringsprosjekter</p>
+            </div>
+            <div id="bild-Kamera">
+                <a href="">
+                <div class="durchsichtig">
+                    <p>
+                        Foto og Kamera 
+                    </p>
+                </div>
+                </a>
+                <p id="bild-Programiren-text2">Her kan du se alle mine Fotos</p>
+            </div>
+        </div>
+        <div id="box2">
+            <div id="bild-Video">
+                <a href="side4.html">
+                <div class="durchsichtig">
+                    <p>
+                        Video
+                    </p>
+                </div>
+                </a>
+                <p id="bild-Programiren-text">Her kan du se mine kortfilmer og mine filmprosjekter </p>
+            </div>
+            <div id="bild-Game">
+                <div class="durchsichtig">
+                    <p>
+                        Games
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="gallery" id="gallery">
+            <img src="image1.jpg" alt="Bild 1">
+            <img src="image2.jpg" alt="Bild 2">
+            <img src="image3.jpg" alt="Bild 3">
+        </div>
+    </div>
 </body>
 </html>

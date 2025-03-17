@@ -1,0 +1,29 @@
+body , html{
+    min-height: 100vh;
+    background-color: rgb(15, 15, 15);
+    height: 100%;
+    width: 100%;
+}
+
+#Text1 {
+    background-color: darkslategray;
+    width: 100%;
+    color: #fff ;
+} 
+
+.Überschriften {
+    color: rgb(210, 32, 32);
+}
+
+.hover {
+    width: 100px;
+    height: 25px;
+    background-color: #8d0606;
+    border-color: #f75656;
+    color: #ffffff;
+}
+
+.hover:hover {
+    border-color: orangered;
+    background-color: #2a2a2a;
+}
