@@ -1,0 +1,97 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgb(15, 15, 15) ;
+    margin: 0;
+    overflow: hidden;
+}
+.gallery {
+    display: flex;
+    overflow-x: scroll;
+    scroll-snap-type: x mandatory;
+    background-image: url(fotohintergrund.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 1000px;
+}
+.gallery img {
+    width: 300px;
+    height: 200px;
+    margin-right: 10px;
+    scroll-snap-align: start;
+    transition: transform 0.3s ease;
+}
+.gallery img:hover {
+    transform: scale(1.1);
+}
+
+.durchsichtig {
+    background-color: rgb(100, 100, 100);
+    opacity: 50%;
+    width: 350px;
+    height: 250px;
+    border-radius: 15px;
+    border-color: #8d0606;
+    color: bisque;
+}
+
+.durchsichtig:hover {
+    opacity: 0%;
+    transition: 1000ms ease;
+    color: rgb(255, 255, 255);
+}
+
+#theteam {
+    background-image: url("theteam.JPG");
+    width: 350px;
+    height: 250px; 
+    border-radius: 15px;
+    margin-left: 2px;
+    margin-top: 5px;
+    margin-right: 2px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#Blume {
+    background-image: url("Blume.JPG");
+    width: 350px;
+    height: 250px;
+    border-radius: 15px;
+    margin-left: 55px;
+    margin-right: 2px;
+    margin-top: 5px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#Blumen-viele {
+    background-image: url("Blumen-viele.JPG");
+    width: 350px;
+    height: 250px;
+    border-radius: 15px;
+    margin-left: 2px;
+    margin-right: 2px;
+    margin-top: 5px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#Bär {
+    background-image: url("Bär.JPG");
+    width: 350px;
+    height: 250px;
+    border-radius: 15px;
+    margin-left: 2px;
+    margin-top: 5px;
+    margin-right: 20px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.moving-image {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100px;
+    height: 100px;
+}
