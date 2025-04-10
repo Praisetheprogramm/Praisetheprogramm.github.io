@@ -1,0 +1,35 @@
+body , html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+body {
+    background-image: url(überdemnebelmeer2.png);
+    /* background-size: cover; */
+    background-repeat: no-repeat;
+}
+
+ /* The animation code */
+ @keyframes example {
+    from {opacity:0;}
+    to {opacity: 100;}
+  }
+  
+  /* The element to apply the animation to */
+#animation {
+    color: darkcyan;
+    animation-name: example;
+    animation-duration: 15s;
+    justify-content: center;
+    align-items: center;
+  } 
+
+#unsichtbar {
+  height: 200px;
+  opacity: 0%;
+}

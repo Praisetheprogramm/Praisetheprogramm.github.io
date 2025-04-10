@@ -7,7 +7,7 @@ gallery.addEventListener('scroll', () => {
 
 const image = document.getElementById('movingImage');
         let position = 0;
-        const speed = 2; // Geschwindigkeit des Bildes
+        const speed = 10; // Geschwindigkeit des Bildes
 
         function moveImage() {
             position += speed;

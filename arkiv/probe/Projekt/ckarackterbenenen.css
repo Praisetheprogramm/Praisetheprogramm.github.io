@@ -1,0 +1,37 @@
+body , html {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+body {
+    background-image: url(Straße.png);
+    background-size: cover;
+}
+
+#1 {
+    justify-content: center;
+    align-items: center;
+}
+
+#text {
+    text-shadow: darkslategray;
+    width: 100px;
+    height: 20px;
+}
+
+.unsichtbar {
+    opacity: 0%;
+height: 150px;
+width: 10000px;
+}
+
+.unsichtbar2 {
+    opacity: 0%;
+    height: 100px;
+    width: 10000px;
+}
