@@ -62,7 +62,7 @@ app.post("/login", async (req, res) => {
 
     // Lagre brukerdata i session
     req.session.bruker = { id: bruker.personnummer, fornavn: bruker.fornavn };
-    res.json({ message: "Innlogging vellykket" });
+    res.json({ message: "Innlogging vellykket", redirect:"/" });
 });
 
 // Rute for å logge ut

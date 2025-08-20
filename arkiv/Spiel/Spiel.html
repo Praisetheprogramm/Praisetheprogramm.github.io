@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jump & Run mit Nahkampfangriff und Schadenseffekt</title>
+  <style>
+    canvas {
+      background-image: url(hintergrund-spiel.png);
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: block;
+      margin: 0 auto;
+      border: 2px solid #0ff;
+    }
+    #resetBtn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #0ff;
+      border: none;
+      border-radius: 10px;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    #resetBtn:hover {
+      background: #0f0;
+      color: #111;
+      transform: scale(1.05);
+    }
+  </style>
+  <link rel="stylesheet" href="Spiel.css">
+</head>
+<body>
+
+<button id="resetBtn">🔁 reload game</button>
+<button id="resetBtn"><a href="index.html">Back</a></button>
+<canvas id="game" width="800" height="400"></canvas>
+
+<script>
+  const canvas = document.getElementById("game"); // der Canvas hollt die datein die er brauch mit der Id =game
+  const ctx = canvas.getContext("2d");
+
+  let player;
+  let platforms;
+  let enemies = []; // Leere Liste für Gegner, um dynamisch zu spawnen
+  let projectiles;
+  let heart = null;
+  let damageTexts = []; // Liste für Schadensanzeigen
+  let meleeEffect = null;
+  const bodenImage = new Image();
+  bodenImage.src = "grass.jpg";
+
+  const keys = {};
+  let enemySpawnTimer = 0;
+  let healerSpawnTimer = 1800; // 30 Sekunden bei 60 FPS
+  let healAuraCooldown = 600;  // 10 Sekunden bei 60 FPS
+
+  function spawnHealer() {
+    // Prüfen, ob bereits ein Heiler existiert
+    if (enemies.some(e => e.alive && e.type === "healer")) return;
+
+    const platformIndex = Math.floor(Math.random() * platforms.length);
+    const platform = platforms[platformIndex];
+
+    const healer = {
+      x: platform.x + Math.random() * (platform.width - 40),
+      y: platform.y - 60,
+      width: 40,
+      height: 60,
+      alive: true,
+      vx: 0,
+      platformIndex: platformIndex,
+      health: 100,
+      type: "healer" // Typ zur Identifikation
+    };
+
+    enemies.push(healer);
+  }
+
+  const originalUpdate = update;
+  update = function () {
+    originalUpdate();
+
+    // Heiler-Gegner spawnen alle 30 Sekunden, wenn keiner existiert
+    healerSpawnTimer--;
+    if (healerSpawnTimer <= 0) {
+      spawnHealer();
+      healerSpawnTimer = 1800;
+    }
+
+    // Heileffekt alle 10 Sekunden
+    healAuraCooldown--;
+    if (healAuraCooldown <= 0) {
+      for (let healer of enemies.filter(e => e.alive && e.type === "healer")) {
+        for (let ally of enemies.filter(e => e.alive && e !== healer)) {
+          const dist = distance(healer.x, healer.y, ally.x, ally.y);
+          if (dist < 100 && ally.health < 100) {
+            ally.health = Math.min(ally.health + 10, 100);
+            damageTexts.push({
+              x: ally.x + ally.width / 2,
+              y: ally.y,
+              text: "+10",
+              color: "lightgreen",
+              timer: 60
+            });
+          }
+        }
+      }
+      healAuraCooldown = 600; //Cooldown
+    }
+  };
+
+  const originalDraw = draw;
+  draw = function () {
+    originalDraw();
+
+    // Goldene transparente Aura zeichnen
+    for (let e of enemies) {
+      if (e.alive && e.type === "healer") {
+        ctx.beginPath();
+        ctx.arc(e.x + e.width / 2, e.y + e.height / 2, 100, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255, 215, 0, 0.15)"; // Transparentes Gold
+        ctx.fill();
+      }
+    }
+  };
+
+  document.addEventListener("keydown", (e) => {
+    keys[e.key.toLowerCase()] = true;
+
+    if (e.key.toLowerCase() === "e" && !player.shieldActive) {      //tasten belegung
+      activateShield();
+    }
+
+    if (e.key.toLowerCase() === "q") {
+      meleeAttack();
+    }
+  });
+
+  document.addEventListener("keyup", (e) => {
+    keys[e.key.toLowerCase()] = false;
+  });
+
+  canvas.addEventListener("mousedown", (e) => {
+    if (e.button !== 0) return;  //wen nicht linke maus taste tuhe nichts
+    const aliveEnemies = enemies.filter(e => e.alive);  //liste mit gegnern die noch leben
+    if (aliveEnemies.length === 0) return;   //wen es keinen gegner gibt macht es nichts
+
+    let closest = aliveEnemies[0];
+    let minDist = distance(player.x, player.y, closest.x, closest.y); //zielt immer auf den nähsten gegner
+
+    for (let enemy of aliveEnemies) {
+      const dist = distance(player.x, player.y, enemy.x, enemy.y);  //schaut immer wehr am nächsten ist um diesen anzu visiren
+      if (dist < minDist) {
+        closest = enemy;
+        minDist = dist;
+      }
+    }
+
+    const dx = closest.x + closest.width / 2 - (player.x + player.width / 2); //horizontale entfernung
+    const dy = closest.y + closest.height / 2 - (player.y + player.height / 2);//vertikale entfernung
+    const len = Math.sqrt(dx * dx + dy * dy); //der vektor wird berechnet
+    const speed = 6;
+    const vx = (dx / len) * speed; //vektor plus Geschwindichkeit 6 so das projektil immer gleisch schnell fliegt
+    const vy = (dy / len) * speed;
+
+    projectiles.push({
+      x: player.x + player.width / 2,   //erzeugt das projekti in der mitte des spieler
+      y: player.y + player.height / 2,
+      width: 8,
+      height: 4,
+      vx: vx,
+      vy: vy,
+      color: "cyan"
+    });
+  });
+
+  function initGame() {
+    player = {
+      x: 100, y: 300,
+      width: 40, height: 60,   //Spieler
+      vx: 0, vy: 0,
+      speed: 4,
+      jumpPower: -12,
+      grounded: false,
+      color: "lime",
+      lives: 3,
+      maxLives: 5,
+      shieldActive: false,
+      shieldCooldown: 0,
+      invincible: false,
+      invincibleTimer: 0,
+      invincibleAfterHit: false // Neue Variable für den Zustand nach dem Treffer
+    };
+
+    platforms = [
+      { x: 0, y: 370, width: 800, height: 30 },
+      { x: 200, y: 300, width: 100, height: 10 },  //PLatform
+      { x: 400, y: 250, width: 100, height: 10 },
+      { x: 600, y: 200, width: 100, height: 10 }
+    ];
+
+    projectiles = [];
+    heart = null;
+
+    spawnHeart();
+    setInterval(spawnHeart, 30000); // Alle 30 Sekunden Herz respawnen
+  }
+
+  function update() {
+    player.vx = 0;
+    if (keys["a"]) player.vx = -player.speed;   //bewegung mit wasd
+    if (keys["d"]) player.vx = player.speed;
+    if (keys["w"] && player.grounded) {
+      player.vy = player.jumpPower;  //springen und verhindert springen in der luft
+      player.grounded = false;
+    }
+
+    player.vy += 0.5;     //Schwerkraft
+    player.x += player.vx;    //position anpasst
+    player.y += player.vy;
+
+    if (player.invincible) {
+      player.invincibleTimer--;//unverwundbarkeit ausgelösst durch schaden nach timmer bekommt der spieler wieder normale farbe und effekte
+      if (player.invincibleTimer <= 0) {
+        player.invincible = false;
+        player.color = "lime";
+        player.invincibleAfterHit = false; // Ende der Unverwundbarkeitsphase
+      }
+    }
+
+    player.grounded = false;
+    for (let p of platforms) {
+      if (
+        player.x < p.x + p.width &&
+        player.x + player.width > p.x &&   //groundet spieler wen auf platform
+        player.y + player.height < p.y + 10 &&
+        player.y + player.height + player.vy >= p.y
+      ) {
+        player.y = p.y - player.height;
+        player.vy = 0;
+        player.grounded = true;
+      }
+    }
+
+    // Gegnerkollision und Schaden
+        // Gegner-Nahkampfangriff, wenn Spieler zu nah ist
+        for (let enemy of enemies) {
+      if (!enemy.alive) continue;
+
+      const dist = distance(player.x + player.width / 2, player.y + player.height / 2,
+                            enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
+
+      if (dist < 40 && !player.invincible && !player.invincibleAfterHit && !player.shieldActive) {
+        player.lives--;
+        if (player.lives <= 0) {
+          resetGame();
+          return;
+        }
+        player.invincible = true;
+        player.invincibleAfterHit = true;
+        player.invincibleTimer = 90;
+        player.color = "orange"; // Farbe für Nahkampftreffer
+
+        damageTexts.push({
+          x: player.x + player.width / 2,
+          y: player.y,
+          text: "-10 (Nahkampf)",
+          color: "orange",
+          timer: 60
+        });
+      }
+    }
+
+    // Projektile aktualisieren und Schaden machen
+    for (let p of projectiles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      for (let enemy of enemies) {
+        if (!enemy.alive) continue;
+        if (
+          p.x < enemy.x + enemy.width &&
+          p.x + p.width > enemy.x &&
+          p.y < enemy.y + enemy.height &&
+          p.y + p.height > enemy.y
+        ) {
+          enemy.health -= 5; // Fernkampf macht 5 Schaden
+
+          // Schadenstext für Gegner
+          damageTexts.push({
+            x: enemy.x + enemy.width / 2,
+            y: enemy.y,
+            text: "-5",
+            color: "red",
+            timer: 60 // 1 Sekunde sichtbar
+          });
+
+          // Gegner besiegt
+          if (enemy.health <= 0) {
+            enemy.alive = false;
+            damageTexts.push({
+              x: enemy.x + enemy.width / 2,
+              y: enemy.y,
+              text: "Gegner besiegt",
+              color: "green",
+              timer: 60
+            });
+          }
+          projectiles.splice(projectiles.indexOf(p), 1); // Projektil entfernen
+        }
+      }
+    }
+
+    // Herz sammeln
+    if (heart) {
+      if (
+        player.x < heart.x + heart.width &&
+        player.x + player.width > heart.x &&
+        player.y < heart.y + heart.height &&
+        player.y + player.height > heart.y
+      ) {
+        if (player.lives < player.maxLives) {
+          player.lives++;
+        }
+        heart = null;
+      }
+    }
+
+    // Gegner spawnen alle 60 Sekunden (wenn weniger als 5 Gegner existieren)
+    enemySpawnTimer--;
+    if (enemySpawnTimer <= 0 && enemies.filter(e => e.alive).length < 5) {
+      spawnEnemy();
+      enemySpawnTimer = 60; // Reset Timer
+    }
+
+    // Schadenstexte zeichnen
+    for (let i = damageTexts.length - 1; i >= 0; i--) {
+      damageTexts[i].y -= 0.5; // Text schwebt nach oben
+      damageTexts[i].timer--;
+      if (damageTexts[i].timer <= 0) {
+        damageTexts.splice(i, 1);
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Plattformen zeichnen
+    for (let p of platforms) {
+      if (p.y >= canvas.height - 30) {
+    // Bodenplattform – Bild verwenden
+    ctx.drawImage(bodenImage, p.x, p.y, p.width, p.height);
+      }
+      else {
+    // Andere Plattformen normal zeichnen
+    ctx.fillStyle = "#0f0";
+    ctx.fillRect(p.x, p.y, p.width, p.height);
+  }
+}
+
+    // Spieler zeichnen
+    ctx.fillStyle = player.color;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+
+    // Schild zeichnen
+    if (player.shieldActive) {
+      ctx.strokeStyle = "cyan";
+      ctx.lineWidth = 4;
+      ctx.strokeRect(player.x, player.y, player.width, player.height);
+    }
+
+    // Nahkampfeffekt zeichnen
+    if (meleeEffect) {
+      ctx.fillStyle = "white";
+      ctx.fillRect(meleeEffect.x, meleeEffect.y, meleeEffect.width, meleeEffect.height);
+    }
+
+    // Gegner zeichnen
+    for (let e of enemies) {
+      if (e.alive) {
+        ctx.fillStyle = "red";
+        ctx.fillRect(e.x, e.y, e.width, e.height);
+      }
+    }
+
+    // Projektile zeichnen
+    for (let p of projectiles) {
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.width, p.height);
+    }
+
+    // Herz zeichnen
+    if (heart) {
+      ctx.fillStyle = "red";
+      ctx.beginPath();
+      ctx.moveTo(heart.x + heart.width / 2, heart.y + heart.height / 5);
+      ctx.bezierCurveTo(heart.x, heart.y, heart.x, heart.y + heart.height, heart.x + heart.width / 2, heart.y + heart.height);
+      ctx.bezierCurveTo(heart.x + heart.width, heart.y + heart.height, heart.x + heart.width, heart.y, heart.x + heart.width / 2, heart.y + heart.height / 5);
+      ctx.fill();
+    }
+
+    // Leben anzeigen
+    ctx.fillStyle = "white";
+    ctx.font = "20px Arial";
+    ctx.fillText("Leben: " + player.lives, 10, 30);
+
+    // Schadenstexte anzeigen
+    ctx.font = "20px Arial";
+    ctx.textAlign = "center";
+    for (let d of damageTexts) {
+      ctx.fillStyle = d.color;
+      ctx.fillText(d.text, d.x, d.y);
+    }
+  }
+
+  function activateShield() {
+    if (player.shieldCooldown <= 0) {
+      player.shieldActive = true;
+      player.shieldCooldown = 300; // 5 Sekunden Cooldown
+    }
+  }
+
+  function meleeAttack() {
+    // Nahkampfangriff vor dem Spieler
+    meleeEffect = {
+      x: player.x + player.width,
+      y: player.y + player.height / 4,
+      width: 50,  // Reichweite des Nahkampfs
+      height: 20
+    };
+
+    // Trefferlogik für Nahkampf
+    for (let enemy of enemies) {
+      if (meleeEffect.x < enemy.x + enemy.width && meleeEffect.x + meleeEffect.width > enemy.x &&
+          meleeEffect.y < enemy.y + enemy.height && meleeEffect.y + meleeEffect.height > enemy.y) {
+        enemy.health -= 10; // Nahkampf macht 10 Schaden
+        damageTexts.push({
+          x: enemy.x + enemy.width / 2,
+          y: enemy.y,
+          text: "-10",
+          color: "orange",
+          timer: 60 // 1 Sekunde sichtbar
+        });
+
+        if (enemy.health <= 0) {
+          enemy.alive = false;
+        }
+      }
+    }
+
+    // Nahkampfeffekt nach kurzer Zeit verschwinden lassen
+    setTimeout(() => {
+      meleeEffect = null;
+    }, 200);
+  }
+
+  function spawnHeart() {
+    heart = {
+      x: Math.random() * (canvas.width - 40) + 20,
+      y: Math.random() * (canvas.height - 100) + 20,
+      width: 30,
+      height: 30
+    };
+  }
+
+  function spawnEnemy() {
+    if (enemies.length < 5) {
+      const platformIndex = Math.floor(Math.random() * platforms.length);
+      const platform = platforms[platformIndex];
+      const enemy = {
+        x: platform.x + Math.random() * platform.width - 40,
+        y: platform.y - 60,
+        width: 40,
+        height: 60,
+        alive: true,
+        vx: 1,
+        platformIndex: platformIndex,
+        health: 10 + Math.floor(Math.random() * 20,10) // Zufällige Gesundheit
+      };
+
+      // Überprüfen, ob der Gegner mit einem anderen Gegner kollidiert
+      for (let e of enemies) {
+        if (e.alive && Math.abs(e.x - enemy.x) < 50) {
+          // Wenn der Gegner zu nah ist, keinen neuen Gegner spawnen
+          return;
+        }
+      }
+
+      enemies.push(enemy);
+    }
+  }
+
+  function distance(x1, y1, x2, y2) {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  }
+
+  function resetGame() {
+    player.lives = 3;
+    player.x = 100;
+    player.y = 300;
+    player.vy = 0;
+    enemies.forEach(e => e.alive = false); // Alle Gegner werden inaktiv
+    enemies = []; // Liste der Gegner zurücksetzen
+    projectiles = [];
+    spawnHeart();
+  }
+
+  initGame();
+
+  function gameLoop() {
+    document.getElementById("resetBtn").addEventListener("click", resetGame);
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+  }
+
+  gameLoop();
+
+  document.getElementById("resetBtn").addEventListener("click", resetGame); // Button-Funktion hinzufügen
+</script>
+
+</body>
+</html>

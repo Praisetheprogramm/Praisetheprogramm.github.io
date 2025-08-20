@@ -1,0 +1,165 @@
+/* body {
+    background-color: #0e0e0e;
+    color: #e0e0e0;
+    font-family: 'Segoe UI', sans-serif;
+    padding: 2rem;
+  } */
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background-color: #000;
+    font-family: 'Segoe UI', sans-serif;
+    color: #aefeff; /* Hellblau für Text */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+  }
+  
+  /* Leuchtende Akzentlichter (Hintergrund-Orbs) */
+  body::before,
+  body::after {
+    content: "";
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.5;
+    z-index: 0;
+  }
+  
+  body::before {
+    background: #00fff0; /* Neon-Hellblau */
+    top: 10%;
+    left: -100px;
+  }
+  
+  body::after {
+    background: #00ff88; /* Neon-Hellgrün */
+    bottom: 10%;
+    right: -100px;
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  datalist,
+  button,
+  select {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+    border-radius: 12px;
+    color: #f0f0f0;
+    padding: 10px 15px;
+    margin: 0.5rem 0;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.05);
+    transition: all 0.3s ease;
+  }
+  
+  input:hover,
+  input:focus,
+  textarea:hover,
+  textarea:focus,
+  button:hover {
+    border-color: #00ffff;
+    background-color: #202020;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.4);
+    outline: none;
+  }
+  
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+  }
+  
+  button {
+    background: linear-gradient(to right, #00f2ff, #8f00ff);
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  }
+
+#button2 {
+    
+    background: linear-gradient(to right, #f4c415, #c60505);
+    color: white;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border-radius: 5px;
+    width: 40px;
+}
+
+#button2:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+  }
+  
+  button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+  }
+  
+  /* Radio Buttons */
+  input[type="radio"] {
+    accent-color: #00ffff;
+  }
+  
+  /* Headings */
+  h1, h2, h3 {
+    color: #ffffff;
+    text-shadow: 0 0 5px #00f2ff;
+  }
+  
+  /* Spielkarten auf der Startseite */
+  #games > div {
+    background-color: #1a1a1a;
+    padding: 1rem;
+    border-radius: 16px;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+  }
+  
+  /* Balkenbewertung */
+  #games .rating-bar {
+    background: #333;
+    height: 10px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  #games .rating-bar > div {
+    height: 100%;
+    background: linear-gradient(to right, #00f2ff, #8f00ff);
+  }
+  
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .add-btn {
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: linear-gradient(to right, #8f00ff, #00f2ff);
+    color: white;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  
+  .add-btn:hover {
+    box-shadow: 0 0 10px #8f00ff, 0 0 20px #00f2ff;
+    transform: scale(1.05);
+  }

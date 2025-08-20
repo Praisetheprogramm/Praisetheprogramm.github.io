@@ -88,6 +88,29 @@ body {
     background-repeat: no-repeat;
 }
 
+#Raumschiff1 {
+    background-image: url("IMG_9591.JPG");
+    width: 350px;
+    height: 250px;
+    border-radius: 15px;
+    margin-left: 2px;
+    margin-top: 5px;
+    margin-right: 20px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+#Raumschiff2 {
+    background-image: url("IMG_9599.JPG");
+    width: 350px;
+    height: 250px;
+    border-radius: 15px;
+    margin-left: 2px;
+    margin-top: 5px;
+    margin-right: 20px;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
 .moving-image {
     position: absolute;
     top: 50%;

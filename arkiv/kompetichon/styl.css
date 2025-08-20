@@ -1,0 +1,27 @@
+#box {
+    width: 100px;
+    height: 100px;
+    background-color: tomato;
+    margin: 100px auto;
+    border-radius: 10px;
+    animation: rotateClockwise 2s linear infinite;
+    cursor: pointer;
+  }
+
+  @keyframes rotateClockwise {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes rotateCounterClockwise {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(-360deg);
+    }
+  }
