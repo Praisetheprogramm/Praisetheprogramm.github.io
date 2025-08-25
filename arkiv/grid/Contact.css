@@ -1,0 +1,32 @@
+html,body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.item1 { grid-area: header;}
+.item2 { grid-area: meny  ;}
+.item3 { grid-area: main  ;}
+.item4 { grid-area: footer;}
+
+.grid-container {
+    display: grid;
+    grid-template-areas:
+        'header header  header  header  header  header'
+        'meny   main    main    main    main    main'
+        'meny   footer  footer  footer  footer  footer';
+    /* gap: 10px; */
+    /* background-color: #2196F3; */
+    /* padding: 10px; */
+}
+
+.item1 {
+    background: linear-gradient(270deg, #334a94, #050609);
+}
+
+#überschrift {
+    color: white;
+    margin-left: 100vh;
+    font-size: 10px;
+    font
+}

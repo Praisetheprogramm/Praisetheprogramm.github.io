@@ -1,0 +1,103 @@
+<!doctype html>
+<div class="thumb"><span class="badge">Einsteiger</span></div>
+<h3>CSS Grid – Crashkurs</h3>
+<p class="desc">Responsive Grids mit auto‑fit, minmax & Areas.</p>
+<div class="tags"><span class="tag">css</span><span class="tag">grid</span></div>
+</div>
+</article>
+
+
+<!-- Karte 3 -->
+<article class="card" data-tags="js dom events">
+<div class="inner">
+<div class="thumb"><span class="badge">Mittel</span></div>
+<h3>DOM‑Interaktionen in Vanilla JS</h3>
+<p class="desc">Events, Klassen toggeln, kleine UI‑Snippets.</p>
+<div class="tags"><span class="tag">js</span><span class="tag">dom</span></div>
+</div>
+</article>
+
+
+<!-- Karte 4 -->
+<article class="card" data-tags="react hooks js">
+<div class="inner">
+<div class="thumb"><span class="badge">Mittel</span></div>
+<h3>React Hooks kompakt</h3>
+<p class="desc">useState, useEffect, custom Hooks – kurz & knackig.</p>
+<div class="tags"><span class="tag">react</span><span class="tag">js</span></div>
+</div>
+</article>
+
+
+<!-- Karte 5 -->
+<article class="card" data-tags="a11y barrierefreiheit">
+<div class="inner">
+<div class="thumb"><span class="badge">Kurz</span></div>
+<h3>Barrierefreiheit Essentials</h3>
+<p class="desc">ARIA‑Labels, Fokus sichtbar, Kontraste – schnell umgesetzt.</p>
+<div class="tags"><span class="tag">a11y</span></div>
+</div>
+</article>
+
+
+<!-- Karte 6 -->
+<article class="card" data-tags="css ui effects">
+<div class="inner">
+<div class="thumb"><span class="badge">Style</span></div>
+<h3>Glassmorphism & Glows</h3>
+<p class="desc">Moderne Looks mit Unschärfe und sanften Verläufen.</p>
+<div class="tags"><span class="tag">css</span><span class="tag">ui</span></div>
+</div>
+</article>
+</section>
+</main>
+
+
+<footer class="container">
+<hr style="border:none;height:1px;background:var(--border);margin:1.6rem 0" />
+<p>© <span id="year"></span> TutorialDesign – frei anpassbar.</p>
+</footer>
+
+
+<script>
+// ====== Helfer ======
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+
+
+// ====== Theme (Light/Dark) ======
+const themeBtn = $('#theme');
+const savedTheme = localStorage.getItem('theme');
+if(savedTheme){ document.documentElement.setAttribute('data-theme', savedTheme); }
+themeBtn.addEventListener('click', () => {
+const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+const next = cur === 'dark' ? 'light' : 'dark';
+document.documentElement.setAttribute('data-theme', next);
+localStorage.setItem('theme', next);
+});
+
+
+// ====== Suche + Filter ======
+const search = $('#q');
+const chips = $$('.chip');
+const cards = $$('.card');
+function apply(){
+const q = (search.value || '').toLowerCase();
+const active = $('.chip.active')?.dataset.filter || 'all';
+cards.forEach(card => {
+const text = (card.querySelector('h3').textContent + ' ' + card.querySelector('.desc').textContent + ' ' + card.dataset.tags).toLowerCase();
+const tags = card.dataset.tags.split(' ');
+const tagOk = active === 'all' || tags.includes(active);
+card.style.display = (text.includes(q) && tagOk) ? '' : 'none';
+});
+}
+search.addEventListener('input', apply);
+chips.forEach(c => c.addEventListener('click', () => { chips.forEach(x => x.classList.remove('active')); c.classList.add('active'); apply(); }));
+$('#reset').addEventListener('click', () => { search.value=''; chips.forEach(x=>x.classList.remove('active')); $('[data-filter="all"]').classList.add('active'); apply(); });
+
+
+// ====== Sonstiges ======
+$('#year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
