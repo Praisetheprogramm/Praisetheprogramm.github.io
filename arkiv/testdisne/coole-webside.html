@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Einfaches Dropdown-Menü</title>
+<style>
+/* --- Basislayout --- */
+:root {
+--bg: #0f172a; /* slate-900 */
+--panel: #111827; /* gray-900 */
+--text: #e5e7eb; /* gray-200 */
+--muted: #9ca3af; /* gray-400 */
+--ring: #60a5fa; /* blue-400 */
+--hover: rgba(96, 165, 250, 0.1);
+--border: #1f2937; /* gray-800 */
+}
+
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+margin: 0;
+font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+background: linear-gradient(120deg, #0b1020, #0a1128 40%, #10162f);
+color: var(--text);
+display: grid;
+place-items: center;
+padding: 24px;
+}
+
+
+/* --- Karte zur Demo --- */
+.card {
+background: var(--panel);
+border: 1px solid var(--border);
+border-radius: 16px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+padding: 24px;
+width: min(560px, 92vw);
+}
+.card h1 { font-size: 1.25rem; margin: 0 0 14px; }
+.card p { margin: 0 0 18px; color: var(--muted); }
+
+
+/* --- Dropdown --- */
+.dropdown { position: relative; display: inline-block; }
+
+
+.dropdown__button {
+appearance: none;
+background: #111827;
+color: var(--text);
+font-weight: 600;
+border: 1px solid var(--border);
+border-radius: 12px;
+padding: 10px 14px;
+cursor: pointer;
+display: inline-flex;
+align-items: center;
+gap: 10px;
+box-shadow: 0 2px 0 rgba(255,255,255,0.03) inset, 0 6px 16px rgba(0,0,0,0.25);
+}
+.dropdown__button:hover { background: #0f172a; }
+</html>

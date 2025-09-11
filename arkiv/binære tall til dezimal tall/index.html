@@ -3,13 +3,28 @@
 <head>
   <meta charset="UTF-8">
   <title>Binär → Dezimal Umwandler</title>
+  <link rel="stylesheet" href="extra_zeug.css">
   <script defer src="code.js"></script>
 </head>
 <body>
   <h1>Binär → Dezimal Umwandler</h1>
   
-  <input type="text" id="binaryInput" placeholder="z. B. 1011">
+  <input type="text" id="binaryInput" placeholder="z.B. 1011">
   <button id="convertBtn">Umwandeln</button>
+  <div id="ageModal" class="modal">
+    <div class="modal-content">
+      <h2>Bitte gib dein Alter ein</h2>
+      <input type="number" id="ageInput" placeholder="Alter" />
+      <button onclick="checkAge()">Bestätigen</button>
+    </div>
+  </div>
+  <form id="chatFelt">
+    <p>Dette er chatvennen din</p>
+    <input type="text" id="chatInput" placeholder="skriv hei">
+    <button id="Knopfchat">submit</button>
+  </form>
+  <img id="meinObjekt" src="hollow Grub.jpg" alt="">
+  <audio id="Grubsound" src="grub-hollow-knight.mp3" preload="auto"></audio>
   
   <p>Ergebnis: <span id="result">-</span></p>
 </body>
