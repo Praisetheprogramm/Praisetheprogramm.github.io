@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>hallo Terra</h1>
+
+    <div id="textbox">
+        <!--Fylles ut av JS-->
+    </div>
+    <button type="input">write your message</button>
+
+    <script>
+        const textbox = document.getElementById("textbox")
+
+        async function skrivUtMeldinger() {
+            const response = await fetch('/hentMeldinger');
+            const meldinger = await response.json();
+            //console.log(Messages);
+
+        //    for (let message of Messages) {
+        //         console.log(message.Messages + ": " + message.message);
+        //     }
+
+            for (let message of meldinger) {
+                const div = document.createElement('div');
+                div.innerHTML = "[" + Messages.tid + "]<br> " + Messages.user-id + ": " + Messages.message;
+                utskrift.appendChild(div);
+            }
+        }
+
+        skrivUtMeldinger();
+    </script>
+</body> 
+</html>

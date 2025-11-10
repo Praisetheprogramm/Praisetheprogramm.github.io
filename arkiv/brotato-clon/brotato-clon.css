@@ -1,0 +1,14 @@
+:root{ --bg:#0b1020; --panel:#0f1724; --accent:#f59e0b; --danger:#ef4444; }
+html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial;background:linear-gradient(180deg,#071023 0%, #081428 100%);color:#e6eef8}
+.wrap{height:100%;display:flex;align-items:center;justify-content:center;gap:20px;padding:30px;box-sizing:border-box}
+.gamebox{background:var(--panel);border-radius:12px;padding:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6);display:flex;gap:12px}
+canvas{background:linear-gradient(180deg,#071022,#0b1627);border-radius:8px;image-rendering:optimizeSpeed}
+.ui{width:220px;display:flex;flex-direction:column;gap:8px}
+.card{background:rgba(255,255,255,0.04);padding:10px;border-radius:8px}
+h1{font-size:16px;margin:0 0 6px 0}
+p.small{margin:0;color:#b9c6d9;font-size:13px}
+.row{display:flex;justify-content:space-between;align-items:center}
+.btn{display:inline-block;padding:6px 8px;border-radius:6px;background:var(--accent);color:#071023;font-weight:600;cursor:pointer}
+.muted{opacity:0.8;font-size:13px}
+.big{font-size:20px;font-weight:700}
+footer{font-size:12px;color:#9fb0cc;margin-top:6px}

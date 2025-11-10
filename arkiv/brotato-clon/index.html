@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Top-Down Überlebensspiel</title>
+<link rel="stylesheet" href="brotato-clon.css">
+<script src="brotato-clon.js"></script>
+</head>
+<body>
+<div class="wrap">
+<div class="gamebox"> 
+<canvas id="game" width="800" height="600"></canvas>
+<div class="ui">
+<div class="card">
+<h1>Überlebensspiel — Demo</h1>
+<p class="small">Bewege den Spieler mit WASD oder Pfeiltasten. Schieße mit Maus (Klick) oder Leertaste. Drücke R zum Neustart.</p>
+</div>
+
+
+<div class="card">
+<div class="row"><span>Health</span><span id="health">100</span></div>
+<div class="row"><span>Score</span><span id="score">0</span></div>
+<div class="row"><span>Enemies</span><span id="enemies">0</span></div>
+</div>
+
+
+<div class="card">
+<div class="muted">Tipps:</div>
+<ul class="muted" style="margin:6px 0 0 16px;padding:0">
+<li>Bewege dich, um nicht eingekreist zu werden.</li>
+<li>Gegner verfolgen dich kontinuierlich.</li>
+<li>Je länger du überlebst, desto mehr Gegner spawnen.</li>
+</ul>
+</div>
+
+
+<div class="card" style="text-align:center">
+<div class="row"><button id="restart" class="btn">Neustart (R)</button></div>
+<footer>Erstellt mit HTML5 Canvas · Beispiel</footer>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>
