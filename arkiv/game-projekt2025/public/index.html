@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gaming Seite</title>
+  <link rel="stylesheet" href="extrazeug.css">
+  <script src="code.js" defer></script>
+</head>
+<body>
+
+  <div class="header">
+    <!-- Dropdown für Tags -->
+    <select id="tagSelect">
+      <option value="all">-- Alle Tags --</option>
+      <option value="horror">Horror</option>
+      <option value="2d">2D</option>
+      <option value="3d">3D</option>
+      <option value="rpg">RPG</option>
+      <option value="action">Action</option>
+      <option value="strategy">strategy</option>
+    </select>
+
+    <!-- Knopf rechts -->
+    <button id="showInfoBtn">Spiel-Info anzeigen</button>
+  </div>
+
+  <!-- Mittlerer Bereich -->
+  <div class="content">
+    <div class="game-info" id="gameInfo">
+      <h2>Kein Spiel ausgewählt</h2>
+      <p>Bitte wähle unten ein Spiel aus und drücke den Button oben.</p>
+    </div>
+
+    <!-- Grid mit Spielen -->
+    <div class="game-grid" id="gameGrid"></div>
+  </div>
+
+</body>
+</html>
