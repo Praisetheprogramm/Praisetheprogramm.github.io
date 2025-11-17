@@ -23,6 +23,66 @@ app.use(express.static('public'));
 // Middleware for å parse JSON-data
 app.use(express.json());
 
+const session = require("express-session");
+const bcrypt = require("bcrypt");
+
+app.use(session({
+    secret: "geheim",
+    resave: false,
+    saveUninitialized: false
+}));
+
+// Tabelle users erstellen falls nicht vorhanden
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS user (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE,
+    email TEXT UNIQUE,
+    password TEXT
+)
+`).run();
+
+// Registrierung
+app.post("/register", (req, res) => {
+    const { username, email, password } = req.body;
+
+    const hashed = bcrypt.hashSync(password, 10);
+
+    try {
+        db.prepare("INSERT INTO user (username, email, password) VALUES (?, ?, ?)")
+          .run(username, email, hashed);
+        res.json({ ok: true });
+    } catch (e) {
+        res.status(400).json({ error: "Username oder Email existiert schon" });
+    }
+});
+
+// Login
+app.post("/login", (req, res) => {
+    const { identifier, password } = req.body;
+
+    const user = db.prepare("SELECT * FROM user WHERE username = ? OR email = ?")
+                   .get(identifier, identifier);
+
+    if (!user) return res.status(400).json({ error: "Nicht gefunden" });
+
+    if (!bcrypt.compareSync(password, user.password)) {
+        return res.status(400).json({ error: "Falsches Passwort" });
+    }
+
+    // Session setzen
+    req.session.userId = user.id;
+    req.session.username = user.username;
+
+    res.json({ ok: true });
+});
+
+// Schutz-Middleware
+function requireAuth(req, res, next) {
+    if (req.session.userId) return next();
+    res.status(401).json({ error: "Nicht eingeloggt" });
+}
+
 // Eksempel på rute som hentar brukarar frå databasen (besøk http://localhost:3000/personer)
 app.get("/user", (req, res) => {
     const users = db.prepare("SELECT * FROM user").all();

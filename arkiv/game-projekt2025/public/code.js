@@ -7,22 +7,23 @@ let games = [];
 let selectedGame = null;
 
 // Spiele vom Backend holen
-async function fetchGames(tag = "all") {
-  const res = await fetch(`http://localhost:3000/games?tag=${tag}`);
+async function fetchGames() {
+  const res = await fetch("/games");
   games = await res.json();
-  renderGames();
+  renderGames(games);
 }
 
 // Spiele anzeigen
-function renderGames() {
+function renderGames(games) {
   gameGrid.innerHTML = "";
-  games.forEach(game => {
+  for (let game of games) {
+    console.log(game);
     const div = document.createElement("div");
     div.className = "game-box";
     div.textContent = game.title;
     div.onclick = () => selectGame(game, div);
     gameGrid.appendChild(div);
-  });
+  };
 }
 
 // Spiel auswählen
