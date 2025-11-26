@@ -1,0 +1,243 @@
+/* GENERAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+body {
+    background: #050505;
+    color: #ccffdd;
+}
+
+/* NAVIGATION */
+.hero {
+    height: 100vh;
+    padding: 25px 60px;
+    background: linear-gradient(180deg, #0b0b0b, #000);
+    background-image: url("Logo.png");
+    background-size: 80%;
+    background-position: center;
+    background-attachment: fixed; /* Parallax Effekt */
+    position: relative;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.7rem;
+    color: #00ff9d;
+    font-weight: 800;
+}
+.logo span {
+    color: white;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #99ffcc;
+    transition: 0.2s;
+}
+nav a:hover {
+    color: #00ff88;
+}
+
+/* HEADER CONTENT */
+.hero-content {
+    margin-top: 15%;
+}
+
+.hero-content h2 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.accent {
+    color: #00ff88;
+    text-shadow: 0 0 15px #00ff88;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 14px 30px;
+    background: #00ff88;
+    border: none;
+    cursor: pointer;
+    color: #000;
+    font-weight: bold;
+    border-radius: 6px;
+    box-shadow: 0 0 12px #00ff88;
+    transition: 0.3s;
+}
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 22px #00ff88;
+}
+
+/* ABOUT SECTION */
+.about-section {
+    padding: 90px 60px;
+    background: #080808;
+}
+
+.about-section h2 {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    color: #00ff88;
+}
+
+/* PROJECTS */
+.projects-section {
+    padding: 90px 60px;
+}
+
+.projects-section h2 {
+    color: #00ff88;
+    text-shadow: 0 0 12px #00ff88;
+}
+
+.project-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.project-card {
+    background: #101010;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #00ff8833;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 10px #00ff8822;
+}
+
+.project-card:hover {
+    transform: translateY(-7px);
+    border-color: #00ff88;
+    box-shadow: 0 0 20px #00ff88;
+}
+
+.project-card h3 {
+    color: #00ff88;
+    margin-bottom: 10px;
+}
+
+/* MODAL */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    background: #0d0d0d;
+    padding: 30px;
+    border-radius: 14px;
+    width: 90%;
+    max-width: 460px;
+    border: 1px solid #00ff88;
+    box-shadow: 0 0 25px #00ff88;
+    position: relative;
+}
+
+.modal-box h2 {
+    color: #00ff88;
+}
+
+.modal-btn {
+    display: block;
+    margin-top: 20px;
+    padding: 12px;
+    background: #00ff88;
+    color: black;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: transparent;
+    color: #00ff88;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* FOOTER */
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #060606;
+    border-top: 1px solid #00ff8833;
+}
+
+/* FADE-IN EFFECT beim Scrollen */
+.fade-in {
+    opacity: 0;
+    transform: translateY(35px);
+    transition: 0.8s ease;
+}
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- GALERIE / CAROUSEL --- */
+.gallery-section {
+    padding: 80px 60px;
+}
+
+.gallery-section h2 {
+    color: #00ff88;
+}
+
+.carousel {
+    margin-top: 25px;
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+}
+
+.carousel::-webkit-scrollbar {
+    height: 10px;
+}
+.carousel::-webkit-scrollbar-thumb {
+    background: #00ff88;
+    border-radius: 5px;
+}
+.carousel img {
+    width: 350px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: 0.3s;
+    box-shadow: 0 0 15px #00ff8850;
+}
+
+.carousel img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #00ff88;
+}

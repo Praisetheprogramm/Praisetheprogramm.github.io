@@ -89,3 +89,40 @@
     .game-box.selected {
       border: 2px solid #3a8ef6;
     }
+
+    .popup-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.popup-window {
+  background: rgba(255, 255, 255, 0.088);
+  padding: 25px;
+  border-radius: 8px;
+  width: 350px;
+  box-shadow: 0 0 15px black;
+}
+
+.popup-window input,
+.popup-window textarea {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.add-btn {
+  margin-left: 20px;
+  padding: 10px 15px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background: #3e8e41;
+}

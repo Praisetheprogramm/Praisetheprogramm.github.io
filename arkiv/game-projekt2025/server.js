@@ -18,6 +18,7 @@ const db = new Database("Projektgamewebseite.db");
 const PORT = 3000;
 
 // Middleware for å servere statiske filer fra public-mappen
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static('public'));
 
 // Middleware for å parse JSON-data
@@ -90,19 +91,66 @@ app.get("/user", (req, res) => {
 });
 
 // Eksempel på rute som hentar bilar frå databasen (besøk http://localhost:3000/biler)
+// app.get("/games", (req, res) => {
+//     const cars = db.prepare("SELECT * FROM games").all();
+//     res.json(cars);
+// });
+
+// app.get("/games", (req, res) => {
+//   const tag = req.query.tag;
+//   let rows;
+
+//   if (tag && tag !== "all") {
+//     rows = db.prepare("SELECT * FROM games WHERE gametag_id LIKE ?").all(`%${tag}%`);
+//   } else {
+//     rows = db.prepare("SELECT * FROM games").all();
+//   }
+
+//   res.json(rows);
+// });
+
 app.get("/games", (req, res) => {
-    const cars = db.prepare("SELECT * FROM games").all();
-    res.json(cars);
+  const rows = db.prepare("SELECT * FROM games").all();
+  res.json(rows);
+});
+
+app.get("/games/byTag/:tagId", (req, res) => {
+  const tagId = req.params.tagId;
+  console.log(tagId)
+
+  const sql = `
+    SELECT games.title, games.Logo, games_tag.tag_id
+    FROM games
+    INNER JOIN games_tag ON games.game_id = games_tag.game_id
+    WHERE games_tag.tag_id = ?
+  `;
+
+  const rows = db.prepare(sql).all(tagId);
+  res.json(rows);
 });
 
 // Rute for å legge til ein ny bil i databasen
-app.post("/leggtilgame", (req, res) => {
-    const { game_id, strategy, title, tags, description, developer, created_at, Logo } = req.body;
+// app.post("/leggtilgame", (req, res) => {
+//     const { game_id, strategy, title, tags, description, developer, created_at, Logo } = req.body;
 
-    const stmt = db.prepare("INSERT INTO games (game_id, title, tags, description, developer, created_at, Logo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    const info = stmt.run(game_id, strategy, title, tags, description, developer, created_at, Logo);
+//     const stmt = db.prepare("INSERT INTO games (game_id, title, tags, description, developer, created_at, Logo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+//     const info = stmt.run(game_id, strategy, title, tags, description, developer, created_at, Logo);
 
-    res.json({ message: "Ny game er lagt til", info });
+//     res.json({ message: "Ny game er lagt til", info });
+// });
+
+ app.post("/leggtilgame", (req, res) => {
+    const { title, description, developer, created_at } = req.body;
+    console.log(title, developer);
+
+    const stmt = db.prepare(`
+        INSERT INTO games (title, description, developer, created_at)
+        VALUES (?, ?, ?, ?)
+    `);
+
+    const info = stmt.run(title, description, developer, created_at);
+
+    res.json({ message: "Neues Game hinzugefügt!", info });
 });
 
 app.listen(PORT, () => {

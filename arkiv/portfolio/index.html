@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="extra_zeug.css"/>
+    <script src="code.js" defer></script>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header class="hero">
+        <nav>
+            <h1 class="logo">PRAISE THE PROGRAM<span>PORTFOLIO</span></h1>
+            <ul>
+                <li><a href="#about">about me</a></li>
+                <li><a href="#projects">Projekte</a></li>
+            </ul>
+        </nav>
+
+        <div class="hero-content">
+            <h2>Hallo, I am  <span class="accent">RICK</span></h2>
+            <p>Web Developer • Programmer • Tech-Enthusiast</p>
+            <button class="btn" onclick="scrollToProjects()">View projects</button>
+        </div>
+    </header>
+
+    <!-- ABOUT -->
+    <section id="about" class="about-section">
+        <h2>Über mich</h2>
+        <p>
+            Schreibe hier etwas über dich, deine Skills und deine Erfahrungen.
+            Dieses Portfolio verwendet ein modernes neon-schwarz/grün Branding.
+        </p>
+    </section>
+
+    <section id="gallery" class="gallery-section fade-in">
+    <h2>Galerie</h2>
+
+    <div class="carousel">
+        <img src="bild-foto.jpg" alt="">
+        <img src="bild-game.jpg" alt="">
+        <img src="bild-video.jpeg" alt="">
+        <img src="Backgroundimgside2.jpg" alt="">
+        <img src="https://placehold.co/350x200" alt="">
+    </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="projects-section">
+        <h2>My GitHub projects</h2>
+
+        <div class="project-grid">
+
+            <!-- PROJECT CARD -->
+            <div class="project-card" onclick="openProject(1)">
+                <h3>Project 1</h3>
+                <p>Kurzbeschreibung...</p>
+            </div>
+
+            <div class="project-card" onclick="openProject(2)">
+                <h3>Project 2</h3>
+                <p>Kurzbeschreibung...</p>
+            </div>
+
+            <div class="project-card" onclick="openProject(3)">
+                <h3>Project 3</h3>
+                <p>Kurzbeschreibung...</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- POPUP MODAL -->
+    <div id="modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="modal-title">Titel</h2>
+            <p id="modal-text">Beschreibung</p>
+
+            <a id="modal-link" href="#" target="_blank" class="modal-btn">Zum Projekt</a>
+
+            <button class="modal-close" onclick="closeModal()">X</button>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>© 2025 – praise the program</p>
+    </footer>
+</body>
+</html>
