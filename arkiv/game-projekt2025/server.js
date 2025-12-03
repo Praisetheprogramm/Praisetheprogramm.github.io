@@ -19,7 +19,6 @@ const PORT = 3000;
 
 // Middleware for å servere statiske filer fra public-mappen
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static('public'));
 
 // Middleware for å parse JSON-data
 app.use(express.json());
@@ -27,11 +26,20 @@ app.use(express.json());
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 
+// Session middleware muss vor dem Ausliefern von Static-Files und vor Routen liegen,
+// damit Set-Cookie korrekt gesetzt und bei späteren Requests gesendet wird.
 app.use(session({
     secret: "geheim",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: false,
+    cookie: {
+        // 'lax' ist eine sichere Default-Einstellung und funktioniert für gleiche Origin
+        sameSite: 'lax'
+    }
 }));
+
+// Static files zuletzt einbinden, damit Session-Middleware zuvor aktiv ist
+app.use(express.static('public'));
 
 // Tabelle users erstellen falls nicht vorhanden
 db.prepare(`
@@ -43,18 +51,50 @@ db.prepare(`
 )
 `).run();
 
+// Startseite - prüft ob User eingeloggt ist
+app.get("/", (req, res) => {
+    if (req.session.userId) {
+        res.sendFile(__dirname + '/public/index.html');
+    } else {
+        res.sendFile(__dirname + '/public/login.html');
+    }
+});
+
 // Registrierung
 app.post("/register", (req, res) => {
     const { username, email, password } = req.body;
 
-    const hashed = bcrypt.hashSync(password, 10);
+    // Validierung
+    if (!username || !email || !password) {
+        return res.status(400).json({ error: "Alle Felder müssen ausgefüllt werden" });
+    }
+
+    if (password.length < 6) {
+        return res.status(400).json({ error: "Passwort muss mindestens 6 Zeichen lang sein" });
+    }
+
+    const hashedPassword = bcrypt.hashSync(password, 10);
 
     try {
-        db.prepare("INSERT INTO user (username, email, password) VALUES (?, ?, ?)")
-          .run(username, email, hashed);
-        res.json({ ok: true });
-    } catch (e) {
-        res.status(400).json({ error: "Username oder Email existiert schon" });
+        const stmt = db.prepare("INSERT INTO user (username, email, password) VALUES (?, ?, ?)");
+        const result = stmt.run(username, email, hashedPassword);
+        
+        // Session direkt nach Registrierung setzen
+        req.session.userId = result.lastInsertRowid;
+        req.session.username = username;
+        
+        res.json({ 
+            ok: true, 
+            message: "Registrierung erfolgreich",
+            user: { id: result.lastInsertRowid, username }
+        });
+    } catch (error) {
+        if (error.code === "SQLITE_CONSTRAINT_UNIQUE") {
+            res.status(400).json({ error: "Benutzername oder E-Mail bereits vergeben" });
+        } else {
+            console.error("Registrierungsfehler:", error);
+            res.status(500).json({ error: "Interner Serverfehler" });
+        }
     }
 });
 
@@ -62,20 +102,65 @@ app.post("/register", (req, res) => {
 app.post("/login", (req, res) => {
     const { identifier, password } = req.body;
 
-    const user = db.prepare("SELECT * FROM user WHERE username = ? OR email = ?")
-                   .get(identifier, identifier);
-
-    if (!user) return res.status(400).json({ error: "Nicht gefunden" });
-
-    if (!bcrypt.compareSync(password, user.password)) {
-        return res.status(400).json({ error: "Falsches Passwort" });
+    // Validierung
+    if (!identifier || !password) {
+        return res.status(400).json({ error: "Benutzername/E-Mail und Passwort sind erforderlich" });
     }
 
-    // Session setzen
-    req.session.userId = user.id;
-    req.session.username = user.username;
+    try {
+        // User finden (per Username oder Email)
+        const user = db.prepare("SELECT * FROM user WHERE username = ? OR email = ?")
+                       .get(identifier, identifier);
 
-    res.json({ ok: true });
+        if (!user) {
+            return res.status(400).json({ error: "Benutzername oder Passwort falsch" });
+        }
+
+        // Passwort überprüfen
+        const isPasswordValid = bcrypt.compareSync(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).json({ error: "Benutzername oder Passwort falsch" });
+        }
+
+        // Session setzen
+        req.session.userId = user.id;
+        req.session.username = user.username;
+
+        res.json({ 
+            ok: true, 
+            message: "Login erfolgreich",
+            user: { id: user.id, username: user.username }
+        });
+    } catch (error) {
+        console.error("Login-Fehler:", error);
+        res.status(500).json({ error: "Interner Serverfehler" });
+    }
+});
+
+// Logout
+app.post("/logout", (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ error: "Logout fehlgeschlagen" });
+        }
+        res.json({ ok: true, message: "Logout erfolgreich" });
+    });
+});
+
+// Geschützte Routen
+function requireAuth(req, res, next) {
+    if (req.session.userId) {
+        return next();
+    }
+    res.status(401).json({ error: "Nicht eingeloggt" });
+}
+
+// User-Info abrufen
+app.get("/api/user", requireAuth, (req, res) => {
+    res.json({ 
+        id: req.session.userId, 
+        username: req.session.username 
+    });
 });
 
 // Schutz-Middleware
@@ -90,25 +175,6 @@ app.get("/user", (req, res) => {
     res.json(users);
 });
 
-// Eksempel på rute som hentar bilar frå databasen (besøk http://localhost:3000/biler)
-// app.get("/games", (req, res) => {
-//     const cars = db.prepare("SELECT * FROM games").all();
-//     res.json(cars);
-// });
-
-// app.get("/games", (req, res) => {
-//   const tag = req.query.tag;
-//   let rows;
-
-//   if (tag && tag !== "all") {
-//     rows = db.prepare("SELECT * FROM games WHERE gametag_id LIKE ?").all(`%${tag}%`);
-//   } else {
-//     rows = db.prepare("SELECT * FROM games").all();
-//   }
-
-//   res.json(rows);
-// });
-
 app.get("/games", (req, res) => {
   const rows = db.prepare("SELECT * FROM games").all();
   res.json(rows);
@@ -119,7 +185,7 @@ app.get("/games/byTag/:tagId", (req, res) => {
   console.log(tagId)
 
   const sql = `
-    SELECT games.title, games.Logo, games_tag.tag_id
+    SELECT games.game_id, games.title, games.Logo, games_tag.tag_id
     FROM games
     INNER JOIN games_tag ON games.game_id = games_tag.game_id
     WHERE games_tag.tag_id = ?
@@ -129,30 +195,127 @@ app.get("/games/byTag/:tagId", (req, res) => {
   res.json(rows);
 });
 
-// Rute for å legge til ein ny bil i databasen
-// app.post("/leggtilgame", (req, res) => {
-//     const { game_id, strategy, title, tags, description, developer, created_at, Logo } = req.body;
+// Route für unique_games
+app.get("/unique-games", (req, res) => {
+  try {
+    const rows = db.prepare("SELECT * FROM unique_games").all();
+    res.json(rows);
+  } catch (error) {
+    console.error("Fehler beim Abrufen der unique_games:", error);
+    res.status(500).json({ error: "Fehler beim Laden der Spiele" });
+  }
+});
 
-//     const stmt = db.prepare("INSERT INTO games (game_id, title, tags, description, developer, created_at, Logo) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-//     const info = stmt.run(game_id, strategy, title, tags, description, developer, created_at, Logo);
+// Bewertung abgeben
+app.post("/rating", requireAuth, (req, res) => {
+    console.log("Rating Request erhalten:", req.body);
+    console.log("User ID:", req.session.userId);
+    
+    const { game_id, rating, comment } = req.body;
+    const user_id = req.session.userId;
 
-//     res.json({ message: "Ny game er lagt til", info });
-// });
+    // Validierung
+    if (!game_id || !rating) {
+        console.log("Fehlende Daten:", { game_id, rating });
+        return res.status(400).json({ error: "Spiel-ID und Bewertung sind erforderlich" });
+    }
 
- app.post("/leggtilgame", (req, res) => {
+    if (rating < 1 || rating > 10) {
+        return res.status(400).json({ error: "Bewertung muss zwischen 1 und 10 liegen" });
+    }
+
+    // Prüfen ob bereits bewertet
+    const existingRating = db.prepare("SELECT * FROM ratings WHERE game_id = ? AND user_id = ?").get(game_id, user_id);
+    
+    if (existingRating) {
+        console.log("Bereits bewertet:", existingRating);
+        return res.status(400).json({ error: "Du hast dieses Spiel bereits bewertet" });
+    }
+
+    try {
+        const stmt = db.prepare(`
+            INSERT INTO ratings (game_id, user_id, rating, comment) 
+            VALUES (?, ?, ?, ?)
+        `);
+        const info = stmt.run(game_id, user_id, rating, comment);
+        console.log("Bewertung gespeichert:", info);
+        
+        res.json({ 
+            message: "Bewertung erfolgreich abgegeben!", 
+            ratingId: info.lastInsertRowid 
+        });
+    } catch (e) {
+        console.error("Datenbank-Fehler:", e);
+        res.status(500).json({ error: "Fehler beim Speichern der Bewertung" });
+    }
+});
+
+// Backend
+app.post("/leggtilgame", async (req, res) => {
     const { title, description, developer, created_at } = req.body;
-    console.log(title, developer);
+    const db = await getDB();
 
-    const stmt = db.prepare(`
-        INSERT INTO games (title, description, developer, created_at)
-        VALUES (?, ?, ?, ?)
-    `);
+    try {
+        await db.run('BEGIN TRANSACTION');
+        
+        // Game einfügen
+        const gameStmt = db.prepare(`
+            INSERT INTO games (title, description, developer, created_at)
+            VALUES (?, ?, ?, ?)
+        `);
+        
+        const info = gameStmt.run(title, description, developer, created_at);
+        const gameId = info.lastInsertRowid;
+        
+        // Tags verarbeiten (wenn vorhanden)
+        if (tags && tags.trim()) {
+            const tagArray = tags.split(',').map(tag => tag.trim());
+            const tagStmt = db.prepare(`
+                INSERT INTO game_tag (game_id, tag_id)
+                VALUES (?, ?)
+            `);
+            
+            for (const tag of tagArray) {
+                if (tag) {
+                    tagStmt.run(gameId, tag);
+                }
+            }
+        }
+        
+        await db.run('COMMIT');
+        
+        res.json({
+            ok: true,
+            message: "Neues Game hinzugefügt!",
+            gameId: gameId
+        });
 
-    const info = stmt.run(title, description, developer, created_at);
-
-    res.json({ message: "Neues Game hinzugefügt!", info });
+    } catch (err) {
+        await db.run('ROLLBACK');
+        console.error("Fehler beim Hinzufügen des Spiels:", err);
+        res.status(500).json({ error: "Game konnte nicht gespeichert werden" });
+    }
 });
 
 app.listen(PORT, () => {
     console.log(`Server køyrer: http://localhost:${PORT}`);
+});
+
+// Server-Seite (Node.js mit Express)
+app.get("/ratings/:gameId", (req, res) => {
+    const gameId = req.params.gameId;
+    
+    try {
+        const ratings = db.prepare(`
+            SELECT rating, comment, created_at 
+            FROM ratings 
+            WHERE game_id = ? 
+            ORDER BY created_at DESC
+        `).all(gameId);
+        
+        res.json(ratings || []);
+    } catch (error) {
+        console.error("Fehler beim Abrufen der Ratings:", error);
+        res.status(500).json({ error: "Fehler beim Laden der Bewertungen" });
+    }
 });

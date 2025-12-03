@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Spielbewertungen</title>
+    <link rel="stylesheet" href="extra_zeug.css">
+    <script src="code.js" defer></script>
 </head>
 <body>
+    <h1>Spielebewertungen</h1>
+    <div id="games-container"></div>
     
+    <script>
+        // Nachdem das DOM geladen ist
+        document.addEventListener('DOMContentLoaded', function() {
+            const container = document.getElementById('games-container');
+            
+            // Beispiel: Dynamische Erstellung von Boxen
+            const games = [
+                { id: 1, title: 'Super Mario' },
+                { id: 2, title: 'Tetris' },
+                { id: 3, title: 'Minecraft' }
+            ];
+            
+            games.forEach(game => {
+                const box = createStyledGameRatingBox(game.id, game.title);
+                container.appendChild(box);
+            });
+        });
+    </script>
 </body>
 </html>

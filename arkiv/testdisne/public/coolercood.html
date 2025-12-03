@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="extra_zeug.css">
+  <script src="code.js" defer></script>
+</head>
+<body>
+  <!-- Bewertungs-Popup -->
+<div id="ratingPopup" class="popup-bg" style="display:none;">
+  <div class="popup-window">
+    <h2 id="ratingGameTitle">Spiel bewerten</h2>
+    
+    <form id="ratingForm">
+      <input type="hidden" id="ratingGameId">
+      
+      <div class="rating-stars">
+        <label>Bewertung (1-10):</label>
+        <select id="ratingSelect" name="rating" required>
+          <option value="">-- Bewertung wählen --</option>
+          <option value="1">1 - Sehr schlecht</option>
+          <option value="2">2 - Schlecht</option>
+          <option value="3">3 - Unterdurchschnittlich</option>
+          <option value="4">4 - Unterdurchschnittlich</option>
+          <option value="5">5 - Durchschnittlich</option>
+          <option value="6">6 - Gut</option>
+          <option value="7">7 - Gut</option>
+          <option value="8">8 - Sehr gut</option>
+          <option value="9">9 - Hervorragend</option>
+          <option value="10">10 - Ausgezeichnet</option>
+        </select>
+      </div>
+      
+      <div class="comment-section">
+        <label for="ratingComment">Kommentar:</label>
+        <textarea id="ratingComment" name="comment" rows="4" placeholder="Dein Kommentar zum Spiel..."></textarea>
+      </div>
+      
+      <div class="rating-buttons">
+        <button type="submit">Bewertung abgeben</button>
+        <button type="button" id="closeRatingPopup">Abbrechen</button>
+      </div>
+    </form>
+    
+    <!-- Bereich für vorhandene Bewertungen -->
+    <div id="existingRatings" style="margin-top: 20px; display: none;">
+      <h3>Vorhandene Bewertungen:</h3>
+      <div id="ratingsList"></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

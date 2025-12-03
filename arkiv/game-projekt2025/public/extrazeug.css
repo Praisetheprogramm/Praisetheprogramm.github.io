@@ -2,11 +2,12 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background-color: #121212;
+      background-image: url(steam.jpg);
       color: #f5f5f5;
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-size: cover;
     }
 
     /* Header */
@@ -19,6 +20,7 @@
       padding: 15px 30px;
       box-sizing: border-box;
       box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      position: sticky;
     }
 
     .header select {
@@ -76,14 +78,37 @@
       background-color: #1f1f1f;
       padding: 20px;
       border-radius: 10px;
+      height: 100px;
+      width: 160px;
       cursor: pointer;
       transition: transform 0.2s, background-color 0.2s, border 0.2s;
       border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-box::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+                                  transparent, 
+                                  rgba(255, 255, 255, 0.3), 
+                                  transparent);
+      transition: left 0.4s ease;
+      pointer-events: none;
     }
 
     .game-box:hover {
       transform: scale(1.05);
       background-color: #2b2b2b;
+    }
+
+    .game-box:hover::after {
+      left: 100%;
     }
 
     .game-box.selected {
@@ -125,4 +150,318 @@
 
 .add-btn:hover {
   background: #3e8e41;
+}
+
+/* Bewertungs-Button in Game-Box */
+
+.rate-btn {
+    background: #ffd700;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+/* Bewertungs-Button unten rechts in Game-Box */
+.rate-btn-corner {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    margin: 0;
+    z-index: 2;
+}
+
+.rate-btn:hover {
+    background: #ffed4a;
+}
+
+/* Durchschnittsbewertung */
+.average-rating {
+    font-size: 12px;
+    color: #ffd700;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* Bewertungs-Formular */
+.rating-stars, .comment-section {
+    margin-bottom: 15px;
+}
+
+.rating-stars select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.comment-section textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.rating-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Vorhandene Bewertungen */
+.rating-item {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    border-left: 3px solid #ffd700;
+}
+
+.rating-item small {
+    color: #666;
+}
+
+.rating-item hr {
+    margin: 8px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+/* Tags-Container Styling */
+.tags-container {
+    margin-bottom: 15px;
+}
+
+.tags-header {
+    width: 100%;
+    padding: 12px;
+    background-color: #2b2b2b;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.tags-header:hover {
+    background-color: #3a3a3a;
+}
+
+.tags-count {
+    font-size: 12px;
+    color: #aaa;
+    margin: 0 10px;
+}
+
+.tags-arrow {
+    font-size: 10px;
+    transition: transform 0.3s;
+}
+
+.tags-arrow.open {
+    transform: rotate(180deg);
+}
+
+.tags-dropdown {
+    background-color: #1f1f1f;
+    border: 1px solid #444;
+    border-top: none;
+    border-radius: 0 0 5px 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.tag-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tag-checkbox input[type="checkbox"] {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.tag-checkbox label {
+    cursor: pointer;
+    color: #fff;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* ===== POPUP BUTTON STYLING ===== */
+
+/* Speichern Button */
+.popup-window button[type="submit"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    margin-right: 10px;
+}
+
+.popup-window button[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.3s ease;
+}
+
+.popup-window button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+.popup-window button[type="submit"]:hover::before {
+    left: 100%;
+}
+
+.popup-window button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+/* Abbrechen/Schließen Button */
+.popup-window button[type="button"] {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+}
+
+.popup-window button[type="button"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.3s ease;
+}
+
+.popup-window button[type="button"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+}
+
+.popup-window button[type="button"]:hover::before {
+    left: 100%;
+}
+
+.popup-window button[type="button"]:active {
+    transform: translateY(0);
+}
+
+/* Rating Buttons (spezifische Styling) */
+.rating-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.rating-buttons button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+#ratingForm button[type="submit"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+#ratingForm button[type="submit"]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.3s ease;
+}
+
+#ratingForm button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+}
+
+#ratingForm button[type="submit"]:hover::before {
+    left: 100%;
+}
+
+#ratingForm button[type="submit"]:active {
+    transform: translateY(0);
+}
+
+#closeRatingPopup {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+}
+
+#closeRatingPopup::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: left 0.3s ease;
+}
+
+#closeRatingPopup:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(245, 87, 108, 0.6);
+}
+
+#closeRatingPopup:hover::before {
+    left: 100%;
+}
+
+#closeRatingPopup:active {
+    transform: translateY(0);
 }

@@ -1,0 +1,71 @@
+/* Bewertungs-Button in Game-Box */
+.rate-btn {
+    background: #ffd700;
+    color: #333;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: background 0.3s;
+}
+
+.rate-btn:hover {
+    background: #ffed4a;
+}
+
+/* Durchschnittsbewertung */
+.average-rating {
+    font-size: 12px;
+    color: #ffd700;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* Bewertungs-Formular */
+.rating-stars, .comment-section {
+    margin-bottom: 15px;
+}
+
+.rating-stars select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.comment-section textarea {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.rating-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+/* Vorhandene Bewertungen */
+.rating-item {
+    background: #f9f9f9;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 4px;
+    border-left: 3px solid #ffd700;
+}
+
+.rating-item small {
+    color: #666;
+}
+
+.rating-item hr {
+    margin: 8px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}

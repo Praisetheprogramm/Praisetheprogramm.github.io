@@ -19,10 +19,17 @@
      <option value="4">2D</option>
      <option value="5">Action</option>
      <option value="6">Strategy</option>
+     <option value="7">Open-World</option>
+     <option value="8">jump and run</option>
+     <option value="9">Competitive</option> 
+     <option value="10">Multiplayer</option> 
+     <option value="11">Singelplayer</option> 
     </select>
 
     <!-- Knopf rechts -->
     <button id="showInfoBtn">Spiel-Info anzeigen</button>
+    <button id="btnUniqueGames">Einzigartige Spiele</button>
+    <button id="btnlogin">Inn Logging</button>
   </div>
 
   <!-- Mittlerer Bereich -->
@@ -35,17 +42,56 @@
 <button id="openAddGameBtn" class="add-btn">Neues Game hinzufügen</button>
 
 <!-- Popup-Fenster -->
-<div id="addGamePopup" class="popup-bg" style="display:none;">
-  <div class="popup-window">
-    <h2>Neues Game hinzufügen</h2>
+  <div id="addGamePopup" class="popup-bg" style="display:none;">
+    <div class="popup-window">
+      <h2>Neues Game hinzufügen</h2>
 
-    <form id="addGameForm">
+      <form id="addGameForm">
 
-      <label>Game Titel:</label>
-      <input type="text" name="title" required>
+        <label>Game Titel:</label>
+        <input type="text" name="title" required>
 
-      <label>Tags (kommagetrennt):</label>
-      <input type="text" name="tags" placeholder="z.B. action, horror">
+        <div class="tags-container">
+          <button type="button" class="tags-header" id="tagsHeaderBtn">
+            <span>Tags</span>
+            <span class="tags-count">(0 ausgewählt)</span>
+            <span class="tags-arrow">▼</span>
+          </button>
+          <div class="tags-dropdown" id="tagsDropdown" style="display: none;">
+            <div class="tag-checkbox">
+              <input type="checkbox" name="tags[]" value="1" id="tag1">
+              <label for="tag1">RPG</label>
+            </div>
+            <div class="tag-checkbox">
+              <input type="checkbox" name="tags[]" value="2" id="tag2">
+              <label for="tag2">Horror</label>
+            </div>
+            <div class="tag-checkbox">
+              <input type="checkbox" name="tags[]" value="3" id="tag3">
+              <label for="tag3">3D</label>
+            </div>
+            <div class="tag-checkbox">
+              <input type="checkbox" name="tags[]" value="4" id="tag4">
+              <label for="tag4">2D</label>
+            </div>
+            <div class="tag-checkbox">
+              <input type="checkbox" name="tags[]" value="5" id="tag5">
+              <label for="tag5">Action</label>
+            </div>
+            <div class="tag-checkbox">
+              <input type="checkbox" name="tags[]" value="6" id="tag6">
+              <label for="tag6">Strategy</label>
+            </div>
+            <div class="tag-checkbox">
+              <input type="checkbox" name="tags[]" value="7" id="tag7">
+              <label for="tag7">Open-World</label>
+            </div>
+            <div class="tag-checkbox">
+              <input type="checkbox" name="tags[]" value="8" id="tag8">
+              <label for="tag8">Jump and Run</label>
+            </div>
+          </div>
+        </div>
 
       <label>Beschreibung:</label>
       <textarea name="description" rows="4"></textarea>
@@ -60,10 +106,53 @@
     </form>
   </div>
 </div>
-
     <!-- Grid mit Spielen -->
     <div class="game-grid" id="gameGrid"></div>
   </div>
+
+  <!-- Bewertungs-Popup -->
+<div id="ratingPopup" class="popup-bg" style="display:none;">
+  <div class="popup-window">
+    <h2 id="ratingGameTitle">Spiel bewerten</h2>
+    
+    <form id="ratingForm">
+      <input type="hidden" id="ratingGameId">
+      
+      <div class="rating-stars">
+        <label>Bewertung (1-10):</label>
+        <select id="ratingSelect" name="rating" required>
+          <option value="">-- Bewertung wählen --</option>
+          <option value="1">1 - Sehr schlecht</option>
+          <option value="2">2 - Schlecht</option>
+          <option value="3">3 - Unterdurchschnittlich</option>
+          <option value="4">4 - Unterdurchschnittlich</option>
+          <option value="5">5 - Durchschnittlich</option>
+          <option value="6">6 - Gut</option>
+          <option value="7">7 - Gut</option>
+          <option value="8">8 - Sehr gut</option>
+          <option value="9">9 - Hervorragend</option>
+          <option value="10">10 - Ausgezeichnet</option>
+        </select>
+      </div>
+      
+      <div class="comment-section">
+        <label for="ratingComment">Kommentar:</label>
+        <textarea id="ratingComment" name="comment" rows="4" placeholder="Dein Kommentar zum Spiel..."></textarea>
+      </div>
+      
+      <div class="rating-buttons">
+        <button type="submit">Bewertung abgeben</button>
+        <button type="button" id="closeRatingPopup">Abbrechen</button>
+      </div>
+    </form>
+    
+    <!-- Bereich für vorhandene Bewertungen -->
+    <div id="existingRatings" style="margin-top: 20px; display: none;">
+      <h3>Vorhandene Bewertungen:</h3>
+      <div id="ratingsList"></div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
