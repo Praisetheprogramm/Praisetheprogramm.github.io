@@ -1,6 +1,6 @@
 # Project: Gaming Review Platform
 
-This [project](https://github.com/Praisetheprogramm/Praisetheprogramm.github.io/tree/main/arkiv/game-projekt2025) aims to create a gaming review website where inexperienced developers can share and receive feedback on their games.
+This [project](https://github.com/Praisetheprogramm/Praisetheprogramm.github.io/tree/main/arkiv/game-projekt2025/index.html) aims to create a gaming review website where inexperienced developers can share and receive feedback on their games.
 
 ![database](./readme-images/databaser.png)
 
