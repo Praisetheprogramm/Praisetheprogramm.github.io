@@ -15,7 +15,14 @@ const gameBackgrounds = {
   9: "images/Minecraft.png",
  10: "images/TotalwarWarhammer3.jpg",
  11: "images/Valorant.png",
- 12: "images/Metal_Gear_Solit3.jpg"
+ 12: "images/Metal_Gear_Solit3.jpg",
+ 13: "images/DBD.jpg",
+ 14: "images/RDR2.png",
+ 15: "images/Eldenring.jpg",
+ 16: "images/Eldenringshadowoftheearthtree.jpg",
+ 17: "images/Expedition-33.png",
+ 18: "images/baldurs-gate-3.jpeg",
+ 19: "images/phasmophobia.jpg"
 };
 
 // --- Popup Elemente ---
@@ -269,11 +276,109 @@ function renderGames(games) {
     for (let game of games) {
       const div = document.createElement("div");
       div.className = "game-box";
+      // Ensure positioned container so absolute children (link button) can be placed bottom-left
+      div.style.position = 'relative';
+
+      // Set data attribute for game id to allow linking between boxes
+      const gameId = game.game_id || game.id || game.gameId;
+      if (gameId !== undefined) div.setAttribute('data-game-id', String(gameId));
 
       // Hintergrundbild aus Mapping setzen
       if (gameBackgrounds[game.game_id]) {
         div.style.backgroundImage = `url('${gameBackgrounds[game.game_id]}')`;
         div.style.backgroundSize = "cover";
+
+  // Öffnet ein Popup mit den verlinkten Spielen (Array von {id,label,found,gameObj})
+  function openLinkedGamesPopup(linkedGames) {
+    // Overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'linked-overlay';
+    Object.assign(overlay.style, {
+      position: 'fixed', top: '0', left: '0', right: '0', bottom: '0',
+      background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000
+    });
+
+    const popup = document.createElement('div');
+      popup.className = 'linked-popup';
+      Object.assign(popup.style, {
+        background: 'rgba(0,0,0,0.85)', padding: '16px', borderRadius: '8px', width: '90%', maxWidth: '800px', maxHeight: '80%', overflow: 'auto', color: '#fff'
+      });
+
+    const title = document.createElement('h3');
+    title.textContent = 'Linked games';
+      title.style.color = '#fff';
+      popup.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'linked-grid';
+    Object.assign(grid.style, { display: 'flex', gap: '12px', flexWrap: 'wrap' });
+
+    linkedGames.forEach(link => {
+      // Try to use the actual game object if available
+      const targetGame = link.gameObj || games.find(g => (g.game_id || g.id || g.gameId) == link.id) || null;
+
+      // Create a small game-box that mirrors the main grid markup
+      const tile = document.createElement('div');
+      tile.className = 'game-box linked-mini';
+      const targetId = link.id;
+      tile.setAttribute('data-game-id', String(targetId));
+
+      // Background if available
+      const previewId = (targetGame && (targetGame.game_id || targetGame.id || targetGame.gameId)) || link.id;
+      if (gameBackgrounds[previewId]) {
+        tile.style.backgroundImage = `url('${gameBackgrounds[previewId]}')`;
+        tile.style.backgroundSize = 'cover';
+          tile.style.backgroundPosition = 'center';
+          tile.style.border = '1px solid rgba(255,255,255,0.12)';
+          tile.style.color = '#fff';
+      }
+
+      // Inner HTML: title + rate button (same as main grid)
+      const titleText = (targetGame && (targetGame.title || targetGame.name)) || link.label || `Game ${link.id}`;
+      tile.innerHTML = `
+        <div class="game-title">${titleText}</div>
+        <button class="rate-btn rate-btn-corner" onclick="event.stopPropagation(); openRatingPopup(${targetId}, '${titleText.replace("'","\'")}')">
+          ★ Bewerten
+        </button>
+      `;
+
+      // click selects the game on main page
+      tile.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const tg = targetGame || games.find(g => (g.game_id || g.id || g.gameId) == targetId);
+        if (tg) {
+          const td = document.querySelector(`.game-box[data-game-id="${targetId}"]`);
+          if (td) {
+            selectGame(tg, td);
+            td.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (overlay.parentNode) document.body.removeChild(overlay);
+            return;
+          }
+        }
+        // reload and try later
+        fetchGames();
+        setTimeout(() => {
+          const td = document.querySelector(`.game-box[data-game-id="${targetId}"]`);
+          const tg2 = games.find(g => (g.game_id || g.id || g.gameId) == targetId);
+          if (td && tg2) selectGame(tg2, td);
+          if (overlay.parentNode) document.body.removeChild(overlay);
+        }, 400);
+      });
+
+      grid.appendChild(tile);
+    });
+
+    popup.appendChild(grid);
+
+    const close = document.createElement('button');
+    close.textContent = 'Close';
+      Object.assign(close.style, { marginTop: '12px', background: 'rgba(255,255,255,0.08)', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' });
+    close.addEventListener('click', () => { if (overlay.parentNode) document.body.removeChild(overlay); });
+    popup.appendChild(close);
+
+    overlay.appendChild(popup);
+    document.body.appendChild(overlay);
+  }
         div.style.backgroundPosition = "center";
       }
 
@@ -286,6 +391,47 @@ function renderGames(games) {
         `;
         
         div.onclick = () => selectGame(game, div);
+
+        // Optional: create a link button if this game links to other games (e.g. DLC -> base game)
+        // The linked id(s) can come from fields like `links` (array), or `linked_game_id` / `related_game_id` / `link_to`.
+        (function maybeAddLink() {
+          // Build an array of link descriptors: { id, label }
+          let linkDescriptors = [];
+          if (Array.isArray(game.links) && game.links.length > 0) {
+            linkDescriptors = game.links.map(l => ({ id: l.linked_game_id || l.linked_game || l.linkedTo, label: l.label || l.relation || undefined }));
+          } else {
+            const linkedId = game.linked_game_id || game.related_game_id || game.link_to || game.linkedTo;
+            if (linkedId) linkDescriptors.push({ id: linkedId, label: game.link_label });
+          }
+          if (linkDescriptors.length === 0) return;
+
+          const linkBtn = document.createElement('button');
+          linkBtn.className = 'link-btn';
+          linkBtn.textContent = linkDescriptors.length === 1 ? (linkDescriptors[0].label || 'Linked') : (game.link_label || 'Linked games');
+          linkBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            // Prepare array of linked game objects (may be missing from current `games` list)
+            const linkedGames = linkDescriptors.map(d => {
+              const found = games.find(g => (g.game_id || g.id || g.gameId) == d.id);
+              return {
+                id: d.id,
+                label: d.label || (found && (found.title || found.name)) || `Game ${d.id}`,
+                found: !!found,
+                gameObj: found || null
+              };
+            });
+            openLinkedGamesPopup(linkedGames);
+          });
+
+          const wrapper = document.createElement('div');
+          wrapper.className = 'link-btn-wrapper';
+          Object.assign(wrapper.style, { position: 'absolute', left: '8px', bottom: '8px', zIndex: 10 });
+          // Make the button compact for the corner
+          Object.assign(linkBtn.style, { padding: '6px 8px', fontSize: '12px' });
+          wrapper.appendChild(linkBtn);
+          div.appendChild(wrapper);
+        })();
+
         gameGrid.appendChild(div);
         
         // Durchschnittsbewertung laden und anzeigen

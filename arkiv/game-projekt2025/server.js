@@ -28,15 +28,15 @@ const bcrypt = require("bcrypt");
 
 // Session middleware muss vor dem Ausliefern von Static-Files und vor Routen liegen,
 // damit Set-Cookie korrekt gesetzt und bei späteren Requests gesendet wird.
-app.use(session({
-    secret: "geheim",
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        // 'lax' ist eine sichere Default-Einstellung und funktioniert für gleiche Origin
-        sameSite: 'lax'
-    }
-}));
+// Middleware for sessions
+app.use(
+    session({
+        secret: "hemmeligNøkkel", // Bytt til en sikker nøkkel i produksjon
+        resave: false,
+        saveUninitialized: false,
+        cookie: { secure: false } // Sett til true hvis du bruker HTTPS
+    })
+);
 
 // Static files zuletzt einbinden, damit Session-Middleware zuvor aktiv ist
 app.use(express.static('public'));

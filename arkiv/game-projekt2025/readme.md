@@ -94,3 +94,106 @@ Server checks session
 - **November 10, 2025**: Database created, basic concept planned
 - **November 11, 2025**: Server setup and database integration started
 - **December 3, 2025**: Authentication, game management, and rating system fully implemented 
+
+---
+
+## Important Functions (short)
+
+Below are the key functions from the main files with very short descriptions and small code excerpts you can reference.
+
+**code.js**
+- fetchGames(tag): Fetches games from the backend (optionally filtered by tag) and calls `renderGames`.
+
+```javascript
+async function fetchGames(tag = "") {
+     let url = "/games";
+     if (tag && tag !== "all") url += `?tag=${encodeURIComponent(tag)}`;
+     const res = await fetch(url);
+     games = await res.json();
+     renderGames(games);
+}
+```
+
+- renderGames(games): Renders the game grid. Each game box gets a `data-game-id` attribute and a rating button.
+
+```javascript
+function renderGames(games) {
+     gameGrid.innerHTML = "";
+     for (let game of games) {
+          const div = document.createElement("div");
+          div.className = "game-box";
+          div.setAttribute('data-game-id', String(game.game_id || game.id));
+          div.innerHTML = `<div class="game-title">${game.title}</div>`;
+          div.onclick = () => selectGame(game, div);
+          gameGrid.appendChild(div);
+     }
+}
+```
+
+- openRatingPopup(gameId, title): Opens the rating modal, loads existing ratings and prepares the form.
+
+```javascript
+async function openRatingPopup(gameId, title) {
+     ratingGameId.value = gameId;
+     ratingGameTitle.textContent = `${title} bewerten`;
+     ratingForm.reset();
+     await loadExistingRatings(gameId);
+     ratingPopup.style.display = 'flex';
+}
+```
+
+**server.js**
+- POST `/register`: Validates input, hashes password, inserts user and sets session.
+
+```javascript
+app.post('/register', (req, res) => {
+     const { username, email, password } = req.body;
+     const hashed = bcrypt.hashSync(password, 10);
+     const info = db.prepare('INSERT INTO user (username,email,password) VALUES (?,?,?)').run(username,email,hashed);
+     req.session.userId = info.lastInsertRowid;
+     res.json({ ok: true });
+});
+```
+
+- POST `/login`: Finds user by username/email, verifies password, sets session.
+
+```javascript
+app.post('/login', (req, res) => {
+     const { identifier, password } = req.body;
+     const user = db.prepare('SELECT * FROM user WHERE username=? OR email=?').get(identifier, identifier);
+     if (user && bcrypt.compareSync(password, user.password)) {
+          req.session.userId = user.id;
+          res.json({ ok: true });
+     } else res.status(400).json({ error: 'Login failed' });
+});
+```
+
+- requireAuth(req,res,next): Middleware that checks `req.session.userId` and allows access only if set.
+
+```javascript
+function requireAuth(req, res, next) {
+     if (req.session.userId) return next();
+     res.status(401).json({ error: 'Nicht eingeloggt' });
+}
+```
+
+**index.html** (important elements)
+- `#tagSelect`: dropdown to filter games by tag (triggers GET `/games/byTag/:tagId`).
+- `#showInfoBtn`: button to show detailed info and ratings for the selected game.
+- `#openAddGameBtn` / `#addGamePopup`: opens the form to add a new game.
+- `#ratingPopup`: modal used by `openRatingPopup` for sending `/rating` POST requests.
+
+Small HTML example for the rating form element:
+
+```html
+<form id="ratingForm">
+     <input type="hidden" id="ratingGameId">
+     <select id="ratingSelect" name="rating"></select>
+     <textarea id="ratingComment" name="comment"></textarea>
+     <button type="submit">Bewertung abgeben</button>
+</form>
+```
+
+---
+
+If you want, I can also add a short section showing how to include linked-game data in the backend JSON (so the frontend link-popup renders correctly).
