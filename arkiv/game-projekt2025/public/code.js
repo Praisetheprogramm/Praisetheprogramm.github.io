@@ -22,7 +22,8 @@ const gameBackgrounds = {
  16: "images/Eldenringshadowoftheearthtree.jpg",
  17: "images/Expedition-33.png",
  18: "images/baldurs-gate-3.jpeg",
- 19: "images/phasmophobia.jpg"
+ 19: "images/phasmophobia.jpg",
+ 20: "images/resident-evil-3.jpg"
 };
 
 // --- Popup Elemente ---
