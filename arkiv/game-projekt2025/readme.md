@@ -2,7 +2,7 @@
 
 This [project](https://github.com/Praisetheprogramm/Praisetheprogramm.github.io/tree/main/arkiv/game-projekt2025/public/index.html) aims to create a gaming review website where inexperienced developers can share and receive feedback on their games.
 
-![database](./readme-images/databaser.png)
+## ![database](./readme-images/databaser.png)
 [Demo Video](https://onedrive.live.com/?id=%2Fpersonal%2Fab7b02262c9a24a9%2FDocuments%2F2025%2D12%2D05%2011%2D02%2D29%2Emp4&parent=%2Fpersonal%2Fab7b02262c9a24a9%2FDocuments)
 
 ---
