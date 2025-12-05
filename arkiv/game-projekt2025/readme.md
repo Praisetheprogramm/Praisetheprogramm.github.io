@@ -89,17 +89,9 @@ Server checks session
 
 ---
 
-## Progress
+## Important Functions
 
-- **November 10, 2025**: Database created, basic concept planned
-- **November 11, 2025**: Server setup and database integration started
-- **December 3, 2025**: Authentication, game management, and rating system fully implemented 
-
----
-
-## Important Functions (short)
-
-Below are the key functions from the main files with very short descriptions and small code excerpts you can reference.
+Below are the key functions from the main files with short descriptions and small code excerpts you can reference.
 
 **code.js**
 - fetchGames(tag): Fetches games from the backend (optionally filtered by tag) and calls `renderGames`.
@@ -192,8 +184,12 @@ Small HTML example for the rating form element:
      <textarea id="ratingComment" name="comment"></textarea>
      <button type="submit">Bewertung abgeben</button>
 </form>
-```
-
 ---
 
-If you want, I can also add a short section showing how to include linked-game data in the backend JSON (so the frontend link-popup renders correctly).
+## Demo Video
+
+Watch a demonstration of the platform in action:
+
+**[2025-12-05 11-08-51.mp4](./2025-12-05%2011-08-51.mp4)**
+
+This video showcases the core features including game browsing, tag-based filtering, rating submissions, and the interactive linked games system.

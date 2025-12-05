@@ -23,7 +23,9 @@ const gameBackgrounds = {
  17: "images/Expedition-33.png",
  18: "images/baldurs-gate-3.jpeg",
  19: "images/phasmophobia.jpg",
- 20: "images/resident-evil-3.jpg"
+ 20: "images/resident-evil-3.jpg",
+ 21: "images/oxygen-not-included.jpg",
+ 22: "images/Dispatch.jpg"
 };
 
 // --- Popup Elemente ---
@@ -122,9 +124,9 @@ showInfoBtn.addEventListener("click", async () => {
     // Grundlegende Spielinfo mit Prüfung
     gameInfo.innerHTML = `
       <h2>${selectedGame.title || selectedGame.name || "Unbekannter Titel"}</h2>
-      <p><strong>Genre:</strong> ${selectedGame.genre || "Nicht angegeben"}</p>
-      <p><strong>Release:</strong> ${selectedGame.release_year || selectedGame.year || "Unbekannt"}</p>
-      <p><strong>Tags:</strong> ${selectedGame.tags || "Keine"}</p>
+      <p><strong>Release:</strong> ${selectedGame.created_at || selectedGame.year || "Unbekannt"}</p>
+      <p><strong>Developer:</strong> ${selectedGame.developer ||"Unknown"}</p>
+      <p><strong>Tags:</strong> ${selectedGame.gametag_id || "Keine"}</p>
       <p>${selectedGame.description || "Keine Beschreibung verfügbar"}</p>
       
       <h3 style="margin-top: 20px;">Bewertungen:</h3>
@@ -146,7 +148,7 @@ showInfoBtn.addEventListener("click", async () => {
     console.log("Response Status:", response.status);
     
     if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`); //error z.B. "HTTP 404: Not Found"
     }
     
     const ratings = await response.json();
