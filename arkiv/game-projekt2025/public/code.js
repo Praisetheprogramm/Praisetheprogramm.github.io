@@ -25,7 +25,13 @@ const gameBackgrounds = {
  19: "images/phasmophobia.jpg",
  20: "images/resident-evil-3.jpg",
  21: "images/oxygen-not-included.jpg",
- 22: "images/Dispatch.jpg"
+ 22: "images/Dispatch.jpg",
+ 23: "images/Totalwar-Warhammer-2.jpg",
+ 24: "images/METAL-GEAR-SOLID-Δ.avif",
+ 25: "images/Arc-raider.jpg",
+ 26: "images/escape-from-tarkov.jpg",
+ 27: "images/delta-force.jpg",
+ 28: "images/Darksouls3.jpg"
 };
 
 // --- Popup Elemente ---

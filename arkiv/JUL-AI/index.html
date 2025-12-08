@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weihnachts-Adventskalender + 2 Easter Eggs</title>
+  <style>
+    body { margin:0; height:100vh; background:linear-gradient(#0f0c29,#302b63,#24243e);
+           font-family:'Mountains of Christmas',cursive; color:white; overflow:hidden;
+           display:flex; flex-direction:column; align-items:center; position:relative; }
+    h1 { font-size:4rem; margin:20px; text-shadow:0 0 30px #ffdd00; z-index:10; }
+
+    .controls { display:flex; gap:40px; margin:15px; z-index:100; }
+    select {
+      padding:15px 35px; font-size:1.6rem; background:#c41e3a; color:white;
+      border:none; border-radius:25px; cursor:pointer; box-shadow:0 0 30px rgba(255,255,255,0.5);
+      transition:0.3s;
+    }
+    select:hover { background:#e91e3a; transform:scale(1.05); }
+
+    .calendar { display:grid; grid-template-columns:repeat(6,1fr); gap:18px;
+                max-width:950px; padding:20px; z-index:10; }
+    .door { width:120px; height:120px; background:#c41e3a; border-radius:18px;
+            display:flex; align-items:center; justify-content:center; font-size:2.8rem;
+            cursor:pointer; box-shadow:0 12px 25px rgba(0,0,0,0.6); transition:0.4s; }
+    .door:hover { transform:scale(1.12); background:#e91e3a; }
+    .door.open { background:#0a5; transform:rotateY(180deg); }
+    .door.locked { background:#444; cursor:not-allowed; }
+    .door.locked:hover { transform:none; background:#555; }
+
+    .snow { position:absolute; top:-100px; pointer-events:auto; z-index:5;
+            animation:fall linear infinite; transition:transform 0.4s ease-out; }
+    .snow:hover { transform:translateX(var(--push)) scale(1.6)!important; opacity:0.8; }
+    @keyframes fall { 0%{transform:translateY(-100px) translateX(0) rotate(0deg);}
+                      100%{transform:translateY(110vh) translateX(100px) rotate(360deg);} }
+    .yoda { width:90px; height:auto; filter:drop-shadow(0 0 20px #00ff00); }
+
+    .modal { position:fixed; inset:0; background:rgba(0,0,0,0.9); display:flex;
+             align-items:center; justify-content:center; z-index:1000; opacity:0;
+             pointer-events:none; transition:opacity 0.4s; }
+    .modal.show { opacity:1; pointer-events:all; }
+    .modal-content { background:white; color:#333; padding:50px; border-radius:25px;
+                     text-align:center; max-width:550px; transform:scale(0.7);
+                     animation:pop 0.5s forwards; box-shadow:0 0 40px #ffdd00; }
+    @keyframes pop { to { transform:scale(1); } }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Mountains+of+Christmas:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <h1>Adventskalender 2025</h1>
+
+  <div class="controls">
+    <select id="snowMode">
+      <option value="off">Schnee aus</option>
+      <option value="light">Leichter Schnee</option>
+      <option value="normal" selected>Normaler Schnee</option>
+      <option value="heavy">Starker Schneefall</option>
+      <option value="storm">Schneesturm</option>
+    </select>
+
+    <select id="musicMode">
+      <option value="off">Musik aus</option>
+      <option value="jingle">Jingle Bells</option>
+      <option value="silent">Stille Nacht</option>
+      <option value="wewish">We Wish You...</option>
+      <option value="carol">Carol of the Bells</option>
+      <option value="deck">Deck the Halls</option>
+    </select>
+  </div>
+
+  <div class="calendar" id="calendar"></div>
+
+  <!-- Normaler Sound + geheimer Yoda-Sound -->
+  <audio id="bgMusic" loop></audio>
+  <audio id="secretYodaMusic" loop></audio>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h2 id="title">Türchen geöffnet!</h2>
+      <p id="text">Frohe Weihnachten!</p>
+      <button onclick="document.getElementById('modal').classList.remove('show')"
+              style="margin-top:20px;padding:12px 30px;background:#c41e3a;color:white;border:none;border-radius:15px;cursor:pointer;">
+        Weiterfeiern
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const YODA_URL = 'image-1.jpg';
+    const YODA_THEME = 'Doom.mp3'; // Lizenzfrei
+
+    const snowSelect = document.getElementById('snowMode');
+    const musicSelect = document.getElementById('musicMode');
+    const bgMusic = document.getElementById('bgMusic');
+    const secretYodaMusic = document.getElementById('secretYodaMusic');
+
+    let normalInterval = null;
+    let yodaInterval = null;
+    let yodaActive = false;
+    let secretMusicActive = false;
+
+    let hoveringSnowDropdown = false;
+    let hoveringMusicDropdown = false;
+
+    // === Musik-Dropdown ===
+    const tracks = {
+      off: null,
+      jingle: 'JingleBellsChristmasSongforKids.mp3',
+      silent: 'Sølvguttene-Deiligerjorden.mp3',
+      wewish: 'WeWishYouaMerryChristmaswithLyricsChristmasCarol&Song.mp3',
+      carol: 'LindseyStirling-CaroloftheBells(Official Music Video).mp3',
+      deck: 'DecktheHallswithLyricsChristmasSongsandCarols.mp3'
+    };
+
+    musicSelect.addEventListener('change', () => {
+      if (secretMusicActive) return; // Geheimer Song hat Vorrang
+      const track = musicSelect.value;
+      if (track === 'off') {
+        bgMusic.pause();
+        bgMusic.src = '';
+      } else {
+        bgMusic.src = tracks[track];
+        bgMusic.play().catch(() => {});
+      }
+    });
+
+    // === Schnee ===
+    function createSnowflake() {
+      const s = document.createElement('div');
+      s.className = 'snow';
+      const size = Math.random()*7 + (snowSelect.value==='storm'?10:4);
+      s.style.width = s.style.height = size+'px';
+      s.style.borderRadius = '50%';
+      s.style.background = 'white';
+      s.style.opacity = Math.random()*0.7 + 0.3;
+      s.style.left = Math.random()*100+'vw';
+      s.style.animationDuration = Math.random()*4 + 4 +'s';
+      s.style.setProperty('--push', (Math.random()<0.5?-1:1)*(Math.random()*250+100)+'px');
+      document.body.appendChild(s);
+      setTimeout(()=>s.remove(), 15000);
+    }
+
+    function startSnow(mode) {
+      clearInterval(normalInterval);
+      document.querySelectorAll('.snow:not(.yoda)').forEach(x=>x.remove());
+      if (mode==='off') return;
+      const speeds = {light:600, normal:120, heavy:70, storm:30};
+      normalInterval = setInterval(createSnowflake, speeds[mode]||120);
+    }
+
+    // === Baby Yoda Sturm (Schnee-Dropdown + R/T) ===
+    function createYoda() {
+      const y = document.createElement('div');
+      y.className = 'snow yoda';
+      const img = new Image();
+      img.src = YODA_URL;
+      img.style.width = '100%';
+      y.appendChild(img);
+      y.style.left = Math.random()*100+'vw';
+      y.style.animationDuration = Math.random()*8 + 10 +'s';
+      y.style.setProperty('--push', (Math.random()<0.5?-1:1)*(Math.random()*400+200)+'px');
+      document.body.appendChild(y);
+      setTimeout(()=>y.remove(), 18000);
+    }
+
+    snowSelect.addEventListener('mouseenter', () => hoveringSnowDropdown = true);
+    snowSelect.addEventListener('mouseleave', () => hoveringSnowDropdown = false);
+
+    // === Geheimer Yoda-Song (Musik-Dropdown + R/T) ===
+    musicSelect.addEventListener('mouseenter', () => hoveringMusicDropdown = true);
+    musicSelect.addEventListener('mouseleave', () => hoveringMusicDropdown = false);
+
+    // === Tastatureingaben ===
+    document.addEventListener('keydown', e => {
+      const key = e.key.toLowerCase();
+
+      // 1. Easter Egg: Yoda-Sturm (über Schnee-Dropdown)
+      if (hoveringSnowDropdown && key === 'r' && !yodaActive) {
+        yodaActive = true;
+        yodaInterval = setInterval(createYoda, 150);
+        snowSelect.style.background = '#00ff00';
+      }
+      if (hoveringSnowDropdown && key === 't' && yodaActive) {
+        yodaActive = false;
+        clearInterval(yodaInterval);
+        snowSelect.style.background = '#c41e3a';
+      }
+
+      // 2. Easter Egg: Geheimer Yoda-Song (über Musik-Dropdown)
+      if (hoveringMusicDropdown && key === 'r' && !secretMusicActive) {
+        secretMusicActive = true;
+        bgMusic.pause();
+        secretYodaMusic.src = YODA_THEME;
+        secretYodaMusic.play();
+        musicSelect.style.background = '#00ff00';
+      }
+      if (hoveringMusicDropdown && key === 't' && secretMusicActive) {
+        secretMusicActive = false;
+        secretYodaMusic.pause();
+        secretYodaMusic.src = '';
+        musicSelect.style.background = '#c41e3a';
+        // Normale Musik wieder starten, falls gewählt
+        if (musicSelect.value !== 'off') {
+          bgMusic.src = tracks[musicSelect.value];
+          bgMusic.play();
+        }
+      }
+    });
+
+    // === Adventskalender ===
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.getMonth() + 1;
+    const unlocked = (month === 12) ? day : 0;
+
+    const messages = ["","Los geht’s!","Plätzchen!","Glühwein!","Nikolaus!","Fast eine Woche!",
+      "Kerzen!","Weihnachtsmarkt!","Wunschliste!","Doppelte 10!","Lichterketten!","Lieder!",
+      "Lucia!","Wochenende!","Halbzeit!","Nur noch 8!","Lebkuchen!","Baum kaufen?",
+      "Einpacken!","Vorbereitung!","Sonnenwende!","Fast da!","Heiligabend naht!","FROHE WEIHNACHTEN!!!"];
+
+    for(let i=1; i<=24; i++){
+      const d = document.createElement('div');
+      d.className = 'door';
+      d.textContent = i;
+      if(i > unlocked){
+        d.classList.add('locked');
+        d.onclick = ()=>show("Noch Geduld!","Türchen "+i+" erst am "+i+". Dezember");
+      }else{
+        d.onclick = ()=>{
+          if(!d.classList.contains('open')){
+            d.classList.add('open');
+            show("Türchen "+i+"!", messages[i-1]);
+          }
+        };
+      }
+      document.getElementById('calendar').appendChild(d);
+    }
+
+    function show(t,m){
+      document.getElementById('title').textContent = t;
+      document.getElementById('text').textContent = m;
+      document.getElementById('modal').classList.add('show');
+    }
+
+    // Start
+    snowSelect.addEventListener('change', e=>startSnow(e.target.value));
+    startSnow('normal');
+    document.body.addEventListener('click', () => { bgMusic.play(); secretYodaMusic.play(); }, {once: true});
+  </script>
+</body>
+</html>

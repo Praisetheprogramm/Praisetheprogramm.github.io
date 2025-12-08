@@ -26,6 +26,21 @@ app.use(express.json());
 const session = require("express-session");
 const bcrypt = require("bcrypt");
 
+// Aktuell eingeloggter User (für Frontend)
+app.get("/api/me", (req, res) => {
+    if (req.session.userId) {
+        res.json({
+            loggedIn: true,
+            user: {
+                id: req.session.userId,
+                username: req.session.username
+            }
+        });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+
 // Session middleware muss vor dem Ausliefern von Static-Files und vor Routen liegen,
 // damit Set-Cookie korrekt gesetzt und bei späteren Requests gesendet wird.
 // Middleware for sessions
