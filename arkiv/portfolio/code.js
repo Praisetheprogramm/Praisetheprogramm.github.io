@@ -1,7 +1,17 @@
 function scrollToProjects() {
-    document.getElementById("projects").scrollIntoView({
-        behavior: "smooth"
-    });
+    console.log('scrollToProjects() called');
+    const projectsSection = document.getElementById("projects");
+    if (projectsSection) {
+        // calculate offset to account for any fixed header height if needed
+        const headerOffset = 0; // adjust if you have a fixed header
+        const targetPosition = projectsSection.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+        window.scrollTo({
+            top: targetPosition,
+            behavior: "smooth"
+        });
+    } else {
+        console.error("Projects section not found");
+    }
 }
 
 // Projekt-Daten
@@ -9,7 +19,7 @@ const projects = {
     1: {
         title: "Projekt 1",
         text: "Ausführliche Beschreibung von Projekt 1.",
-        link: "https://github.com/DEINNAME/Projekt1"
+        link: "https://praisetheprogramm.github.io/arkiv/englisch/index.html"
     },
     2: {
         title: "Projekt 2",

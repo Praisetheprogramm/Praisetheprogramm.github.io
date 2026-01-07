@@ -23,6 +23,50 @@ body {
     position: relative;
 }
 
+.logo-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* make container non-interactive so it doesn't block clicks to nav/buttons */
+    pointer-events: none;
+    z-index: 0;
+}
+
+.logo-tooltip {
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    background: rgba(100, 100, 100, 0.6);
+    color: black;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 400;
+    font-size: 0.65rem;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: 0.18s ease;
+    pointer-events: none;
+    box-shadow: none;
+    max-width: 180px;
+    line-height: 1.2;
+    text-align: center;
+    z-index: 1;
+}
+
+/* Show tooltip when hovering the header (so the overlay doesn't block clicks) */
+.hero:hover .logo-tooltip {
+    opacity: 0.75;
+    transform: scale(1);
+}
+
+/* Ensure navigation and header content stay clickable above the logo container */
+nav, .hero-content {
+    position: relative;
+    z-index: 2;
+}
+
 nav {
     display: flex;
     justify-content: space-between;
