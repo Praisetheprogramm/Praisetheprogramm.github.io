@@ -68,3 +68,29 @@ function checkFade() {
 
 window.addEventListener('scroll', checkFade);
 window.addEventListener('load', checkFade);
+
+// ---- Gallery toggle: Hide until button pressed ----
+const toggleBtn = document.getElementById('toggle-gallery');
+const galleryWrapper = document.getElementById('gallery-wrapper');
+
+function toggleGallery() {
+    if (!galleryWrapper || !toggleBtn) return;
+    const isOpen = galleryWrapper.classList.toggle('open');
+    toggleBtn.textContent = isOpen ? 'Hide gallery' : 'View gallery';
+    toggleBtn.setAttribute('aria-expanded', isOpen);
+    galleryWrapper.setAttribute('aria-hidden', !isOpen);
+
+    if (isOpen) {
+        // wait for the CSS transition to finish before scrolling and running fade
+        function onGalleryTransition(e) {
+            if (e.propertyName !== 'max-height') return;
+            const top = toggleBtn.getBoundingClientRect().bottom + window.pageYOffset - 8;
+            window.scrollTo({ top, behavior: 'smooth' });
+            checkFade();
+            galleryWrapper.removeEventListener('transitionend', onGalleryTransition);
+        }
+        galleryWrapper.addEventListener('transitionend', onGalleryTransition);
+    }
+}
+
+if (toggleBtn) toggleBtn.addEventListener('click', toggleGallery);
