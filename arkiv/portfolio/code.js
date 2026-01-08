@@ -17,14 +17,14 @@ function scrollToProjects() {
 // Projekt-Daten
 const projects = {
     1: {
-        title: "Projekt 1",
-        text: "Ausführliche Beschreibung von Projekt 1.",
+        title: "Guide to New Zealand",
+        text: "I made this page as my first project and I will revise it; right now it's pretty bad and ugly, you can see how little I knew back then.",
         link: "https://praisetheprogramm.github.io/arkiv/englisch/index.html"
     },
     2: {
-        title: "Projekt 2",
+        title: "Game rating ebsite",
         text: "Ausführliche Beschreibung von Projekt 2.",
-        link: "https://github.com/DEINNAME/Projekt2"
+        link: "https://github.com/Praisetheprogramm/Praisetheprogramm.github.io/blob/main/arkiv/game-projekt2025/public/index.html"
     },
     3: {
         title: "Projekt 3",

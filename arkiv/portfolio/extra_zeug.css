@@ -129,6 +129,13 @@ nav a:hover {
     box-shadow: 0 0 22px #00ff88;
 }
 
+/* Ensure the About button stacks above the gallery button */
+#about-btn {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
 /* ABOUT SECTION */
 .about-section {
     padding: 90px 60px;
