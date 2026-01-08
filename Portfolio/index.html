@@ -1,112 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Portfolio</title>
-    <link rel="stylesheet" href="extrazeug.css">
-    <script src="kode.js"></script>
+    <link rel="stylesheet" href="extra_zeug.css"/>
+    <script src="code.js" defer></script>
 </head>
 <body>
-    <header>
-        <img id="Logo" src="Logo.jpg" alt="">
-        <div class="container">
-            <h1 id="Überschrift">Rick D. K. Bauer</h1>
-            <h1 id="Schrift">Student at the Amalie Skram School</h1>
-            <p>Jeg studerer informasjonsteknologi og media Jeg er født i Meißen, Tyskland, har vært i Norge i 2 år og snakker tysk, engelsk og norsk. Jeg er punktlig og gleder meg til å lære nye ting</p>
-            <br/>
-            <form action="side2.html">
-                <button class="read-more">My-Thinks</button>
-            </form>
 
+    <!-- HEADER -->
+    <header class="hero">
+        <div class="logo-container">
+            <div class="logo-tooltip">I created this logo myself, which is based on the "Praise the Sun" meme, and all credit goes to the creators of the pose, FromSoftware.</div>
+        </div>
+
+        <nav>
+            <h1 class="logo">PRAISE THE PROGRAM<span>PORTFOLIO</span></h1>
+            <ul>
+                <li><a href="About-me.html">about me</a></li>
+                <li><a href="#projects">Projekte</a></li>
+            </ul>
+        </nav>
+
+        <div class="hero-content">
+            <h2>Hallo, I am  <span class="accent">RICK</span></h2>
+            <p>Web Developer • Programmer • Tech-Enthusiast</p>
+            <button type="button" class="btn" onclick="scrollToProjects()">View projects</button>
         </div>
     </header>
-    <section id="skill-section">
-        <h1 id="Überschrift2">My Skills</h1>
-        <div class="wrapper" id="platz">
-            <div class="skill-container">
-                <h1 id="Überschrift3">Program</h1>
-                <ul class="skill">
-                    <li>adobe Photoshop<progress max="100" value="80"></progress></li>
-                    <li>Html, Css<progress max="100" value="90"></progress></li>  
-                    <li>JavaScript<progress max="100" value="45"></progress></li>
-                    <li>adobe Pixelart<progress max="100" value="60"></progress></li>
-                </ul>
+
+    <!-- ABOUT -->
+    <a id="about-btn" class="btn" href="About-me.html">About me</a>
+
+    <button id="toggle-gallery" class="btn" aria-expanded="false" aria-controls="gallery-wrapper">View gallery</button>
+
+    <div id="gallery-wrapper">
+        <section id="gallery" class="gallery-section fade-in">
+    <h2>Galerie</h2>
+
+    <div class="carousel">
+        <img src="Bär.JPG" alt="">
+        <img src="Blume.JPG" alt="">
+        <img src="Blumen-viele.JPG" alt="">
+        <img src="Brunnen.JPG" alt="">
+        <img src="theteam.JPG" alt="">
+    </div>
+    </section>
+    </div>
+
+    <!-- PROJECTS -->
+    <section id="projects" class="projects-section">
+        <h2>My GitHub projects</h2>
+
+        <div class="project-grid">
+
+            <!-- PROJECT CARD -->
+            <div class="project-card" onclick="openProject(1)">
+                <h3>Guide to New Zealand</h3>
+                <p>An old, rather poor site that serves as an information website for New Zealand tourists.</p>
             </div>
-            <div class="skill-container">
-                <h1 id="Überschrift3">Media studies</h1>
-                <ul class="skill">
-                    <li>mirror reflex camera<progress max="100" value="90"></progress></li>
-                    <li>Story telling<progress max="100" value="100"></progress></li>  
-                    <li>acting<progress max="100" value="35"></progress></li>
-                    <li>Film camera<progress max="100" value="90"></progress></li>
-                </ul>
+
+            <div class="project-card" onclick="openProject(2)">
+                <h3>Game rating Website</h3>
+                <p>small ratings website inspired by crazy games</p>
             </div>
-            <div>
-                <a href="side3.html">
-                    <button class="hover">
-                        <p>mer om meg</p>
-                    </button>
-                </a>
+
+            <div class="project-card" onclick="openProject(3)">
+                <h3>Project 3</h3>
+                <p>Kurzbeschreibung...</p>
             </div>
-        </div>
-        <div id="Hintergrund">
-            <div id="Plazirung">
-                <div id="grau">
-                    <p>I have already used several programming languages. I have most of the experience with CSS, HTML and Java Script, but I also learned Python and worked with 3D game studios. Thanks to my training at the Amalie Skram School, I also have quite good experience with Adobe programs such as Ilustrator, Photoshop, Indesign and with OBS.  I also have very limited experience with Unity.</p>
-                </div>
-            </div>
+
         </div>
     </section>
-    <div id="schwarz">
-        <div>
-            <div id="bild-Programiren">
-                <a href="side2.html">
-                <div  class="durchsichtig">
-                    <p>
-                       Programmering og Kode
-                    </p>
-                </div>
-                </a>
-                <p id="bild-Programiren-text">Her kan du se alle nettsidene mine og se mine programmeringsprosjekter</p>
-            </div>
-            <div id="bild-Kamera">
-                <a href="bilder.html">
-                <div class="durchsichtig">
-                    <p>
-                        Foto og Kamera 
-                    </p>
-                </div>
-                </a>
-                <p id="bild-Programiren-text2">Her kan du se alle mine Fotos</p>
-            </div>
-        </div>
-        <div id="box2">
-            <div id="bild-Video">
-                <a href="side4.html">
-                <div class="durchsichtig">
-                    <p>
-                        Video
-                    </p>
-                </div>
-                </a>
-                <p id="bild-Programiren-text">Her kan du se mine kortfilmer og mine filmprosjekter </p>
-            </div>
-            <div id="bild-Game">
-                <div class="durchsichtig">
-                    <p>
-                        Games
-                    </p>
-                </div>
-            </div>
+
+    <!-- POPUP MODAL -->
+    <div id="modal" class="modal-overlay">
+        <div class="modal-box">
+            <h2 id="modal-title">Titel</h2>
+            <p id="modal-text">Beschreibung</p>
+
+            <a id="modal-link" href="#" target="_blank" class="modal-btn">Zum Projekt</a>
+
+            <button class="modal-close" onclick="closeModal()">X</button>
         </div>
     </div>
-    <div>
-        <div class="gallery" id="gallery">
-            <img src="image1.jpg" alt="Bild 1">
-            <img src="image2.jpg" alt="Bild 2">
-            <img src="image3.jpg" alt="Bild 3">
-        </div>
-    </div>
+
+    <footer class="footer">
+        <p>© 2025 – praise the program</p>
+    </footer>
 </body>
 </html>
+

@@ -94,3 +94,4 @@ function toggleGallery() {
 }
 
 if (toggleBtn) toggleBtn.addEventListener('click', toggleGallery);
+

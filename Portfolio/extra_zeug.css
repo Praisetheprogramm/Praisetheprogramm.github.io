@@ -1,0 +1,310 @@
+/* GENERAL */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+body {
+    background: #050505;
+    color: #ccffdd;
+}
+
+/* NAVIGATION */
+.hero {
+    height: 100vh;
+    padding: 25px 60px;
+    background: linear-gradient(180deg, #0b0b0b, #000);
+    background-image: url("Logo.png");
+    background-size: 80%;
+    background-position: center;
+    background-attachment: fixed; /* Parallax Effekt */
+    position: relative;
+}
+
+.logo-container {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* make container non-interactive so it doesn't block clicks to nav/buttons */
+    pointer-events: none;
+    z-index: 0;
+}
+
+.logo-tooltip {
+    position: absolute;
+    bottom: 5%;
+    right: 5%;
+    background: rgba(100, 100, 100, 0.6);
+    color: black;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-weight: 400;
+    font-size: 0.65rem;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: 0.18s ease;
+    pointer-events: none;
+    box-shadow: none;
+    max-width: 180px;
+    line-height: 1.2;
+    text-align: center;
+    z-index: 1;
+}
+
+/* Show tooltip when hovering the header (so the overlay doesn't block clicks) */
+.hero:hover .logo-tooltip {
+    opacity: 0.75;
+    transform: scale(1);
+}
+
+/* Ensure navigation and header content stay clickable above the logo container */
+nav, .hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.7rem;
+    color: #00ff9d;
+    font-weight: 800;
+}
+.logo span {
+    color: white;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #99ffcc;
+    transition: 0.2s;
+}
+nav a:hover {
+    color: #00ff88;
+}
+
+/* HEADER CONTENT */
+.hero-content {
+    margin-top: 15%;
+}
+
+.hero-content h2 {
+    font-size: 3rem;
+    margin-bottom: 10px;
+}
+
+.accent {
+    color: #00ff88;
+    text-shadow: 0 0 15px #00ff88;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 14px 30px;
+    background: #00ff88;
+    border: none;
+    cursor: pointer;
+    color: #000;
+    font-weight: bold;
+    border-radius: 6px;
+    box-shadow: 0 0 12px #00ff88;
+    transition: 0.3s;
+}
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 22px #00ff88;
+}
+
+/* Ensure the About button stacks above the gallery button */
+#about-btn {
+    display: block;
+    margin-top: 12px;
+    margin-bottom: 6px;
+}
+
+/* ABOUT SECTION */
+.about-section {
+    padding: 90px 60px;
+    background: #080808;
+}
+
+.about-section h2 {
+    font-size: 2rem;
+    margin-bottom: 16px;
+    color: #00ff88;
+}
+
+/* PROJECTS */
+.projects-section {
+    padding: 90px 60px;
+}
+
+.projects-section h2 {
+    color: #00ff88;
+    text-shadow: 0 0 12px #00ff88;
+}
+
+.project-grid {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 30px;
+}
+
+.project-card {
+    background: #101010;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #00ff8833;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 10px #00ff8822;
+}
+
+.project-card:hover {
+    transform: translateY(-7px);
+    border-color: #00ff88;
+    box-shadow: 0 0 20px #00ff88;
+}
+
+.project-card h3 {
+    color: #00ff88;
+    margin-bottom: 10px;
+}
+
+/* MODAL */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(5px);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    background: #0d0d0d;
+    padding: 30px;
+    border-radius: 14px;
+    width: 90%;
+    max-width: 460px;
+    border: 1px solid #00ff88;
+    box-shadow: 0 0 25px #00ff88;
+    position: relative;
+}
+
+.modal-box h2 {
+    color: #00ff88;
+}
+
+.modal-btn {
+    display: block;
+    margin-top: 20px;
+    padding: 12px;
+    background: #00ff88;
+    color: black;
+    text-align: center;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: transparent;
+    color: #00ff88;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/* FOOTER */
+.footer {
+    padding: 20px;
+    text-align: center;
+    background: #060606;
+    border-top: 1px solid #00ff8833;
+}
+
+/* FADE-IN EFFECT beim Scrollen */
+.fade-in {
+    opacity: 0;
+    transform: translateY(35px);
+    transition: 0.8s ease;
+}
+.fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- GALERIE / CAROUSEL --- */
+.gallery-section {
+    padding: 80px 60px;
+    background: #071316; /* dunkles, nicht-schwarzes Hintergrundton */
+}
+
+.gallery-section h2 {
+    color: #00ff88;
+}
+
+.carousel {
+    margin-top: 25px;
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding-bottom: 10px;
+}
+
+.carousel::-webkit-scrollbar {
+    height: 10px;
+}
+.carousel::-webkit-scrollbar-thumb {
+    background: #00ff88;
+    border-radius: 5px;
+}
+.carousel img {
+    width: 350px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: 0.3s;
+    box-shadow: 0 0 15px #00ff8850;
+}
+
+.carousel img:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px #00ff88;
+}
+
+/* Gallery toggle wrapper: hidden by default, opens with .open */
+#gallery-wrapper {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1s ease-in-out, padding 1s ease-in-out;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+#gallery-wrapper.open {
+    /* max-height must be large enough to contain the gallery; adjust if needed */
+    max-height: 1400px;
+    padding-top: 80px; /* match .gallery-section padding */
+    padding-bottom: 80px;
+}

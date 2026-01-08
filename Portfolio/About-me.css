@@ -1,0 +1,61 @@
+/* About-me page styles */
+* { box-sizing: border-box; }
+html,body { height: 100%; }
+body {
+    margin: 0;
+    font-family: "Inter", system-ui;
+    background: #050505;
+    color: #ccffdd;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.about-section {
+    max-width: 900px;
+    margin: 72px auto;
+    background: linear-gradient(180deg, #071316 0%, #081b1b 100%);
+    padding: 40px 48px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 255, 136, 0.06);
+}
+
+#h2About {
+    color: #00ff88;
+    font-size: 2.2rem;
+    margin: 0 0 14px 0;
+    text-shadow: 0 0 12px rgba(0,255,136,0.08);
+}
+
+#h3About {
+    color: #00ff88;
+    font-size: 2.2rem;
+    margin: 0 0 14px 0;
+    text-shadow: 0 0 12px rgba(0,255,136,0.08);
+}
+
+.about-section p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: #dfffe8;
+    margin: 0 0 16px 0;
+}
+
+.school-section p {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: white;
+    margin: 0 0 16px 0;
+}
+
+.btn {
+    margin-top: 20px;
+    padding: 14px 30px;
+    background: #00ff88;
+    border: none;
+    cursor: pointer;
+    color: #000;
+    font-weight: bold;
+    border-radius: 6px;
+    box-shadow: 0 0 12px #00ff88;
+    transition: 0.3s;
+}
