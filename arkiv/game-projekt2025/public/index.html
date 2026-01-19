@@ -35,6 +35,45 @@
     <button id="btnlogin">Inn Logging</button>
   </div>
 
+  <!-- Login/Registrierung Popup -->
+  <div id="loginPopup" class="popup-bg" style="display:none;">
+    <div class="popup-window">
+      <h2 id="formTitle">Anmelden</h2>
+      
+      <div id="formArea">
+        <label>Benutzername oder E-Mail:</label>
+        <input type="text" id="identifier" required>
+        
+        <label>Passwort:</label>
+        <input type="password" id="password" required>
+        
+        <button id="loginBtn">Anmelden</button>
+        <div id="errorMsg" class="error"></div>
+      </div>
+      
+      <div id="registerArea" style="display:none;">
+        <label>Benutzername:</label>
+        <input type="text" id="reg_username" required>
+        
+        <label>E-Mail:</label>
+        <input type="email" id="reg_email" required>
+        
+        <label>Passwort:</label>
+        <input type="password" id="reg_password" required>
+        
+        <button id="registerBtn">Registrieren</button>
+        <div id="regError" class="error"></div>
+      </div>
+      
+      <p class="switch">
+        <a href="#" id="showRegister">Noch kein Konto? Registrieren</a> | 
+        <a href="#" id="showLogin">Bereits Konto? Anmelden</a>
+      </p>
+      
+      <button type="button" id="closeLoginPopup">Schließen</button>
+    </div>
+  </div>
+
   <!-- Mittlerer Bereich -->
   <div class="content">
     <div class="game-info" id="gameInfo">

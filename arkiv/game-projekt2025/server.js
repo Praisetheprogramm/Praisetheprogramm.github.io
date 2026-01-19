@@ -7,6 +7,9 @@
 
     Merk at det blir vist litt om feilmeldinger og problemer som kan oppstå, men her er det mer arbeid å gjøre.
 
+<--------------------------------------------------------------------------------------------------------------------->
+    WEN DAS PROGAM SICH SELBER SCHLIEST GIB DAS HIER IM CMD EIN => taskkill /F /IM node.exe <=
+<--------------------------------------------------------------------------------------------------------------------->
 */
 
 const express = require("express");
@@ -15,19 +18,41 @@ const app = express();
 const Database = require("better-sqlite3");
 const db = new Database("Projektgamewebseite.db");
 
+// Set busy timeout to avoid "database is locked"
+db.pragma('busy_timeout = 5000');
+
 const PORT = 3000;
 
 // Middleware for å servere statiske filer fra public-mappen
-app.use(express.urlencoded({ extended: false }));
+app.use(express.static('public'));
 
 // Middleware for å parse JSON-data
 app.use(express.json());
 
 const session = require("express-session");
+const SQLiteStore = require('connect-sqlite3')(session);
 const bcrypt = require("bcrypt");
+
+// Session middleware MUSS VOR den Routen kommen
+app.use(
+    session({
+        secret: "hemmeligNøkkel", // Bytt til en sikker nøkkel i produksjon
+        resave: true,
+        saveUninitialized: true,
+        store: new SQLiteStore({ db: 'sessions.db', dir: __dirname }),
+        cookie: { 
+            secure: false, // Sett til true hvis du bruker HTTPS
+            maxAge: 24 * 60 * 60 * 1000 // 24 Stunden
+        }
+    })
+);
+
+// Static files zuletzt einbinden, damit Session-Middleware zuvor aktiv ist
+app.use(express.static('public'));
 
 // Aktuell eingeloggter User (für Frontend)
 app.get("/api/me", (req, res) => {
+    console.log("Session userId:", req.session.userId);
     if (req.session.userId) {
         res.json({
             loggedIn: true,
@@ -41,20 +66,13 @@ app.get("/api/me", (req, res) => {
     }
 });
 
-// Session middleware muss vor dem Ausliefern von Static-Files und vor Routen liegen,
-// damit Set-Cookie korrekt gesetzt und bei späteren Requests gesendet wird.
-// Middleware for sessions
-app.use(
-    session({
-        secret: "hemmeligNøkkel", // Bytt til en sikker nøkkel i produksjon
-        resave: false,
-        saveUninitialized: false,
-        cookie: { secure: false } // Sett til true hvis du bruker HTTPS
-    })
-);
-
-// Static files zuletzt einbinden, damit Session-Middleware zuvor aktiv ist
-app.use(express.static('public'));
+// Geschützte Routen
+function requireAuth(req, res, next) {
+    if (req.session.userId) {
+        return next();
+    }
+    res.status(401).json({ error: "Nicht eingeloggt" });
+}
 
 // Tabelle users erstellen falls nicht vorhanden
 db.prepare(`
@@ -63,16 +81,24 @@ db.prepare(`
     username TEXT UNIQUE,
     email TEXT UNIQUE,
     password TEXT
-)
+  )
 `).run();
 
-// Startseite - prüft ob User eingeloggt ist
+// Tabelle ratings erstellen falls nicht vorhanden
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS ratings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_id INTEGER,
+    user_id INTEGER,
+    rating INTEGER,
+    comment TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`).run();
+
+// Startseite - immer index.html senden, Login-Status wird im Frontend geprüft
 app.get("/", (req, res) => {
-    if (req.session.userId) {
-        res.sendFile(__dirname + '/public/index.html');
-    } else {
-        res.sendFile(__dirname + '/public/login.html');
-    }
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 // Registrierung
@@ -116,6 +142,7 @@ app.post("/register", (req, res) => {
 // Login
 app.post("/login", (req, res) => {
     const { identifier, password } = req.body;
+    console.log(identifier, password);
 
     // Validierung
     if (!identifier || !password) {
@@ -126,6 +153,7 @@ app.post("/login", (req, res) => {
         // User finden (per Username oder Email)
         const user = db.prepare("SELECT * FROM user WHERE username = ? OR email = ?")
                        .get(identifier, identifier);
+        console.log("Found user:", user);
 
         if (!user) {
             return res.status(400).json({ error: "Benutzername oder Passwort falsch" });
@@ -138,13 +166,15 @@ app.post("/login", (req, res) => {
         }
 
         // Session setzen
-        req.session.userId = user.id;
+        req.session.userId = user.user_id;
         req.session.username = user.username;
+        console.log("User ID:", user.user_id);
+        console.log("Session userId:", req.session.userId);
 
         res.json({ 
             ok: true, 
             message: "Login erfolgreich",
-            user: { id: user.id, username: user.username }
+            user: { id: user.user_id, username: user.username }
         });
     } catch (error) {
         console.error("Login-Fehler:", error);
@@ -162,14 +192,6 @@ app.post("/logout", (req, res) => {
     });
 });
 
-// Geschützte Routen
-function requireAuth(req, res, next) {
-    if (req.session.userId) {
-        return next();
-    }
-    res.status(401).json({ error: "Nicht eingeloggt" });
-}
-
 // User-Info abrufen
 app.get("/api/user", requireAuth, (req, res) => {
     res.json({ 
@@ -180,12 +202,13 @@ app.get("/api/user", requireAuth, (req, res) => {
 
 // Schutz-Middleware
 function requireAuth(req, res, next) {
+    console.log("requireAuth - Session userId:", req.session.userId);
     if (req.session.userId) return next();
     res.status(401).json({ error: "Nicht eingeloggt" });
 }
 
 // Eksempel på rute som hentar brukarar frå databasen (besøk http://localhost:3000/personer)
-app.get("/user", (req, res) => {
+app.get("/users", (req, res) => {
     const users = db.prepare("SELECT * FROM user").all();
     res.json(users);
 });
@@ -219,6 +242,33 @@ app.get("/unique-games", (req, res) => {
     console.error("Fehler beim Abrufen der unique_games:", error);
     res.status(500).json({ error: "Fehler beim Laden der Spiele" });
   }
+});
+
+// Bewertung löschen
+app.delete("/rating/:id", requireAuth, (req, res) => {
+    const ratingId = req.params.id;
+    const userId = req.session.userId;
+
+    try {
+        // Prüfen ob die Bewertung dem User gehört
+        const rating = db.prepare("SELECT * FROM ratings WHERE id = ? AND user_id = ?").get(ratingId, userId);
+        
+        if (!rating) {
+            return res.status(404).json({ error: "Bewertung nicht gefunden oder nicht berechtigt" });
+        }
+
+        // Bewertung löschen
+        const info = db.prepare("DELETE FROM ratings WHERE id = ?").run(ratingId);
+        
+        if (info.changes > 0) {
+            res.json({ message: "Bewertung erfolgreich gelöscht" });
+        } else {
+            res.status(500).json({ error: "Fehler beim Löschen" });
+        }
+    } catch (error) {
+        console.error("Fehler beim Löschen der Bewertung:", error);
+        res.status(500).json({ error: "Fehler beim Löschen der Bewertung" });
+    }
 });
 
 // Bewertung abgeben
@@ -266,13 +316,10 @@ app.post("/rating", requireAuth, (req, res) => {
 });
 
 // Backend
-app.post("/leggtilgame", async (req, res) => {
-    const { title, description, developer, created_at } = req.body;
-    const db = await getDB();
+app.post("/leggtilgame", requireAuth, (req, res) => {
+    const { title, description, developer, created_at, tags } = req.body;
 
     try {
-        await db.run('BEGIN TRANSACTION');
-        
         // Game einfügen
         const gameStmt = db.prepare(`
             INSERT INTO games (title, description, developer, created_at)
@@ -283,21 +330,18 @@ app.post("/leggtilgame", async (req, res) => {
         const gameId = info.lastInsertRowid;
         
         // Tags verarbeiten (wenn vorhanden)
-        if (tags && tags.trim()) {
-            const tagArray = tags.split(',').map(tag => tag.trim());
+        if (Array.isArray(tags) && tags.length > 0) {
             const tagStmt = db.prepare(`
-                INSERT INTO game_tag (game_id, tag_id)
+                INSERT INTO games_tag (game_id, tag_id)
                 VALUES (?, ?)
             `);
             
-            for (const tag of tagArray) {
+            for (const tag of tags) {
                 if (tag) {
                     tagStmt.run(gameId, tag);
                 }
             }
         }
-        
-        await db.run('COMMIT');
         
         res.json({
             ok: true,
@@ -306,7 +350,6 @@ app.post("/leggtilgame", async (req, res) => {
         });
 
     } catch (err) {
-        await db.run('ROLLBACK');
         console.error("Fehler beim Hinzufügen des Spiels:", err);
         res.status(500).json({ error: "Game konnte nicht gespeichert werden" });
     }
@@ -322,10 +365,11 @@ app.get("/ratings/:gameId", (req, res) => {
     
     try {
         const ratings = db.prepare(`
-            SELECT rating, comment, created_at 
+            SELECT ratings.rating, ratings.comment, ratings.created_at, user.username 
             FROM ratings 
-            WHERE game_id = ? 
-            ORDER BY created_at DESC
+            INNER JOIN user ON ratings.user_id = user.user_id 
+            WHERE ratings.game_id = ? 
+            ORDER BY ratings.created_at DESC
         `).all(gameId);
         
         res.json(ratings || []);
