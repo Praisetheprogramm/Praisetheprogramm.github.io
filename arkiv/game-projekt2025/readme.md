@@ -14,6 +14,36 @@ A **gaming review platform** where authenticated users can browse games, rate th
 
 ---
 
+## Project Structure
+
+```
+game-projekt2025/
+├── package.json          # Project dependencies and scripts
+├── readme.md             # This README file
+├── server.js             # Express backend server
+├── public/               # Static files served by the server
+│   ├── index.html        # Main game browsing page
+│   ├── login.html        # Login and registration page (not shown in structure)
+│   ├── code.js           # Frontend JavaScript for main page
+│   ├── extrazeug.css     # Additional CSS styles
+│   ├── login.css         # Styles for login page
+│   ├── our_unique_games.html  # Page for unique games
+│   ├── our_unique_games.js    # JS for unique games page
+│   ├── our_unique_games.css   # CSS for unique games page
+│   ├── games/            # Game-specific pages
+│   │   ├── filler.html   # Placeholder page
+│   │   └── Spore/        # Example game page
+│   │       ├── index.html
+│   │       ├── code.js
+│   │       └── extra_zeug.css
+│   └── images/           # Game background images
+│       └── METAL-GEAR-SOLID-Δ.avif
+└── readme-images/        # Images for README
+    └── databaser.png
+```
+
+---
+
 ## Code Summary
 
 ### 1. **server.js** - Express Backend
@@ -186,3 +216,142 @@ Small HTML example for the rating form element:
      <textarea id="ratingComment" name="comment"></textarea>
      <button type="submit">Bewertung abgeben</button>
 </form>
+
+**Additional Functions**
+
+**code.js**
+- selectGame(game, div): Selects a game and highlights it visually.
+
+```javascript
+function selectGame(game, div) {
+  document.querySelectorAll(".game-box").forEach(b => b.classList.remove("selected"));
+  div.classList.add("selected");
+  selectedGame = game;
+}
+```
+
+- loadExistingRatings(gameId): Fetches and displays existing ratings for a game.
+
+```javascript
+async function loadExistingRatings(gameId) {
+    try {
+        const res = await fetch(`/ratings/${gameId}`);
+        const ratings = await res.json();
+        
+        if (ratings.length > 0) {
+            ratingsList.innerHTML = "";
+            ratings.forEach(rating => {
+                const ratingDiv = document.createElement("div");
+                ratingDiv.className = "rating-item";
+                ratingDiv.innerHTML = `
+                    <strong>${rating.username}</strong>: ★ ${rating.rating}/10
+                    <br><em>${rating.comment || 'Kein Kommentar'}</em>
+                    <small> - ${new Date(rating.created_at).toLocaleDateString()}</small>
+                    <hr>
+                `;
+                ratingsList.appendChild(ratingDiv);
+            });
+            existingRatings.style.display = "block";
+        } else {
+            existingRatings.style.display = "none";
+        }
+    } catch (error) {
+        console.error("Fehler beim Laden der Bewertungen:", error);
+        existingRatings.style.display = "none";
+    }
+}
+```
+
+**server.js**
+- GET `/games`: Retrieves all games from the database.
+
+```javascript
+app.get("/games", (req, res) => {
+  const rows = db.prepare("SELECT * FROM games").all();
+  res.json(rows);
+});
+```
+
+- POST `/rating`: Submits a new rating for a game, ensuring no duplicate ratings per user.
+
+```javascript
+app.post("/rating", requireAuth, (req, res) => {
+    const { game_id, rating, comment } = req.body;
+    const user_id = req.session.userId;
+
+    // Validation
+    if (!game_id || !rating) {
+        return res.status(400).json({ error: "Game ID and rating are required" });
+    }
+
+    if (rating < 1 || rating > 10) {
+        return res.status(400).json({ error: "Rating must be between 1 and 10" });
+    }
+
+    // Check if already rated
+    const existingRating = db.prepare("SELECT * FROM ratings WHERE game_id = ? AND user_id = ?").get(game_id, user_id);
+    
+    if (existingRating) {
+        return res.status(400).json({ error: "You have already rated this game" });
+    }
+
+    try {
+        const stmt = db.prepare(`
+            INSERT INTO ratings (game_id, user_id, rating, comment) 
+            VALUES (?, ?, ?, ?)
+        `);
+        const info = stmt.run(game_id, user_id, rating, comment);
+        
+        res.json({ 
+            message: "Rating submitted successfully!", 
+            ratingId: info.lastInsertRowid 
+        });
+    } catch (e) {
+        console.error("Database error:", e);
+        res.status(500).json({ error: "Error saving rating" });
+    }
+});
+```
+
+- POST `/leggtilgame`: Adds a new game to the database with tags.
+
+```javascript
+app.post("/leggtilgame", requireAuth, (req, res) => {
+    const { title, description, developer, created_at, tags } = req.body;
+
+    try {
+        // Insert game
+        const gameStmt = db.prepare(`
+            INSERT INTO games (title, description, developer, created_at)
+            VALUES (?, ?, ?, ?)
+        `);
+        
+        const info = gameStmt.run(title, description, developer, created_at);
+        const gameId = info.lastInsertRowid;
+        
+        // Process tags
+        if (Array.isArray(tags) && tags.length > 0) {
+            const tagStmt = db.prepare(`
+                INSERT INTO games_tag (game_id, tag_id)
+                VALUES (?, ?)
+            `);
+            
+            for (const tag of tags) {
+                if (tag) {
+                    tagStmt.run(gameId, tag);
+                }
+            }
+        }
+        
+        res.json({
+            ok: true,
+            message: "New game added!",
+            gameId: gameId
+        });
+
+    } catch (err) {
+        console.error("Error adding game:", err);
+        res.status(500).json({ error: "Game could not be saved" });
+    }
+});
+```

@@ -21,6 +21,7 @@ const db = new Database("Projektgamewebseite.db");
 // Set busy timeout to avoid "database is locked"
 db.pragma('busy_timeout = 5000');
 
+//Port 3000 :)
 const PORT = 3000;
 
 // Middleware for å servere statiske filer fra public-mappen
@@ -29,6 +30,7 @@ app.use(express.static('public'));
 // Middleware for å parse JSON-data
 app.use(express.json());
 
+//allows the use of the things set in ().
 const session = require("express-session");
 const SQLiteStore = require('connect-sqlite3')(session);
 const bcrypt = require("bcrypt");
