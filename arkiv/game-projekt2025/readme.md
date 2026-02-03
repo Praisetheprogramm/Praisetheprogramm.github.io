@@ -109,6 +109,83 @@ Server checks session
 
 ---
 
+## Drag-and-Drop für Bilder
+
+Beim Hinzufügen eines neuen Spiels kannst du Bilder per Drag-and-Drop hochladen:
+
+1. **Öffne das Add-Game-Popup**: Klicke auf "Neues Game hinzufügen".
+2. **Bild auswählen**:
+   - Ziehe eine Bilddatei (z.B. PNG, JPG) direkt in die Drop-Zone ("Bild hier hineinziehen oder klicken, um auszuwählen").
+   - Alternativ: Klicke auf die Drop-Zone, um einen Datei-Dialog zu öffnen.
+3. **Upload**: Das Bild wird automatisch beim Speichern des Spiels hochgeladen und als Hintergrundbild für die Game-Box verwendet.
+4. **Unterstützte Formate**: JPG, PNG, GIF, etc. (max. Größe abhängig vom Server).
+
+**Hinweis**: Bilder werden im `public/images/` Ordner gespeichert und mit einem eindeutigen Namen versehen.
+
+**Beispiel-Code** (aus `code.js`):
+
+```javascript
+function initializeDropZone() {
+    // Erstelle eine neue Drop-Zone
+    const dropZone = document.createElement("div");
+    dropZone.id = "imageDropZone";
+    dropZone.style.cssText = `
+        border: 2px dashed #ccc;
+        padding: 20px;
+        margin: 10px 0;
+        text-align: center;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    `;
+    dropZone.textContent = "Bild hier hineinziehen oder klicken, um auszuwählen";
+    
+    // Eingabe-Element für Fallback
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.style.display = "none";
+    dropZone.appendChild(fileInput);
+    
+    // Event-Listener für Drag-and-Drop
+    dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "#007bff";
+    });
+    dropZone.addEventListener("dragleave", () => {
+        dropZone.style.borderColor = "#ccc";
+    });
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "#ccc";
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.startsWith("image/")) {
+            draggedImageFile = files[0];
+            dropZone.textContent = `Bild ausgewählt: ${draggedImageFile.name}`;
+            dropZone.style.backgroundColor = "#e9f7e9";
+        } else {
+            alert("Bitte nur Bilddateien hereinziehen!");
+        }
+    });
+    
+    // Fallback: Klick zum Auswählen
+    dropZone.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+            draggedImageFile = e.target.files[0];
+            dropZone.textContent = `Bild ausgewählt: ${draggedImageFile.name}`;
+            dropZone.style.backgroundColor = "#e9f7e9";
+        }
+    });
+    
+    // Füge die Drop-Zone zum Formular hinzu
+    const submitBtn = addGameForm.querySelector('button[type="submit"]');
+    addGameForm.insertBefore(dropZone, submitBtn);
+}
+```
+
+---
+
 ## Technology Stack
 
 | Component | Technology |
