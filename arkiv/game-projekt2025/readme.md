@@ -109,24 +109,24 @@ Server checks session
 
 ---
 
-## Drag-and-Drop für Bilder
+## Drag-and-Drop for Images
 
-Beim Hinzufügen eines neuen Spiels kannst du Bilder per Drag-and-Drop hochladen:
+When adding a new game, you can upload images via drag-and-drop:
 
-1. **Öffne das Add-Game-Popup**: Klicke auf "Neues Game hinzufügen".
-2. **Bild auswählen**:
-   - Ziehe eine Bilddatei (z.B. PNG, JPG) direkt in die Drop-Zone ("Bild hier hineinziehen oder klicken, um auszuwählen").
-   - Alternativ: Klicke auf die Drop-Zone, um einen Datei-Dialog zu öffnen.
-3. **Upload**: Das Bild wird automatisch beim Speichern des Spiels hochgeladen und als Hintergrundbild für die Game-Box verwendet.
-4. **Unterstützte Formate**: JPG, PNG, GIF, etc. (max. Größe abhängig vom Server).
+1. **Open the Add-Game-Popup**: Click on "Neues Game hinzufügen".
+2. **Select Image**:
+   - Drag an image file (e.g., PNG, JPG) directly into the drop zone ("Bild hier hineinziehen oder klicken, um auszuwählen").
+   - Alternatively: Click on the drop zone to open a file dialog.
+3. **Upload**: The image is automatically uploaded when saving the game and used as the background image for the game box.
+4. **Supported Formats**: JPG, PNG, GIF, etc. (max. size depends on server).
 
-**Hinweis**: Bilder werden im `public/images/` Ordner gespeichert und mit einem eindeutigen Namen versehen.
+**Note**: Images are stored in the `public/images/` folder with a unique name.
 
-**Beispiel-Code** (aus `code.js`):
+**Example Code** (from `code.js`):
 
 ```javascript
 function initializeDropZone() {
-    // Erstelle eine neue Drop-Zone
+    // Create a new drop zone
     const dropZone = document.createElement("div");
     dropZone.id = "imageDropZone";
     dropZone.style.cssText = `
@@ -140,14 +140,14 @@ function initializeDropZone() {
     `;
     dropZone.textContent = "Bild hier hineinziehen oder klicken, um auszuwählen";
     
-    // Eingabe-Element für Fallback
+    // Input element for fallback
     const fileInput = document.createElement("input");
     fileInput.type = "file";
     fileInput.accept = "image/*";
     fileInput.style.display = "none";
     dropZone.appendChild(fileInput);
     
-    // Event-Listener für Drag-and-Drop
+    // Event listeners for drag-and-drop
     dropZone.addEventListener("dragover", (e) => {
         e.preventDefault();
         dropZone.style.borderColor = "#007bff";
@@ -168,7 +168,7 @@ function initializeDropZone() {
         }
     });
     
-    // Fallback: Klick zum Auswählen
+    // Fallback: Click to select
     dropZone.addEventListener("click", () => fileInput.click());
     fileInput.addEventListener("change", (e) => {
         if (e.target.files.length > 0) {
@@ -178,7 +178,7 @@ function initializeDropZone() {
         }
     });
     
-    // Füge die Drop-Zone zum Formular hinzu
+    // Add the drop zone to the form
     const submitBtn = addGameForm.querySelector('button[type="submit"]');
     addGameForm.insertBefore(dropZone, submitBtn);
 }
