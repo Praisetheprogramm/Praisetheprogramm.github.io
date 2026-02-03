@@ -60,7 +60,7 @@ function updateButtonStates() {
 }
 
 // Hintergrund-Bilder Mapping
-const gameBackgrounds = {
+let gameBackgrounds = {
   1: "images/Hollow_Knight.jpg",
   2: "images/Skyrim.jpg",
   3: "images/helldivers2.jpg",
@@ -88,7 +88,10 @@ const gameBackgrounds = {
  25: "images/Arc-raider.jpg",
  26: "images/escape-from-tarkov.jpg",
  27: "images/delta-force.jpg",
- 28: "images/Darksouls3.jpg"
+ 28: "images/Darksouls3.jpg",
+ 29: "images/seaofthieves.png",
+ 30: "images/apexlegens.jpg",
+ 31: "images/TailsofIrone2.png"
 };
 
 // --- Popup Elemente ---
@@ -113,6 +116,9 @@ const tagsCount = document.querySelector(".tags-count");
 const tagCheckboxes = document.querySelectorAll('.tag-checkbox input[type="checkbox"]');
 const MAX_TAGS = 4;
 
+// Neue Variable für das herein gezogene Bild
+let draggedImageFile = null;
+
 // Tag Akkordeon Toggle
 tagsHeaderBtn.addEventListener("click", (e) => {
     e.preventDefault();
@@ -127,7 +133,129 @@ function updateTagCount() {
     tagsCount.textContent = `(${checkedCount} ausgewählt)`;
 }
 
-// Popup öffnen - Tags zurücksetzen
+// Funktion zur Initialisierung der Drop-Zone
+function initializeDropZone() {
+    // Entferne bestehende Drop-Zone, falls vorhanden
+    const existingDropZone = document.getElementById("imageDropZone");
+    if (existingDropZone) existingDropZone.remove();
+    
+    // Erstelle eine neue Drop-Zone
+    const dropZone = document.createElement("div");
+    dropZone.id = "imageDropZone";
+    dropZone.style.cssText = `
+        border: 2px dashed #ccc;
+        padding: 20px;
+        margin: 10px 0;
+        text-align: center;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        transition: border-color 0.3s;
+    `;
+    dropZone.textContent = "Bild hier hineinziehen oder klicken, um auszuwählen";
+    
+    // Eingabe-Element für Fallback (Klick zum Auswählen)
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = "image/*";
+    fileInput.style.display = "none";
+    dropZone.appendChild(fileInput);
+    
+    // Event-Listener für Drag-and-Drop
+    dropZone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "#007bff";
+    });
+    dropZone.addEventListener("dragleave", () => {
+        dropZone.style.borderColor = "#ccc";
+    });
+    dropZone.addEventListener("drop", (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = "#ccc";
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && files[0].type.startsWith("image/")) {
+            draggedImageFile = files[0];
+            dropZone.textContent = `Bild ausgewählt: ${draggedImageFile.name}`;
+            dropZone.style.backgroundColor = "#e9f7e9";
+        } else {
+            alert("Bitte nur Bilddateien hereinziehen!");
+        }
+    });
+    
+    // Fallback: Klick zum Auswählen
+    dropZone.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", (e) => {
+        if (e.target.files.length > 0) {
+            draggedImageFile = e.target.files[0];
+            dropZone.textContent = `Bild ausgewählt: ${draggedImageFile.name}`;
+            dropZone.style.backgroundColor = "#e9f7e9";
+        }
+    });
+    
+    // Füge die Drop-Zone zum Formular hinzu (z.B. vor dem Submit-Button)
+    const submitBtn = addGameForm.querySelector('button[type="submit"]');
+    addGameForm.insertBefore(dropZone, submitBtn);
+
+    // Lade Tags hartcodiert
+    loadTagsForForm();
+}
+
+// Funktion zum Laden der Tags für das Formular
+function loadTagsForForm() {
+    const tags = [
+        { tag_id: 1, name: "RPG" },
+        { tag_id: 2, name: "Horror" },
+        { tag_id: 3, name: "3D" },
+        { tag_id: 4, name: "2D" },
+        { tag_id: 5, name: "Action" },
+        { tag_id: 6, name: "Strategy" },
+        { tag_id: 7, name: "Open-World" },
+        { tag_id: 8, name: "Jump and Run" },
+        { tag_id: 9, name: "Competitive" },
+        { tag_id: 10, name: "Multiplayer" },
+        { tag_id: 11, name: "Singelplayer" },
+        { tag_id: 12, name: "Extraktions-Shooter" },
+        { tag_id: 13, name: "Building Game" },
+        { tag_id: 14, name: "Souls Like" },
+        { tag_id: 15, name: "Card Game" }
+    ];
+    
+    const tagsDropdown = document.getElementById("tagsDropdown");
+    // Entferne bestehende Checkboxen
+    const existingCheckboxes = tagsDropdown.querySelectorAll('.tag-checkbox');
+    existingCheckboxes.forEach(cb => cb.remove());
+    
+    // Füge neue Checkboxen hinzu
+    tags.forEach(tag => {
+        const div = document.createElement("div");
+        div.className = "tag-checkbox";
+        div.innerHTML = `
+            <input type="checkbox" name="tags[]" value="${tag.tag_id}" id="tag${tag.tag_id}">
+            <label for="tag${tag.tag_id}">${tag.name}</label>
+        `;
+        tagsDropdown.appendChild(div);
+    });
+
+    // Event-Listener für Checkboxen hinzufügen
+    const checkboxes = tagsDropdown.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', updateSelectedCount);
+    });
+
+    // Initial Anzahl aktualisieren
+    updateSelectedCount();
+}
+
+// Funktion zur Aktualisierung der Anzahl ausgewählter Tags
+function updateSelectedCount() {
+    const tagsDropdown = document.getElementById("tagsDropdown");
+    const count = tagsDropdown.querySelectorAll('input[type="checkbox"]:checked').length;
+    const countSpan = document.querySelector('.tags-count');
+    if (countSpan) {
+        countSpan.textContent = `(${count} ausgewählt)`;
+    }
+}
+
+// Popup öffnen - Tags zurücksetzen und Drop-Zone initialisieren
 openAddGameBtn.addEventListener("click", async () => {
     // Prüfe Login-Status erneut
     await checkLoginStatus();
@@ -146,6 +274,9 @@ openAddGameBtn.addEventListener("click", async () => {
     tagsArrow.classList.remove("open");
     tagCheckboxes.forEach(cb => cb.checked = false);
     updateTagCount();
+    
+    // Drop-Zone dynamisch hinzufügen oder zurücksetzen
+    initializeDropZone();
 });
 
 let currentGameForRating = null;
@@ -160,6 +291,15 @@ async function fetchGames(tag = "") {
 
   const res = await fetch(url);
   games = await res.json();
+  
+  // Aktualisiere gameBackgrounds mit den Bildpfaden aus den Daten
+  games.forEach(game => {
+    const gameId = game.game_id || game.id;
+    if (game.image_path) {
+      gameBackgrounds[gameId] = 'images/' + game.image_path;
+    }
+  });
+  
   renderGames(games);
 }
 
@@ -268,11 +408,6 @@ showInfoBtn.addEventListener("click", async () => {
 checkLoginStatus();
 fetchGames();
 
-// Popup öffnen
-openAddGameBtn.addEventListener("click", () => {
-  popup.style.display = "flex";
-});
-
 
 // Popup schließen
 closePopupBtn.addEventListener("click", () => {
@@ -280,7 +415,7 @@ closePopupBtn.addEventListener("click", () => {
 });
 
 
-// // Game speichern
+// // Game speichern (angepasst für FormData und Bild-Upload)
 addGameForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
@@ -293,32 +428,39 @@ addGameForm.addEventListener("submit", async (e) => {
     return;
   }
 
+  // FormData erstellen (unterstützt Dateien)
   const formData = new FormData(addGameForm);
+  formData.append("created_at", new Date().toISOString());
+  
+  // Bild hinzufügen, falls vorhanden
+  if (draggedImageFile) {
+    formData.append("image", draggedImageFile);
+  }
 
-  const newGame = { 
-    title: formData.get("title"),
-    tags: selectedTags, // Array!
-    description: formData.get("description"),
-    developer: formData.get("developer"),
-    created_at: new Date().toISOString()
-  };
+  console.log("FormData:", formData);
 
-  console.log("newGame", newGame);
+  try {
+    const res = await fetch("/leggtilgame", {
+      method: "POST",
+      credentials: 'same-origin',
+      body: formData // Keine Headers nötig, FormData setzt Content-Type automatisch
+    });
 
-  const res = await fetch("/leggtilgame", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    // falls diese Route Sessions benötigt: Cookie mitsenden
-    credentials: 'same-origin',
-    body: JSON.stringify(newGame)
-  });
+    const data = await res.json();
+    console.log("SERVER:", data);
 
-  const data = await res.json();
-  console.log("SERVER:", data);
-
-  popup.style.display = "none";
-  addGameForm.reset();
-  fetchGames();
+    if (res.ok) {
+      popup.style.display = "none";
+      addGameForm.reset();
+      draggedImageFile = null; // Zurücksetzen
+      fetchGames(); // Aktualisiere die Liste und gameBackgrounds
+    } else {
+      alert(data.error || "Fehler beim Speichern des Spiels");
+    }
+  } catch (error) {
+    console.error("Netzwerkfehler beim Speichern:", error);
+    alert("Netzwerkfehler: " + error.message);
+  }
 });
 
 // Checkbox Event Listener für Max 4 Tags Limit
@@ -352,7 +494,7 @@ tagCheckboxes.forEach(checkbox => {
 
 // Spiel-Boxen mit Bewertungs-Button rendern
 function renderGames(games) {
-    console.log(games);
+    console.log("Rendering games:", games.length);
     gameGrid.innerHTML = "";
     
     for (let game of games) {
@@ -365,9 +507,10 @@ function renderGames(games) {
       const gameId = game.game_id || game.id || game.gameId;
       if (gameId !== undefined) div.setAttribute('data-game-id', String(gameId));
 
-      // Hintergrundbild aus Mapping setzen
-      if (gameBackgrounds[game.game_id]) {
-        div.style.backgroundImage = `url('${gameBackgrounds[game.game_id]}')`;
+      // Hintergrundbild aus Mapping oder direkt aus game.image_path setzen
+      const bgImage = gameBackgrounds[game.game_id] || (game.image_path ? 'images/' + game.image_path : null);
+      if (bgImage) {
+        div.style.backgroundImage = `url('${bgImage}')`;
         div.style.backgroundSize = "cover";
 
   // Öffnet ein Popup mit den verlinkten Spielen (Array von {id,label,found,gameObj})
@@ -477,6 +620,7 @@ function renderGames(games) {
         // Optional: create a link button if this game links to other games (e.g. DLC -> base game)
         // The linked id(s) can come from fields like `links` (array), or `linked_game_id` / `related_game_id` / `link_to`.
         (function maybeAddLink() {
+          console.log("Checking game:", game.title, "linked_game_id:", game.linked_game_id);
           // Build an array of link descriptors: { id, label }
           let linkDescriptors = [];
           if (Array.isArray(game.links) && game.links.length > 0) {
@@ -485,6 +629,7 @@ function renderGames(games) {
             const linkedId = game.linked_game_id || game.related_game_id || game.link_to || game.linkedTo;
             if (linkedId) linkDescriptors.push({ id: linkedId, label: game.link_label });
           }
+          console.log("linkDescriptors:", linkDescriptors);
           if (linkDescriptors.length === 0) return;
 
           const linkBtn = document.createElement('button');
@@ -512,6 +657,7 @@ function renderGames(games) {
           Object.assign(linkBtn.style, { padding: '6px 8px', fontSize: '12px' });
           wrapper.appendChild(linkBtn);
           div.appendChild(wrapper);
+          console.log("Added link button to", game.title);
         })();
 
         gameGrid.appendChild(div);

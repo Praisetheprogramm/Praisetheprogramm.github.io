@@ -21,6 +21,20 @@ const db = new Database("Projektgamewebseite.db");
 // Set busy timeout to avoid "database is locked"
 db.pragma('busy_timeout = 5000');
 
+// Add image_path column if not exists
+try {
+    db.exec(`ALTER TABLE games ADD COLUMN image_path TEXT`);
+} catch (err) {
+    // Column might already exist, ignore error
+}
+
+// Add group_id column if not exists
+try {
+    db.exec(`ALTER TABLE games ADD COLUMN group_id INTEGER`);
+} catch (err) {
+    // Column might already exist, ignore error
+}
+
 //Port 3000 :)
 const PORT = 3000;
 
@@ -29,6 +43,22 @@ app.use(express.static('public'));
 
 // Middleware for å parse JSON-data
 app.use(express.json());
+
+// Middleware for å parse URL-encoded data
+app.use(express.urlencoded({ extended: true }));
+
+// Multer for file uploads
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'public/images/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
 
 //allows the use of the things set in ().
 const session = require("express-session");
@@ -97,6 +127,60 @@ db.prepare(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )
 `).run();
+
+// Tabelle games erstellen falls nicht vorhanden
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS games (
+    game_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT,
+    description TEXT,
+    developer TEXT,
+    created_at DATETIME,
+    image_path TEXT
+  )
+`).run();
+
+// Tabelle tags erstellen falls nicht vorhanden
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS tags (
+    tag_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT
+  )
+`).run();
+
+// Tabelle games_tag erstellen falls nicht vorhanden
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS games_tag (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    game_id INTEGER,
+    tag_id INTEGER
+  )
+`).run();
+
+// Beispiel-Daten einfügen, falls Tabelle leer
+const gameCount = db.prepare("SELECT COUNT(*) as count FROM games").get().count;
+console.log("Game Count:", gameCount);
+if (gameCount === 0) {
+    console.log("Füge Beispiel-Daten ein...");
+    // Tags einfügen
+    const tagInserts = [
+        "RPG", "Horror", "3D", "2D", "Action", "Strategy", "Open-World", "Jump and Run", "Competitive", "Multiplayer", "Singelplayer", "Extraktions-Shooter", "Building Game", "Souls Like", "Card Game"
+    ];
+    const tagStmt = db.prepare("INSERT INTO tags (name) VALUES (?)");
+    tagInserts.forEach(tag => {
+        console.log("Füge Tag ein:", tag);
+        tagStmt.run(tag);
+    });
+
+    // Beispiel-Spiele einfügen
+    const gameStmt = db.prepare("INSERT INTO games (title, description, developer, created_at) VALUES (?, ?, ?, ?)");
+    gameStmt.run("Hollow Knight", "Ein Metroidvania-Spiel", "Team Cherry", new Date().toISOString());
+    gameStmt.run("Skyrim", "Ein Open-World RPG", "Bethesda", new Date().toISOString());
+    gameStmt.run("Helldivers 2", "Ein kooperatives Shooter-Spiel", "Arrowhead Game Studios", new Date().toISOString());
+    console.log("Beispiel-Daten eingefügt.");
+} else {
+    console.log("Tabelle games ist nicht leer, überspringe Einfügung.");
+}
 
 // Startseite - immer index.html senden, Login-Status wird im Frontend geprüft
 app.get("/", (req, res) => {
@@ -217,6 +301,13 @@ app.get("/users", (req, res) => {
 
 app.get("/games", (req, res) => {
   const rows = db.prepare("SELECT * FROM games").all();
+  console.log("Games from DB:", rows);
+  res.json(rows);
+});
+
+app.get("/tags", (req, res) => {
+  const rows = db.prepare("SELECT * FROM tags").all();
+  console.log("Tags aus DB:", rows);
   res.json(rows);
 });
 
@@ -318,17 +409,24 @@ app.post("/rating", requireAuth, (req, res) => {
 });
 
 // Backend
-app.post("/leggtilgame", requireAuth, (req, res) => {
-    const { title, description, developer, created_at, tags } = req.body;
+app.post("/leggtilgame", requireAuth, upload.single('image'), (req, res) => {
+    console.log("req.body:", req.body);
+    const { title, description, developer, created_at, tags, group_id } = req.body;
 
     try {
+        // Bild-Pfad, falls vorhanden
+        let imagePath = null;
+        if (req.file) {
+            imagePath = req.file.filename;
+        }
+
         // Game einfügen
         const gameStmt = db.prepare(`
-            INSERT INTO games (title, description, developer, created_at)
-            VALUES (?, ?, ?, ?)
+            INSERT INTO games (title, description, developer, created_at, image_path, group_id)
+            VALUES (?, ?, ?, ?, ?, ?)
         `);
         
-        const info = gameStmt.run(title, description, developer, created_at);
+        const info = gameStmt.run(title, description, developer, created_at, imagePath, group_id);
         const gameId = info.lastInsertRowid;
         
         // Tags verarbeiten (wenn vorhanden)
@@ -348,7 +446,8 @@ app.post("/leggtilgame", requireAuth, (req, res) => {
         res.json({
             ok: true,
             message: "Neues Game hinzugefügt!",
-            gameId: gameId
+            gameId: gameId,
+            imagePath: imagePath
         });
 
     } catch (err) {

@@ -50,8 +50,8 @@
     .content {
       margin-top: 40px;
       text-align: center;
-      max-width: 800px;
-      width: 90%;
+      max-width: 1400px;
+      width: 95%;
     }
 
     .game-info {
@@ -71,8 +71,8 @@
     /* Grid der Spielboxen */
     .game-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
       margin-bottom: 50px;
     }
 
@@ -81,12 +81,13 @@
       padding: 20px;
       border-radius: 10px;
       height: 100px;
-      width: 160px;
+      width: 100%;
       cursor: pointer;
       transition: transform 0.2s, background-color 0.2s, border 0.2s;
       border: 2px solid transparent;
       position: relative;
       overflow: hidden;
+      box-sizing: border-box;
     }
 
     .game-box::after {
