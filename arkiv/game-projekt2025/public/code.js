@@ -18,6 +18,8 @@ const tagSelect = document.getElementById("tagSelect");
 const gameGrid = document.getElementById("gameGrid");
 const showInfoBtn = document.getElementById("showInfoBtn");
 const gameInfo = document.getElementById("gameInfo");
+const btnLogin = document.getElementById("btnlogin");
+const btnLogout = document.getElementById("btnLogout");
 
 // Login-Status
 let isLoggedIn = false;
@@ -57,6 +59,9 @@ function updateButtonStates() {
             openAddGameBtn.title = "Bitte melden Sie sich an, um Spiele hinzuzufügen";
         }
     }
+  // Zeige oder verstecke Login/Logout Buttons
+  if (btnLogin) btnLogin.style.display = isLoggedIn ? 'none' : 'inline-block';
+  if (btnLogout) btnLogout.style.display = isLoggedIn ? 'inline-block' : 'none';
 }
 
 // Hintergrund-Bilder Mapping
@@ -64,7 +69,7 @@ let gameBackgrounds = {
   1: "images/Hollow_Knight.jpg",
   2: "images/Skyrim.jpg",
   3: "images/helldivers2.jpg",
-  4: "images/Silksong.jpg",
+  4: "images/Silksong.webp",
   5: "images/Cyberpunk2077.jpg",
   6: "images/Borderlands4.jpg",
   7: "images/Portal2.png",
@@ -91,7 +96,8 @@ let gameBackgrounds = {
  28: "images/Darksouls3.jpg",
  29: "images/seaofthieves.png",
  30: "images/apexlegens.jpg",
- 31: "images/TailsofIrone2.png"
+ 31: "images/TailsofIrone2.png",
+ 40: "the-lords-of-the-fallen.jpg"
 };
 
 // --- Popup Elemente ---
@@ -324,89 +330,119 @@ function selectGame(game, div) {
 }
 
 showInfoBtn.addEventListener("click", async () => {
-  console.log("selectedGame Object:", selectedGame); // Debug-Ausgabe
-  console.log("selectedGame Keys:", Object.keys(selectedGame || {})); // Welche Eigenschaften hat es?
-  
   if (!selectedGame) {
-    gameInfo.innerHTML = `
-      <h2>Kein Spiel ausgewählt</h2>
-      <p>Bitte wähle unten ein Spiel aus.</p>
-    `;
+    alert("Bitte wähle unten ein Spiel aus.");
     return;
   }
 
+  const selectedDiv = document.querySelector('.game-box.selected');
+  if (!selectedDiv) {
+    alert("Ausgewählte Game-Box nicht gefunden.");
+    return;
+  }
+
+  // If a focused clone exists, remove it (toggle)
+  const existingBackdrop = document.querySelector('.focused-backdrop');
+  if (existingBackdrop) {
+    const existingClone = document.querySelector('.focused-clone');
+    if (existingClone && existingClone.parentNode) existingClone.parentNode.removeChild(existingClone);
+    existingBackdrop.parentNode.removeChild(existingBackdrop);
+    return;
+  }
+
+  // Create backdrop
+  const backdrop = document.createElement('div');
+  backdrop.className = 'focused-backdrop';
+  document.body.appendChild(backdrop);
+
+  // Create focused clone (visual copy) and center it
+  const clone = document.createElement('div');
+  clone.className = 'focused-clone';
+  // Copy background if present
+  clone.style.backgroundImage = selectedDiv.style.backgroundImage || getComputedStyle(selectedDiv).backgroundImage;
+  clone.style.backgroundSize = 'cover';
+  clone.style.backgroundPosition = 'center';
+
+  // Build info-overlay inside clone with full info
+  const title = selectedGame.title || selectedGame.name || 'Unbekannter Titel';
+  const release = selectedGame.created_at || selectedGame.year || 'Unbekannt';
+  const developer = selectedGame.developer || 'Unknown';
+  const tags = (selectedGame.tags && selectedGame.tags.join(', ')) || selectedGame.gametag_id || 'Keine';
+  const desc = selectedGame.description || 'Keine Beschreibung verfügbar';
+
+  const overlay = document.createElement('div');
+  overlay.className = 'info-overlay visible';
+  overlay.innerHTML = `
+    <button class="info-close">Schließen</button>
+    <div class="info-title">${title}</div>
+    <div class="info-meta"><strong>Release:</strong> ${release} &nbsp; <strong>Developer:</strong> ${developer} &nbsp; <strong>Tags:</strong> ${tags}</div>
+    <div class="info-desc">${desc}</div>
+    <div class="info-ratings" id="ratings-display-mini">Lade Bewertungen...</div>
+  `;
+
+  // Close handlers
+  overlay.querySelector('.info-close').addEventListener('click', () => {
+    if (clone.parentNode) clone.parentNode.removeChild(clone);
+    if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+  });
+  backdrop.addEventListener('click', () => {
+    if (clone.parentNode) clone.parentNode.removeChild(clone);
+    if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+  });
+
+  clone.appendChild(overlay);
+  document.body.appendChild(clone);
+
+  // Load full ratings into the clone overlay
   try {
-    // Grundlegende Spielinfo mit Prüfung
-    gameInfo.innerHTML = `
-      <h2>${selectedGame.title || selectedGame.name || "Unbekannter Titel"}</h2>
-      <p><strong>Release:</strong> ${selectedGame.created_at || selectedGame.year || "Unbekannt"}</p>
-      <p><strong>Developer:</strong> ${selectedGame.developer ||"Unknown"}</p>
-      <p><strong>Tags:</strong> ${selectedGame.gametag_id || "Keine"}</p>
-      <p>${selectedGame.description || "Keine Beschreibung verfügbar"}</p>
-      
-      <h3 style="margin-top: 20px;">Bewertungen:</h3>
-      <div id="ratings-display"></div>
-    `;
-
-    // Prüfe die Game-ID
     const gameId = selectedGame.id || selectedGame.game_id || selectedGame.gameId;
-    console.log("Game ID für API Call:", gameId);
-    
+    const ratingsEl = overlay.querySelector('#ratings-display-mini');
     if (!gameId) {
-      document.getElementById("ratings-display").innerHTML = 
-        "<p style='color: orange;'>Keine Game-ID gefunden</p>";
-      return;
-    }
-
-    // Ratings laden
-    const response = await fetch(`/ratings/${gameId}`);
-    console.log("Response Status:", response.status);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`); //error z.B. "HTTP 404: Not Found"
-    }
-    
-    const ratings = await response.json();
-    console.log("Ratings Daten:", ratings);
-    
-    const ratingsDisplay = document.getElementById("ratings-display");
-    
-    if (!ratings || ratings.length === 0) {
-      ratingsDisplay.innerHTML = "<p>Noch keine Bewertungen vorhanden.</p>";
-      return;
-    }
-    
-    // Alle Ratings anzeigen
-    ratingsDisplay.innerHTML = ratings.map(rating => `
-      <div style="border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px;">
-        <div>
-          <strong>User:</strong> ${rating.username}
-        </div>
-        <div>
-          <strong>Bewertung:</strong> ${rating.rating}/10
-          ${[1,2,3,4,5,6,7,8,9,10].map(star => 
-            star <= rating.rating ? '★' : '☆'
-          ).join('')}
-        </div>
-        ${rating.comment ? `
-          <div style="margin-top: 5px;">
-            <strong>Kommentar:</strong> ${rating.comment}
+      ratingsEl.innerHTML = '<p style="color:orange">Keine Game-ID</p>';
+    } else {
+      const res = await fetch(`/ratings/${gameId}`);
+      if (!res.ok) {
+        ratingsEl.innerHTML = '<p>Fehler beim Laden der Bewertungen.</p>';
+      } else {
+        const ratings = await res.json();
+        if (!ratings || ratings.length === 0) ratingsEl.innerHTML = '<p>Noch keine Bewertungen.</p>';
+        else ratingsEl.innerHTML = ratings.map(r => `
+          <div style="font-size:12px; padding:6px 0; border-top:1px solid rgba(255,255,255,0.06)">
+            <strong>${r.username || 'User'}</strong>: ${r.rating}/10<br>
+            <small style="color:#ccc">${(r.comment||'')}</small>
           </div>
-        ` : ''}
-        <div style="margin-top: 5px; font-size: 12px; color: #666;">
-          <strong>Erstellt am:</strong> ${new Date(rating.created_at).toLocaleDateString('de-DE')}
-        </div>
-      </div>
-    `).join('');
-    
-  } catch (error) {
-    console.error("Detailierter Fehler:", error);
-    gameInfo.innerHTML += `<p style="color: red;">Fehler beim Laden der Bewertungen: ${error.message}</p>`;
+        `).join('');
+      }
+    }
+  } catch (e) {
+    const ratingsEl = overlay.querySelector('#ratings-display-mini');
+    if (ratingsEl) ratingsEl.innerHTML = '<p>Fehler beim Laden.</p>';
+    console.error('Ratings mini load error', e);
   }
 });
 // Initialer Aufruf
 checkLoginStatus();
 fetchGames();
+
+// Logout-Handler: Session auf dem Server löschen
+if (btnLogout) {
+  btnLogout.addEventListener('click', async () => {
+    try {
+      const res = await fetch('/logout', { method: 'POST', credentials: 'same-origin' });
+      if (res.ok) {
+        isLoggedIn = false;
+        updateButtonStates();
+        alert('Erfolgreich ausgeloggt');
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || 'Logout fehlgeschlagen');
+      }
+    } catch (e) {
+      console.error('Logout Fehler:', e);
+      alert('Netzwerkfehler beim Ausloggen');
+    }
+  });
+}
 
 
 // Popup schließen

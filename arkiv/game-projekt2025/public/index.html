@@ -33,6 +33,7 @@
     <button id="showInfoBtn">Spiel-Info anzeigen</button>
     <button id="btnUniqueGames">Einzigartige Spiele</button>
     <button id="btnlogin">Inn Logging</button>
+    <button id="btnLogout" style="display:none;">Ausloggen</button>
   </div>
 
   <!-- Login/Registrierung Popup -->
@@ -76,12 +77,8 @@
 
   <!-- Mittlerer Bereich -->
   <div class="content">
-    <div class="game-info" id="gameInfo">
-      <h2>Kein Spiel ausgewählt</h2>
-      <p>Bitte wähle unten ein Spiel aus und drücke den Button oben.</p>
-    </div>
     <!-- Button zum Öffnen des Popups -->
-<button id="openAddGameBtn" class="add-btn">Neues Game hinzufügen</button>
+    <button id="openAddGameBtn" class="add-btn">Neues Game hinzufügen</button>
 
 <!-- Popup-Fenster -->
   <div id="addGamePopup" class="popup-bg" style="display:none;">
@@ -167,16 +164,16 @@
         <label>Bewertung (1-10):</label>
         <select id="ratingSelect" name="rating" required>
           <option value="">-- Bewertung wählen --</option>
-          <option value="1">1 - Sehr schlecht</option>
-          <option value="2">2 - Schlecht</option>
-          <option value="3">3 - Unterdurchschnittlich</option>
+          <option value="1">1 - schrecklich</option>
+          <option value="2">2 - Sehr Schlecht</option>
+          <option value="3">3 - Schlecht</option>
           <option value="4">4 - Unterdurchschnittlich</option>
           <option value="5">5 - Durchschnittlich</option>
           <option value="6">6 - Gut</option>
-          <option value="7">7 - Gut</option>
-          <option value="8">8 - Sehr gut</option>
-          <option value="9">9 - Hervorragend</option>
-          <option value="10">10 - Ausgezeichnet</option>
+          <option value="7">7 - Sehr Gut</option>
+          <option value="8">8 - Hervorragend</option>
+          <option value="9">9 - ausgezeichnet</option>
+          <option value="10">10 - God Game</option>
         </select>
       </div>
       

@@ -18,27 +18,27 @@ A **gaming review platform** where authenticated users can browse games, rate th
 
 ```
 game-projekt2025/
-├── package.json          # Project dependencies and scripts
-├── readme.md             # This README file
-├── server.js             # Express backend server
-├── public/               # Static files served by the server
-│   ├── index.html        # Main game browsing page
-│   ├── login.html        # Login and registration page (not shown in structure)
-│   ├── code.js           # Frontend JavaScript for main page
-│   ├── extrazeug.css     # Additional CSS styles
-│   ├── login.css         # Styles for login page
+├── package.json               # Project dependencies and scripts
+├── readme.md                  # This README file
+├── server.js                  # Express backend server
+├── public/                    # Static files served by the server
+│   ├── index.html             # Main game browsing page
+│   ├── login.html             # Login and registration page (not shown in structure)
+│   ├── code.js                # Frontend JavaScript for main page
+│   ├── extrazeug.css          # Additional CSS styles
+│   ├── login.css              # Styles for login page
 │   ├── our_unique_games.html  # Page for unique games
 │   ├── our_unique_games.js    # JS for unique games page
 │   ├── our_unique_games.css   # CSS for unique games page
-│   ├── games/            # Game-specific pages
-│   │   ├── filler.html   # Placeholder page
-│   │   └── Spore/        # Example game page
+│   ├── games/                 # Game-specific pages
+│   │   ├── filler.html        # Placeholder page
+│   │   └── Spore/             # Example game page
 │   │       ├── index.html
 │   │       ├── code.js
 │   │       └── extra_zeug.css
-│   └── images/           # Game background images
+│   └── images/                # Game background images
 │       └── METAL-GEAR-SOLID-Δ.avif
-└── readme-images/        # Images for README
+└── readme-images/             # Images for README
     └── databaser.png
 ```
 
@@ -55,12 +55,8 @@ Handles all API routes and database interactions:
 - **Rating System**: Submit ratings (1-10), view existing ratings, calculate averages
 - **Security**: Session-based auth, protected routes with `requireAuth` middleware
 
-### 2. **login.html & login.js** - Authentication UI
-
-- Simple two-tab interface for login and registration
+- Simple pop up for login and registration
 - Form validation and error handling
-- Sends credentials to `/login` or `/register` endpoints
-- Auto-redirects to main page on success
 
 ### 3. **index.html** - Main Page
 
@@ -88,7 +84,7 @@ Manages all interactive features:
 User opens app
     ↓
 Server checks session
-    ├─ No session → login.html
+    ├─ No session → login pop up
     └─ Session exists → index.html
          ↓
     Load games from /games
@@ -200,7 +196,7 @@ function initializeDropZone() {
 
 ## Important Functions
 
-Below are the key functions from the main files with short descriptions and small code excerpts you can reference.
+Below are the key functions from the main files
 
 **code.js**
 - fetchGames(tag): Fetches games from the backend (optionally filtered by tag) and calls `renderGames`.

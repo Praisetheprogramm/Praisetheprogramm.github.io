@@ -22,8 +22,8 @@ const projects = {
         link: "https://praisetheprogramm.github.io/arkiv/englisch/index.html"
     },
     2: {
-        title: "Game rating ebsite",
-        text: "Ausführliche Beschreibung von Projekt 2.",
+        title: "Game rating website",
+        text: "Denne nettsiden har som mål å gjøre det mulig for folk å dele sine erfaringer med et spill med venner og andre, og dermed fraråde andre eller anbefale spill. Videre er denne nettsiden ment å gi små utviklere muligheten til å vise frem spillene sine anonymt og motta kritikk og komplimenter. (Dette prosjektet bruker localhost 3000; denne knappen vil derfor bare ta deg til GitHub-siden min som inneholder nettstedets kode.)",
         link: "https://github.com/Praisetheprogramm/Praisetheprogramm.github.io/blob/main/arkiv/game-projekt2025/public/index.html"
     },
     3: {
