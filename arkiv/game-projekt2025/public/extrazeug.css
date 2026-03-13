@@ -32,6 +32,17 @@
       border-radius: 5px;
     }
 
+    /* search input styling */
+    .header input[type="text"] {
+      padding: 8px;
+      margin-left: 10px;
+      background-color: #2b2b2b;
+      color: #fff;
+      border: 1px solid #444;
+      border-radius: 5px;
+      width: 180px;
+    }
+
     .header button {
       padding: 8px 16px;
       background-color: #3a8ef6;

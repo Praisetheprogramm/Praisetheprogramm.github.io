@@ -1,71 +1,18 @@
-async function postJson(url, body) {
-    try {
-        const res = await fetch(url, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: 'same-origin',
-            body: JSON.stringify(body)
-        });
-        const data = await res.json().catch(() => ({}));
-        return { ok: res.ok, status: res.status, data };
-    } catch (error) {
-        console.error("Network error:", error);
-        return { ok: false, status: 0, data: { error: "Netzwerkfehler" } };
-    }
-}
+const $ = (sel, root = document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-const tagSelect = document.getElementById("tagSelect");
-const gameGrid = document.getElementById("gameGrid");
-const showInfoBtn = document.getElementById("showInfoBtn");
-const gameInfo = document.getElementById("gameInfo");
-const btnLogin = document.getElementById("btnlogin");
-const btnLogout = document.getElementById("btnLogout");
+const tagSelect = $("#tagSelect");
+const searchInput = $("#searchInput");
+const gameGrid = $("#gameGrid");
+const showInfoBtn = $("#showInfoBtn");
+const btnLogin = $("#btnlogin");
+const btnLogout = $("#btnLogout");
 
 // Login-Status
 let isLoggedIn = false;
 
-// Prüfe beim Laden, ob der User eingeloggt ist
-async function checkLoginStatus() {
-    try {
-        const res = await fetch("/api/me");
-        
-        // Fehlerbehandlung: Prüfe ob Response OK ist
-        if (!res.ok) {
-            console.error("API Fehler:", res.status);
-            isLoggedIn = false;
-            return;
-        }
-        
-        const data = await res.json();
-        isLoggedIn = data.loggedIn;
-        
-        // Buttons entsprechend aktivieren/deaktivieren
-        updateButtonStates();
-    } catch (error) {
-        console.error("Fehler beim Prüfen des Login-Status:", error);
-        isLoggedIn = false;
-    }
-}
-
-// Buttons aktivieren/deaktivieren basierend auf Login-Status
-function updateButtonStates() {
-    const openAddGameBtn = document.getElementById("openAddGameBtn");
-    if (openAddGameBtn) {
-        if (isLoggedIn) {
-            openAddGameBtn.disabled = false;
-            openAddGameBtn.title = "Neues Game hinzufügen";
-        } else {
-            openAddGameBtn.disabled = true;
-            openAddGameBtn.title = "Bitte melden Sie sich an, um Spiele hinzuzufügen";
-        }
-    }
-  // Zeige oder verstecke Login/Logout Buttons
-  if (btnLogin) btnLogin.style.display = isLoggedIn ? 'none' : 'inline-block';
-  if (btnLogout) btnLogout.style.display = isLoggedIn ? 'inline-block' : 'none';
-}
-
 // Hintergrund-Bilder Mapping
-let gameBackgrounds = {
+const gameBackgrounds = {
   1: "images/Hollow_Knight.jpg",
   2: "images/Skyrim.jpg",
   3: "images/helldivers2.jpg",
@@ -100,278 +47,298 @@ let gameBackgrounds = {
  40: "the-lords-of-the-fallen.jpg"
 };
 
-// --- Popup Elemente ---
-const popup = document.getElementById("addGamePopup");
-const openAddGameBtn = document.getElementById("openAddGameBtn");
-const closePopupBtn = document.getElementById("closePopupBtn");
-const addGameForm = document.getElementById("addGameForm");
-// --- Bewertungs-Popup Elemente ---
-const ratingPopup = document.getElementById("ratingPopup");
-const ratingForm = document.getElementById("ratingForm");
-const closeRatingPopup = document.getElementById("closeRatingPopup");
-const ratingGameTitle = document.getElementById("ratingGameTitle");
-const ratingGameId = document.getElementById("ratingGameId");
-const existingRatings = document.getElementById("existingRatings");
-const ratingsList = document.getElementById("ratingsList");
+// --- UI Elemente ---
+const popup = $("#addGamePopup");
+const openAddGameBtn = $("#openAddGameBtn");
+const closePopupBtn = $("#closePopupBtn");
+const addGameForm = $("#addGameForm");
 
-// --- Tags Akkordeon Elemente ---
-const tagsHeaderBtn = document.getElementById("tagsHeaderBtn");
-const tagsDropdown = document.getElementById("tagsDropdown");
-const tagsArrow = document.querySelector(".tags-arrow");
-const tagsCount = document.querySelector(".tags-count");
-const tagCheckboxes = document.querySelectorAll('.tag-checkbox input[type="checkbox"]');
+const ratingPopup = $("#ratingPopup");
+const ratingForm = $("#ratingForm");
+const closeRatingPopup = $("#closeRatingPopup");
+const ratingGameTitle = $("#ratingGameTitle");
+const ratingGameId = $("#ratingGameId");
+const existingRatings = $("#existingRatings");
+const ratingsList = $("#ratingsList");
+
+const tagsHeaderBtn = $("#tagsHeaderBtn");
+const tagsDropdown = $("#tagsDropdown");
+const tagsArrow = $(".tags-arrow");
+const tagsCount = $(".tags-count");
+
+const loginPopup = $("#loginPopup");
+const formTitle = $("#formTitle");
+const formArea = $("#formArea");
+const registerArea = $("#registerArea");
+const showRegister = $("#showRegister");
+const showLogin = $("#showLogin");
+const closeLoginPopup = $("#closeLoginPopup");
+
+const loginBtn = $("#loginBtn");
+const registerBtn = $("#registerBtn");
+const btnUniqueGames = $("#btnUniqueGames");
+
 const MAX_TAGS = 4;
 
-// Neue Variable für das herein gezogene Bild
 let draggedImageFile = null;
-
-// Tag Akkordeon Toggle
-tagsHeaderBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    const isOpen = tagsDropdown.style.display !== "none";
-    tagsDropdown.style.display = isOpen ? "none" : "block";
-    tagsArrow.classList.toggle("open", !isOpen);
-});
-
-// Funktion zum Aktualisieren des Counters
-function updateTagCount() {
-    const checkedCount = document.querySelectorAll('.tag-checkbox input[type="checkbox"]:checked').length;
-    tagsCount.textContent = `(${checkedCount} ausgewählt)`;
-}
-
-// Funktion zur Initialisierung der Drop-Zone
-function initializeDropZone() {
-    // Entferne bestehende Drop-Zone, falls vorhanden
-    const existingDropZone = document.getElementById("imageDropZone");
-    if (existingDropZone) existingDropZone.remove();
-    
-    // Erstelle eine neue Drop-Zone
-    const dropZone = document.createElement("div");
-    dropZone.id = "imageDropZone";
-    dropZone.style.cssText = `
-        border: 2px dashed #ccc;
-        padding: 20px;
-        margin: 10px 0;
-        text-align: center;
-        background-color: #f9f9f9;
-        cursor: pointer;
-        transition: border-color 0.3s;
-    `;
-    dropZone.textContent = "Bild hier hineinziehen oder klicken, um auszuwählen";
-    
-    // Eingabe-Element für Fallback (Klick zum Auswählen)
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept = "image/*";
-    fileInput.style.display = "none";
-    dropZone.appendChild(fileInput);
-    
-    // Event-Listener für Drag-and-Drop
-    dropZone.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = "#007bff";
-    });
-    dropZone.addEventListener("dragleave", () => {
-        dropZone.style.borderColor = "#ccc";
-    });
-    dropZone.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = "#ccc";
-        const files = e.dataTransfer.files;
-        if (files.length > 0 && files[0].type.startsWith("image/")) {
-            draggedImageFile = files[0];
-            dropZone.textContent = `Bild ausgewählt: ${draggedImageFile.name}`;
-            dropZone.style.backgroundColor = "#e9f7e9";
-        } else {
-            alert("Bitte nur Bilddateien hereinziehen!");
-        }
-    });
-    
-    // Fallback: Klick zum Auswählen
-    dropZone.addEventListener("click", () => fileInput.click());
-    fileInput.addEventListener("change", (e) => {
-        if (e.target.files.length > 0) {
-            draggedImageFile = e.target.files[0];
-            dropZone.textContent = `Bild ausgewählt: ${draggedImageFile.name}`;
-            dropZone.style.backgroundColor = "#e9f7e9";
-        }
-    });
-    
-    // Füge die Drop-Zone zum Formular hinzu (z.B. vor dem Submit-Button)
-    const submitBtn = addGameForm.querySelector('button[type="submit"]');
-    addGameForm.insertBefore(dropZone, submitBtn);
-
-    // Lade Tags hartcodiert
-    loadTagsForForm();
-}
-
-// Funktion zum Laden der Tags für das Formular
-function loadTagsForForm() {
-    const tags = [
-        { tag_id: 1, name: "RPG" },
-        { tag_id: 2, name: "Horror" },
-        { tag_id: 3, name: "3D" },
-        { tag_id: 4, name: "2D" },
-        { tag_id: 5, name: "Action" },
-        { tag_id: 6, name: "Strategy" },
-        { tag_id: 7, name: "Open-World" },
-        { tag_id: 8, name: "Jump and Run" },
-        { tag_id: 9, name: "Competitive" },
-        { tag_id: 10, name: "Multiplayer" },
-        { tag_id: 11, name: "Singelplayer" },
-        { tag_id: 12, name: "Extraktions-Shooter" },
-        { tag_id: 13, name: "Building Game" },
-        { tag_id: 14, name: "Souls Like" },
-        { tag_id: 15, name: "Card Game" }
-    ];
-    
-    const tagsDropdown = document.getElementById("tagsDropdown");
-    // Entferne bestehende Checkboxen
-    const existingCheckboxes = tagsDropdown.querySelectorAll('.tag-checkbox');
-    existingCheckboxes.forEach(cb => cb.remove());
-    
-    // Füge neue Checkboxen hinzu
-    tags.forEach(tag => {
-        const div = document.createElement("div");
-        div.className = "tag-checkbox";
-        div.innerHTML = `
-            <input type="checkbox" name="tags[]" value="${tag.tag_id}" id="tag${tag.tag_id}">
-            <label for="tag${tag.tag_id}">${tag.name}</label>
-        `;
-        tagsDropdown.appendChild(div);
-    });
-
-    // Event-Listener für Checkboxen hinzufügen
-    const checkboxes = tagsDropdown.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(cb => {
-        cb.addEventListener('change', updateSelectedCount);
-    });
-
-    // Initial Anzahl aktualisieren
-    updateSelectedCount();
-}
-
-// Funktion zur Aktualisierung der Anzahl ausgewählter Tags
-function updateSelectedCount() {
-    const tagsDropdown = document.getElementById("tagsDropdown");
-    const count = tagsDropdown.querySelectorAll('input[type="checkbox"]:checked').length;
-    const countSpan = document.querySelector('.tags-count');
-    if (countSpan) {
-        countSpan.textContent = `(${count} ausgewählt)`;
-    }
-}
-
-// Popup öffnen - Tags zurücksetzen und Drop-Zone initialisieren
-openAddGameBtn.addEventListener("click", async () => {
-    // Prüfe Login-Status erneut
-    await checkLoginStatus();
-    
-    if (!isLoggedIn) {
-        alert("Bitte melden Sie sich an, um Spiele hinzuzufügen!");
-        loginPopup.style.display = "flex";
-        formArea.style.display = "block";
-        registerArea.style.display = "none";
-        formTitle.textContent = "Anmelden";
-        clearErrors();
-        return;
-    }
-    popup.style.display = "flex";
-    tagsDropdown.style.display = "none";
-    tagsArrow.classList.remove("open");
-    tagCheckboxes.forEach(cb => cb.checked = false);
-    updateTagCount();
-    
-    // Drop-Zone dynamisch hinzufügen oder zurücksetzen
-    initializeDropZone();
-});
-
 let currentGameForRating = null;
-
 let games = [];
 let selectedGame = null;
 
-// Spiele vom Backend holen (mit optionalem Tag-Filter)
+async function postJson(url, body) {
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "same-origin",
+      body: JSON.stringify(body)
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  } catch (error) {
+    console.error("Network error:", error);
+    return { ok: false, status: 0, data: { error: "Netzwerkfehler" } };
+  }
+}
+
+async function checkLoginStatus() {
+  try {
+    const res = await fetch("/api/me");
+    if (!res.ok) {
+      console.error("API Fehler:", res.status);
+      isLoggedIn = false;
+      return;
+    }
+
+    const data = await res.json();
+    isLoggedIn = data.loggedIn;
+    updateButtonStates();
+  } catch (error) {
+    console.error("Fehler beim Prüfen des Login-Status:", error);
+    isLoggedIn = false;
+  }
+}
+
+function updateButtonStates() {
+  if (openAddGameBtn) {
+    openAddGameBtn.disabled = !isLoggedIn;
+    openAddGameBtn.title = isLoggedIn
+      ? "Neues Game hinzufügen"
+      : "Bitte melden Sie sich an, um Spiele hinzuzufügen";
+  }
+
+  if (btnLogin) btnLogin.style.display = isLoggedIn ? "none" : "inline-block";
+  if (btnLogout) btnLogout.style.display = isLoggedIn ? "inline-block" : "none";
+}
+
+function showLoginDialog() {
+  if (!loginPopup) return;
+  loginPopup.style.display = "flex";
+  formArea.style.display = "block";
+  registerArea.style.display = "none";
+  formTitle.textContent = "Anmelden";
+  clearErrors();
+}
+
+function getTagCheckboxes() {
+  return $$(".tag-checkbox input[type=checkbox]");
+}
+
+function updateTagCount() {
+  const count = getTagCheckboxes().filter(cb => cb.checked).length;
+  if (tagsCount) tagsCount.textContent = `(${count} ausgewählt)`;
+}
+
+function initializeDropZone() {
+  if (!addGameForm) return;
+
+  const existing = $("#imageDropZone");
+  if (existing) existing.remove();
+
+  const dropZone = document.createElement("div");
+  dropZone.id = "imageDropZone";
+  dropZone.style.cssText = `
+    border: 2px dashed #ccc;
+    padding: 20px;
+    margin: 10px 0;
+    text-align: center;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: border-color 0.3s;
+  `;
+  dropZone.textContent =
+    "Drag and drop the image here or click to select (and make sure the image has a high resolution)";
+
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = "image/*";
+  fileInput.style.display = "none";
+  dropZone.appendChild(fileInput);
+
+  const setSelectedImage = (file) => {
+    if (!file) return;
+    draggedImageFile = file;
+    dropZone.textContent = `Bild ausgewählt: ${file.name}`;
+    dropZone.style.backgroundColor = "#e9f7e9";
+  };
+
+  dropZone.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = "#007bff";
+  });
+
+  dropZone.addEventListener("dragleave", () => {
+    dropZone.style.borderColor = "#ccc";
+  });
+
+  dropZone.addEventListener("drop", (e) => {
+    e.preventDefault();
+    dropZone.style.borderColor = "#ccc";
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith("image/")) {
+      setSelectedImage(file);
+    } else {
+      alert("Please only upload image files!");
+    }
+  });
+
+  dropZone.addEventListener("click", () => fileInput.click());
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file) setSelectedImage(file);
+  });
+
+  const submitBtn = addGameForm.querySelector('button[type="submit"]');
+  addGameForm.insertBefore(dropZone, submitBtn);
+
+  loadTagsForForm();
+}
+
+function loadTagsForForm() {
+  if (!tagsDropdown) return;
+
+  const tags = [
+    { tag_id: 1, name: "RPG" },
+    { tag_id: 2, name: "Horror" },
+    { tag_id: 3, name: "3D" },
+    { tag_id: 4, name: "2D" },
+    { tag_id: 5, name: "Action" },
+    { tag_id: 6, name: "Strategy" },
+    { tag_id: 7, name: "Open-World" },
+    { tag_id: 8, name: "Jump and Run" },
+    { tag_id: 9, name: "Competitive" },
+    { tag_id: 10, name: "Multiplayer" },
+    { tag_id: 11, name: "Singelplayer" },
+    { tag_id: 12, name: "Extraktions-Shooter" },
+    { tag_id: 13, name: "Building Game" },
+    { tag_id: 14, name: "Souls Like" },
+    { tag_id: 15, name: "Card Game" }
+  ];
+
+  tagsDropdown.innerHTML = tags
+    .map(
+      (tag) => `
+        <div class="tag-checkbox">
+          <input type="checkbox" name="tags[]" value="${tag.tag_id}" id="tag${tag.tag_id}">
+          <label for="tag${tag.tag_id}">${tag.name}</label>
+        </div>`
+    )
+    .join("");
+
+  updateTagCount();
+}
+
+function enforceTagLimit(e) {
+  if (!e.target.matches(".tag-checkbox input[type=checkbox]")) return;
+  const checked = getTagCheckboxes().filter((cb) => cb.checked);
+  if (checked.length > MAX_TAGS) {
+    e.target.checked = false;
+  }
+  updateTagCount();
+}
+
+function toggleTagsDropdown() {
+  if (!tagsDropdown) return;
+  const isOpen = tagsDropdown.style.display !== "none";
+  tagsDropdown.style.display = isOpen ? "none" : "block";
+  tagsArrow?.classList.toggle("open", !isOpen);
+}
+
 async function fetchGames(tag = "") {
   let url = "/games";
   if (tag && tag !== "all") url += `?tag=${encodeURIComponent(tag)}`;
 
   const res = await fetch(url);
   games = await res.json();
-  
-  // Aktualisiere gameBackgrounds mit den Bildpfaden aus den Daten
-  games.forEach(game => {
+
+  games.forEach((game) => {
     const gameId = game.game_id || game.id;
     if (game.image_path) {
-      gameBackgrounds[gameId] = 'images/' + game.image_path;
+      gameBackgrounds[gameId] = "images/" + game.image_path;
     }
   });
-  
-  renderGames(games);
+
+  filterAndRenderGames();
 }
 
-// Spiele anzeigen
-function renderGames(games) {
-  console.log(games);
-  gameGrid.innerHTML="";
-  for (let game of games) {
-    const div = document.createElement("div");
-    div.className = "game-box";
-    div.textContent = game.title;
-    div.onclick = () => selectGame(game, div);
-    gameGrid.appendChild(div);
-  }
+function filterAndRenderGames() {
+  if (!games) return;
+  const term = (searchInput?.value || "").trim().toLowerCase();
+  const list = term
+    ? games.filter((g) => g.title && g.title.toLowerCase().includes(term))
+    : games;
+  renderGames(list);
 }
 
-// Spiel auswählen
 function selectGame(game, div) {
-  document.querySelectorAll(".game-box").forEach(b => b.classList.remove("selected"));
+  document.querySelectorAll(".game-box").forEach((b) => b.classList.remove("selected"));
   div.classList.add("selected");
   selectedGame = game;
 }
 
-showInfoBtn.addEventListener("click", async () => {
+function clearFocusOverlay() {
+  const backdrop = $(".focused-backdrop");
+  const clone = $(".focused-clone");
+  backdrop?.remove();
+  clone?.remove();
+}
+
+showInfoBtn?.addEventListener("click", async () => {
   if (!selectedGame) {
     alert("Bitte wähle unten ein Spiel aus.");
     return;
   }
 
-  const selectedDiv = document.querySelector('.game-box.selected');
+  const selectedDiv = document.querySelector(".game-box.selected");
   if (!selectedDiv) {
     alert("Ausgewählte Game-Box nicht gefunden.");
     return;
   }
 
-  // If a focused clone exists, remove it (toggle)
-  const existingBackdrop = document.querySelector('.focused-backdrop');
-  if (existingBackdrop) {
-    const existingClone = document.querySelector('.focused-clone');
-    if (existingClone && existingClone.parentNode) existingClone.parentNode.removeChild(existingClone);
-    existingBackdrop.parentNode.removeChild(existingBackdrop);
+  if ($(".focused-backdrop")) {
+    clearFocusOverlay();
     return;
   }
 
-  // Create backdrop
-  const backdrop = document.createElement('div');
-  backdrop.className = 'focused-backdrop';
+  const backdrop = document.createElement("div");
+  backdrop.className = "focused-backdrop";
   document.body.appendChild(backdrop);
 
-  // Create focused clone (visual copy) and center it
-  const clone = document.createElement('div');
-  clone.className = 'focused-clone';
-  // Copy background if present
-  clone.style.backgroundImage = selectedDiv.style.backgroundImage || getComputedStyle(selectedDiv).backgroundImage;
-  clone.style.backgroundSize = 'cover';
-  clone.style.backgroundPosition = 'center';
+  const clone = document.createElement("div");
+  clone.className = "focused-clone";
+  clone.style.backgroundImage =
+    selectedDiv.style.backgroundImage || getComputedStyle(selectedDiv).backgroundImage;
+  clone.style.backgroundSize = "cover";
+  clone.style.backgroundPosition = "center";
 
-  // Build info-overlay inside clone with full info
-  const title = selectedGame.title || selectedGame.name || 'Unbekannter Titel';
-  const release = selectedGame.created_at || selectedGame.year || 'Unbekannt';
-  const developer = selectedGame.developer || 'Unknown';
-  const tags = (selectedGame.tags && selectedGame.tags.join(', ')) || selectedGame.gametag_id || 'Keine';
-  const desc = selectedGame.description || 'Keine Beschreibung verfügbar';
+  const title = selectedGame.title || selectedGame.name || "Unbekannter Titel";
+  const release = selectedGame.created_at || selectedGame.year || "Unbekannt";
+  const developer = selectedGame.developer || "Unknown";
+  const tags = (selectedGame.tags && selectedGame.tags.join(", ")) || selectedGame.gametag_id || "Keine";
+  const desc = selectedGame.description || "Keine Beschreibung verfügbar";
 
-  const overlay = document.createElement('div');
-  overlay.className = 'info-overlay visible';
+  const overlay = document.createElement("div");
+  overlay.className = "info-overlay visible";
   overlay.innerHTML = `
     <button class="info-close">Schließen</button>
     <div class="info-title">${title}</div>
@@ -380,23 +347,15 @@ showInfoBtn.addEventListener("click", async () => {
     <div class="info-ratings" id="ratings-display-mini">Lade Bewertungen...</div>
   `;
 
-  // Close handlers
-  overlay.querySelector('.info-close').addEventListener('click', () => {
-    if (clone.parentNode) clone.parentNode.removeChild(clone);
-    if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
-  });
-  backdrop.addEventListener('click', () => {
-    if (clone.parentNode) clone.parentNode.removeChild(clone);
-    if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
-  });
+  overlay.querySelector(".info-close")?.addEventListener("click", clearFocusOverlay);
+  backdrop.addEventListener("click", clearFocusOverlay);
 
   clone.appendChild(overlay);
   document.body.appendChild(clone);
 
-  // Load full ratings into the clone overlay
   try {
     const gameId = selectedGame.id || selectedGame.game_id || selectedGame.gameId;
-    const ratingsEl = overlay.querySelector('#ratings-display-mini');
+    const ratingsEl = overlay.querySelector("#ratings-display-mini");
     if (!gameId) {
       ratingsEl.innerHTML = '<p style="color:orange">Keine Game-ID</p>';
     } else {
@@ -405,91 +364,304 @@ showInfoBtn.addEventListener("click", async () => {
         ratingsEl.innerHTML = '<p>Fehler beim Laden der Bewertungen.</p>';
       } else {
         const ratings = await res.json();
-        if (!ratings || ratings.length === 0) ratingsEl.innerHTML = '<p>Noch keine Bewertungen.</p>';
-        else ratingsEl.innerHTML = ratings.map(r => `
+        if (!ratings || ratings.length === 0) {
+          ratingsEl.innerHTML = '<p>Noch keine Bewertungen.</p>';
+        } else {
+          ratingsEl.innerHTML = ratings
+            .map(
+              (r) => `
           <div style="font-size:12px; padding:6px 0; border-top:1px solid rgba(255,255,255,0.06)">
-            <strong>${r.username || 'User'}</strong>: ${r.rating}/10<br>
-            <small style="color:#ccc">${(r.comment||'')}</small>
-          </div>
-        `).join('');
+            <strong>${r.username || "User"}</strong>: ${r.rating}/10<br>
+            <small style="color:#ccc">${(r.comment || "")}</small>
+          </div>`
+            )
+            .join("");
+        }
       }
     }
   } catch (e) {
-    const ratingsEl = overlay.querySelector('#ratings-display-mini');
-    if (ratingsEl) ratingsEl.innerHTML = '<p>Fehler beim Laden.</p>';
-    console.error('Ratings mini load error', e);
+    const ratingsEl = overlay.querySelector("#ratings-display-mini");
+    if (ratingsEl) ratingsEl.innerHTML = "<p>Fehler beim Laden.</p>";
+    console.error("Ratings mini load error", e);
   }
 });
-// Initialer Aufruf
-checkLoginStatus();
-fetchGames();
 
-// Logout-Handler: Session auf dem Server löschen
-if (btnLogout) {
-  btnLogout.addEventListener('click', async () => {
-    try {
-      const res = await fetch('/logout', { method: 'POST', credentials: 'same-origin' });
-      if (res.ok) {
-        isLoggedIn = false;
-        updateButtonStates();
-        alert('Erfolgreich ausgeloggt');
-      } else {
-        const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Logout fehlgeschlagen');
-      }
-    } catch (e) {
-      console.error('Logout Fehler:', e);
-      alert('Netzwerkfehler beim Ausloggen');
+if (searchInput) searchInput.addEventListener("input", filterAndRenderGames);
+
+async function loadAverageRating(gameId, gameElement) {
+  try {
+    const res = await fetch(`/ratings/average/${gameId}`);
+    const data = await res.json();
+    if (data.count > 0) {
+      const avgRating = parseFloat(data.average).toFixed(1);
+      const ratingElement = document.createElement("div");
+      ratingElement.className = "average-rating";
+      ratingElement.innerHTML = `★ ${avgRating} (${data.count} Bewertungen)`;
+      gameElement.appendChild(ratingElement);
     }
+  } catch (error) {
+    console.error("Fehler beim Laden der Bewertungen:", error);
+  }
+}
+
+async function openRatingPopup(gameId, gameTitle) {
+  await checkLoginStatus();
+  if (!isLoggedIn) {
+    alert("Bitte melden Sie sich an, um Spiele zu bewerten!");
+    showLoginDialog();
+    return;
+  }
+
+  currentGameForRating = gameId;
+  ratingGameId.value = gameId;
+  ratingGameTitle.textContent = `${gameTitle} bewerten`;
+  ratingForm.reset();
+  await loadExistingRatings(gameId);
+  ratingPopup.style.display = "flex";
+}
+
+async function loadExistingRatings(gameId) {
+  try {
+    const res = await fetch(`/ratings/${gameId}`);
+    const ratings = await res.json();
+
+    if (ratings.length > 0) {
+      ratingsList.innerHTML = "";
+      ratings.forEach((rating) => {
+        const ratingDiv = document.createElement("div");
+        ratingDiv.className = "rating-item";
+        ratingDiv.innerHTML = `
+                    <strong>${rating.username}</strong>: ★ ${rating.rating}/10
+                    <br><em>${rating.comment || "Kein Kommentar"}</em>
+                    <small> - ${new Date(rating.created_at).toLocaleDateString()}</small>
+                    <hr>
+                `;
+        ratingsList.appendChild(ratingDiv);
+      });
+      existingRatings.style.display = "block";
+    } else {
+      existingRatings.style.display = "none";
+    }
+  } catch (error) {
+    console.error("Fehler beim Laden der Bewertungen:", error);
+    existingRatings.style.display = "none";
+  }
+}
+
+ratingForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const formData = new FormData(ratingForm);
+  const ratingData = {
+    game_id: currentGameForRating,
+    rating: parseInt(formData.get("rating")),
+    comment: formData.get("comment")
+  };
+
+  try {
+    const res = await fetch("/rating", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(ratingData)
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("Bewertung erfolgreich abgegeben!");
+      ratingPopup.style.display = "none";
+      fetchGames(tagSelect?.value);
+    } else {
+      alert(data.error || "Fehler beim Speichern der Bewertung");
+    }
+  } catch (error) {
+    console.error("Detailierter Fehler:", error);
+    alert("Netzwerkfehler - bitte versuche es erneut");
+  }
+});
+
+closeRatingPopup?.addEventListener("click", () => {
+  ratingPopup.style.display = "none";
+});
+
+ratingPopup?.addEventListener("click", (e) => {
+  if (e.target === ratingPopup) ratingPopup.style.display = "none";
+});
+
+showRegister?.addEventListener("click", (e) => {
+  e.preventDefault();
+  formArea.style.display = "none";
+  registerArea.style.display = "block";
+  formTitle.textContent = "Registrieren";
+  clearErrors();
+});
+
+showLogin?.addEventListener("click", (e) => {
+  e.preventDefault();
+  formArea.style.display = "block";
+  registerArea.style.display = "none";
+  formTitle.textContent = "Anmelden";
+  clearErrors();
+});
+
+function clearErrors() {
+  $("#errorMsg").textContent = "";
+  $("#regError").textContent = "";
+}
+
+function setupEnterKey(inputs, button) {
+  inputs.forEach((input) => {
+    input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") button.click();
+    });
   });
 }
 
+setupEnterKey([$("#identifier"), $("#password")], loginBtn);
 
-// Popup schließen
-closePopupBtn.addEventListener("click", () => {
+loginBtn?.addEventListener("click", async () => {
+  const identifier = $("#identifier").value.trim();
+  const password = $("#password").value;
+  const error = $("#errorMsg");
+  error.textContent = "";
+
+  if (!identifier || !password) {
+    error.textContent = "Bitte Benutzername/E-Mail und Passwort eingeben.";
+    return;
+  }
+
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Wird angemeldet...";
+
+  const res = await postJson("/login", { identifier, password });
+
+  loginBtn.disabled = false;
+  loginBtn.textContent = "Anmelden";
+
+  if (res.ok) {
+    alert("Du bist jetzt eingeloggt!");
+    loginPopup.style.display = "none";
+    checkLoginStatus();
+  } else {
+    error.textContent = res.data?.error || "Login fehlgeschlagen";
+  }
+});
+
+setupEnterKey([$("#reg_username"), $("#reg_email"), $("#reg_password")], registerBtn);
+
+registerBtn?.addEventListener("click", async () => {
+  const username = $("#reg_username").value.trim();
+  const email = $("#reg_email").value.trim();
+  const password = $("#reg_password").value;
+  const error = $("#regError");
+  error.textContent = "";
+
+  if (!username || !email || !password) {
+    error.textContent = "Bitte alle Felder ausfüllen.";
+    return;
+  }
+
+  if (password.length < 6) {
+    error.textContent = "Passwort muss mindestens 6 Zeichen lang sein.";
+    return;
+  }
+
+  registerBtn.disabled = true;
+  registerBtn.textContent = "Wird registriert...";
+
+  const res = await postJson("/register", { username, email, password });
+
+  registerBtn.disabled = false;
+  registerBtn.textContent = "Registrieren";
+
+  if (res.ok) {
+    alert("Registrierung erfolgreich! Du bist jetzt eingeloggt.");
+    loginPopup.style.display = "none";
+    checkLoginStatus();
+  } else {
+    error.textContent = res.data?.error || "Registrierung fehlgeschlagen";
+  }
+});
+
+closeLoginPopup?.addEventListener("click", () => {
+  loginPopup.style.display = "none";
+});
+
+btnLogin?.addEventListener("click", () => {
+  if (isLoggedIn) {
+    alert("Du bist bereits eingeloggt!");
+  } else {
+    showLoginDialog();
+  }
+});
+
+btnLogout?.addEventListener("click", async () => {
+  try {
+    const res = await fetch("/logout", { method: "POST", credentials: "same-origin" });
+    if (res.ok) {
+      isLoggedIn = false;
+      updateButtonStates();
+      alert("Erfolgreich ausgeloggt");
+    } else {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error || "Logout fehlgeschlagen");
+    }
+  } catch (e) {
+    console.error("Logout Fehler:", e);
+    alert("Netzwerkfehler beim Ausloggen");
+  }
+});
+
+openAddGameBtn?.addEventListener("click", async () => {
+  await checkLoginStatus();
+  if (!isLoggedIn) {
+    alert("Bitte melden Sie sich an, um Spiele hinzuzufügen!");
+    showLoginDialog();
+    return;
+  }
+
+  popup.style.display = "flex";
+  tagsDropdown.style.display = "none";
+  tagsArrow?.classList.remove("open");
+  getTagCheckboxes().forEach((cb) => (cb.checked = false));
+  updateTagCount();
+  initializeDropZone();
+});
+
+closePopupBtn?.addEventListener("click", () => {
   popup.style.display = "none";
 });
 
+if (tagsHeaderBtn) tagsHeaderBtn.addEventListener("click", toggleTagsDropdown);
+if (tagsDropdown) tagsDropdown.addEventListener("change", enforceTagLimit);
+if (tagSelect) tagSelect.addEventListener("change", () => fetchGames(tagSelect.value));
+if (btnUniqueGames) btnUniqueGames.addEventListener("click", () => (window.location.href = "/our_unique_games.html"));
 
-// // Game speichern (angepasst für FormData und Bild-Upload)
-addGameForm.addEventListener("submit", async (e) => {
+addGameForm?.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // Mehrere Tags von den Checkboxen auslesen
-  const selectedTags = Array.from(document.querySelectorAll('.tag-checkbox input[type="checkbox"]:checked'))
-    .map(cb => parseInt(cb.value));
-
+  const selectedTags = getTagCheckboxes().filter((cb) => cb.checked).map((cb) => parseInt(cb.value, 10));
   if (selectedTags.length === 0) {
     alert("Bitte wähle mindestens ein Tag aus!");
     return;
   }
 
-  // FormData erstellen (unterstützt Dateien)
   const formData = new FormData(addGameForm);
   formData.append("created_at", new Date().toISOString());
-  
-  // Bild hinzufügen, falls vorhanden
-  if (draggedImageFile) {
-    formData.append("image", draggedImageFile);
-  }
-
-  console.log("FormData:", formData);
+  if (draggedImageFile) formData.append("image", draggedImageFile);
 
   try {
     const res = await fetch("/leggtilgame", {
       method: "POST",
-      credentials: 'same-origin',
-      body: formData // Keine Headers nötig, FormData setzt Content-Type automatisch
+      credentials: "same-origin",
+      body: formData
     });
 
     const data = await res.json();
-    console.log("SERVER:", data);
-
     if (res.ok) {
       popup.style.display = "none";
       addGameForm.reset();
-      draggedImageFile = null; // Zurücksetzen
-      fetchGames(); // Aktualisiere die Liste und gameBackgrounds
+      draggedImageFile = null;
+      fetchGames();
     } else {
       alert(data.error || "Fehler beim Speichern des Spiels");
     }
@@ -499,486 +671,239 @@ addGameForm.addEventListener("submit", async (e) => {
   }
 });
 
-// Checkbox Event Listener für Max 4 Tags Limit
-tagCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener("change", (e) => {
-        const checkedCount = document.querySelectorAll('.tag-checkbox input[type="checkbox"]:checked').length;
-        
-        // Wenn bereits 4 Tags ausgewählt sind, weitere können nicht ausgewählt werden
-        if (checkedCount > MAX_TAGS) {
-            checkbox.checked = false;
-        }
-        
-        // Counter aktualisieren
-        updateTagCount();
+ratingForm?.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const formData = new FormData(ratingForm);
+  const ratingData = {
+    game_id: currentGameForRating,
+    rating: parseInt(formData.get("rating"), 10),
+    comment: formData.get("comment")
+  };
+
+  try {
+    const res = await fetch("/rating", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(ratingData)
     });
-});
+    const data = await res.json();
 
-  tagSelect.addEventListener("change", async (e) => {
-  const tagId = e.target.value;
-  console.log("tagId="+tagId)
-
-  if (tagId === "all") {
-    fetchGames();
-    return;
+    if (res.ok) {
+      alert("Bewertung erfolgreich abgegeben!");
+      ratingPopup.style.display = "none";
+      fetchGames(tagSelect?.value);
+    } else {
+      alert(data.error || "Fehler beim Speichern der Bewertung");
+    }
+  } catch (error) {
+    console.error("Detailierter Fehler:", error);
+    alert("Netzwerkfehler - bitte versuche es erneut");
   }
-
-  const res = await fetch(`/games/byTag/${tagId}`);
-  const games = await res.json();
-  renderGames(games);
 });
 
-// Spiel-Boxen mit Bewertungs-Button rendern
+checkLoginStatus();
+fetchGames();
+
 function renderGames(games) {
-    console.log("Rendering games:", games.length);
-    gameGrid.innerHTML = "";
-    
-    for (let game of games) {
-      const div = document.createElement("div");
-      div.className = "game-box";
-      // Ensure positioned container so absolute children (link button) can be placed bottom-left
-      div.style.position = 'relative';
+  if (!gameGrid) return;
+  gameGrid.innerHTML = "";
 
-      // Set data attribute for game id to allow linking between boxes
-      const gameId = game.game_id || game.id || game.gameId;
-      if (gameId !== undefined) div.setAttribute('data-game-id', String(gameId));
+  for (const game of games) {
+    const div = document.createElement("div");
+    div.className = "game-box";
+    div.style.position = "relative";
 
-      // Hintergrundbild aus Mapping oder direkt aus game.image_path setzen
-      const bgImage = gameBackgrounds[game.game_id] || (game.image_path ? 'images/' + game.image_path : null);
-      if (bgImage) {
-        div.style.backgroundImage = `url('${bgImage}')`;
-        div.style.backgroundSize = "cover";
+    const gameId = game.game_id || game.id || game.gameId;
+    if (gameId !== undefined) div.dataset.gameId = String(gameId);
 
-  // Öffnet ein Popup mit den verlinkten Spielen (Array von {id,label,found,gameObj})
-  function openLinkedGamesPopup(linkedGames) {
-    // Overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'linked-overlay';
-    Object.assign(overlay.style, {
-      position: 'fixed', top: '0', left: '0', right: '0', bottom: '0',
-      background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000
+    const bgImage = gameBackgrounds[gameId] || (game.image_path ? "images/" + game.image_path : null);
+    if (bgImage) {
+      div.style.backgroundImage = `url('${bgImage}')`;
+      div.style.backgroundSize = "cover";
+      div.style.backgroundPosition = "center";
+    }
+
+    const titleText = game.title || game.name || "Unbekannter Titel";
+
+    const titleEl = document.createElement("div");
+    titleEl.className = "game-title";
+    titleEl.textContent = titleText;
+
+    const rateBtn = document.createElement("button");
+    rateBtn.className = "rate-btn rate-btn-corner";
+    rateBtn.textContent = "★ Bewerten";
+    rateBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openRatingPopup(gameId, titleText);
     });
 
-    const popup = document.createElement('div');
-      popup.className = 'linked-popup';
-      Object.assign(popup.style, {
-        background: 'rgba(0,0,0,0.85)', padding: '16px', borderRadius: '8px', width: '90%', maxWidth: '800px', maxHeight: '80%', overflow: 'auto', color: '#fff'
-      });
+    div.append(titleEl, rateBtn);
+    div.addEventListener("click", () => selectGame(game, div));
 
-    const title = document.createElement('h3');
-    title.textContent = 'Linked games';
-      title.style.color = '#fff';
-      popup.appendChild(title);
+    const linkDescriptors = [];
+    if (Array.isArray(game.links) && game.links.length) {
+      linkDescriptors.push(
+        ...game.links.map((l) => ({
+          id: l.linked_game_id || l.linked_game || l.linkedTo,
+          label: l.label || l.relation
+        }))
+      );
+    } else {
+      const linkedId = game.linked_game_id || game.related_game_id || game.link_to || game.linkedTo;
+      if (linkedId) linkDescriptors.push({ id: linkedId, label: game.link_label });
+    }
 
-    const grid = document.createElement('div');
-    grid.className = 'linked-grid';
-    Object.assign(grid.style, { display: 'flex', gap: '12px', flexWrap: 'wrap' });
-
-    linkedGames.forEach(link => {
-      // Try to use the actual game object if available
-      const targetGame = link.gameObj || games.find(g => (g.game_id || g.id || g.gameId) == link.id) || null;
-
-      // Create a small game-box that mirrors the main grid markup
-      const tile = document.createElement('div');
-      tile.className = 'game-box linked-mini';
-      const targetId = link.id;
-      tile.setAttribute('data-game-id', String(targetId));
-
-      // Background if available
-      const previewId = (targetGame && (targetGame.game_id || targetGame.id || targetGame.gameId)) || link.id;
-      if (gameBackgrounds[previewId]) {
-        tile.style.backgroundImage = `url('${gameBackgrounds[previewId]}')`;
-        tile.style.backgroundSize = 'cover';
-          tile.style.backgroundPosition = 'center';
-          tile.style.border = '1px solid rgba(255,255,255,0.12)';
-          tile.style.color = '#fff';
-      }
-
-      // Inner HTML: title + rate button (same as main grid)
-      const titleText = (targetGame && (targetGame.title || targetGame.name)) || link.label || `Game ${link.id}`;
-      tile.innerHTML = `
-        <div class="game-title">${titleText}</div>
-        <button class="rate-btn rate-btn-corner" onclick="event.stopPropagation(); openRatingPopup(${targetId}, '${titleText.replace("'","\'")}')">
-          ★ Bewerten
-        </button>
-      `;
-
-      // click selects the game on main page
-      tile.addEventListener('click', (e) => {
+    if (linkDescriptors.length) {
+      const linkBtn = document.createElement("button");
+      linkBtn.className = "link-btn";
+      linkBtn.textContent =
+        linkDescriptors.length === 1
+          ? linkDescriptors[0].label || "Linked"
+          : game.link_label || "Linked games";
+      linkBtn.addEventListener("click", (e) => {
         e.stopPropagation();
-        const tg = targetGame || games.find(g => (g.game_id || g.id || g.gameId) == targetId);
-        if (tg) {
-          const td = document.querySelector(`.game-box[data-game-id="${targetId}"]`);
-          if (td) {
-            selectGame(tg, td);
-            td.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            if (overlay.parentNode) document.body.removeChild(overlay);
-            return;
-          }
-        }
-        // reload and try later
-        fetchGames();
-        setTimeout(() => {
-          const td = document.querySelector(`.game-box[data-game-id="${targetId}"]`);
-          const tg2 = games.find(g => (g.game_id || g.id || g.gameId) == targetId);
-          if (td && tg2) selectGame(tg2, td);
-          if (overlay.parentNode) document.body.removeChild(overlay);
-        }, 400);
+        const linkedGames = linkDescriptors.map((d) => {
+          const found = games.find((g) => (g.game_id || g.id || g.gameId) == d.id);
+          return {
+            id: d.id,
+            label: d.label || (found && (found.title || found.name)) || `Game ${d.id}`,
+            found: !!found,
+            gameObj: found || null
+          };
+        });
+        openLinkedGamesPopup(linkedGames);
       });
 
-      grid.appendChild(tile);
-    });
+      const wrapper = document.createElement("div");
+      wrapper.className = "link-btn-wrapper";
+      wrapper.style.position = "absolute";
+      wrapper.style.left = "8px";
+      wrapper.style.bottom = "8px";
+      wrapper.style.zIndex = "10";
+      linkBtn.style.padding = "6px 8px";
+      linkBtn.style.fontSize = "12px";
+      wrapper.appendChild(linkBtn);
+      div.appendChild(wrapper);
+    }
 
-    popup.appendChild(grid);
-
-    const close = document.createElement('button');
-    close.textContent = 'Close';
-      Object.assign(close.style, { marginTop: '12px', background: 'rgba(255,255,255,0.08)', color: '#fff', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer' });
-    close.addEventListener('click', () => { if (overlay.parentNode) document.body.removeChild(overlay); });
-    popup.appendChild(close);
-
-    overlay.appendChild(popup);
-    document.body.appendChild(overlay);
+    gameGrid.appendChild(div);
+    loadAverageRating(gameId, div);
   }
-        div.style.backgroundPosition = "center";
-      }
-
-      // Spiel-Titel und Bewertungs-Button
-        div.innerHTML = `
-          <div class="game-title">${game.title}</div>
-          <button class="rate-btn rate-btn-corner" onclick="event.stopPropagation(); openRatingPopup(${game.game_id}, '${game.title}')">
-            ★ Bewerten
-          </button>
-        `;
-        
-        div.onclick = () => selectGame(game, div);
-
-        // Optional: create a link button if this game links to other games (e.g. DLC -> base game)
-        // The linked id(s) can come from fields like `links` (array), or `linked_game_id` / `related_game_id` / `link_to`.
-        (function maybeAddLink() {
-          console.log("Checking game:", game.title, "linked_game_id:", game.linked_game_id);
-          // Build an array of link descriptors: { id, label }
-          let linkDescriptors = [];
-          if (Array.isArray(game.links) && game.links.length > 0) {
-            linkDescriptors = game.links.map(l => ({ id: l.linked_game_id || l.linked_game || l.linkedTo, label: l.label || l.relation || undefined }));
-          } else {
-            const linkedId = game.linked_game_id || game.related_game_id || game.link_to || game.linkedTo;
-            if (linkedId) linkDescriptors.push({ id: linkedId, label: game.link_label });
-          }
-          console.log("linkDescriptors:", linkDescriptors);
-          if (linkDescriptors.length === 0) return;
-
-          const linkBtn = document.createElement('button');
-          linkBtn.className = 'link-btn';
-          linkBtn.textContent = linkDescriptors.length === 1 ? (linkDescriptors[0].label || 'Linked') : (game.link_label || 'Linked games');
-          linkBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            // Prepare array of linked game objects (may be missing from current `games` list)
-            const linkedGames = linkDescriptors.map(d => {
-              const found = games.find(g => (g.game_id || g.id || g.gameId) == d.id);
-              return {
-                id: d.id,
-                label: d.label || (found && (found.title || found.name)) || `Game ${d.id}`,
-                found: !!found,
-                gameObj: found || null
-              };
-            });
-            openLinkedGamesPopup(linkedGames);
-          });
-
-          const wrapper = document.createElement('div');
-          wrapper.className = 'link-btn-wrapper';
-          Object.assign(wrapper.style, { position: 'absolute', left: '8px', bottom: '8px', zIndex: 10 });
-          // Make the button compact for the corner
-          Object.assign(linkBtn.style, { padding: '6px 8px', fontSize: '12px' });
-          wrapper.appendChild(linkBtn);
-          div.appendChild(wrapper);
-          console.log("Added link button to", game.title);
-        })();
-
-        gameGrid.appendChild(div);
-        
-        // Durchschnittsbewertung laden und anzeigen
-        loadAverageRating(game.game_id, div);
-    }
-}// Durchschnittsbewertung laden
-async function loadAverageRating(gameId, gameElement) {
-    try {
-        const res = await fetch(`/ratings/average/${gameId}`);
-        const data = await res.json();
-        
-        if (data.count > 0) {
-            const avgRating = parseFloat(data.average).toFixed(1);
-            const ratingElement = document.createElement("div");
-            ratingElement.className = "average-rating";
-            ratingElement.innerHTML = `★ ${avgRating} (${data.count} Bewertungen)`;
-            gameElement.appendChild(ratingElement);
-        }
-    } catch (error) {
-        console.error("Fehler beim Laden der Bewertungen:", error);
-    }
 }
 
-// Bewertungs-Popup öffnen
-async function openRatingPopup(gameId, gameTitle) {
-    // Prüfe Login-Status erneut
-    await checkLoginStatus();
-    
-    if (!isLoggedIn) {
-        alert("Bitte melden Sie sich an, um Spiele zu bewerten!");
-        loginPopup.style.display = "flex";
-        formArea.style.display = "block";
-        registerArea.style.display = "none";
-        formTitle.textContent = "Anmelden";
-        clearErrors();
-        return;
+function openLinkedGamesPopup(linkedGames) {
+  const overlay = document.createElement("div");
+  overlay.className = "linked-overlay";
+  Object.assign(overlay.style, {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    right: "0",
+    bottom: "0",
+    background: "rgba(0,0,0,0.6)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2000
+  });
+
+  const popup = document.createElement("div");
+  popup.className = "linked-popup";
+  Object.assign(popup.style, {
+    background: "rgba(0,0,0,0.85)",
+    padding: "16px",
+    borderRadius: "8px",
+    width: "90%",
+    maxWidth: "800px",
+    maxHeight: "80%",
+    overflow: "auto",
+    color: "#fff"
+  });
+
+  const title = document.createElement("h3");
+  title.textContent = "Linked games";
+  title.style.color = "#fff";
+  popup.appendChild(title);
+
+  const grid = document.createElement("div");
+  grid.className = "linked-grid";
+  Object.assign(grid.style, { display: "flex", gap: "12px", flexWrap: "wrap" });
+
+  linkedGames.forEach((link) => {
+    const targetGame = link.gameObj || games.find((g) => (g.game_id || g.id || g.gameId) == link.id);
+    const tile = document.createElement("div");
+    tile.className = "game-box linked-mini";
+    tile.dataset.gameId = String(link.id);
+
+    const previewId = (targetGame && (targetGame.game_id || targetGame.id || targetGame.gameId)) || link.id;
+    if (gameBackgrounds[previewId]) {
+      tile.style.backgroundImage = `url('${gameBackgrounds[previewId]}')`;
+      tile.style.backgroundSize = "cover";
+      tile.style.backgroundPosition = "center";
+      tile.style.border = "1px solid rgba(255,255,255,0.12)";
+      tile.style.color = "#fff";
     }
-    
-    currentGameForRating = gameId;
-    ratingGameId.value = gameId;
-    ratingGameTitle.textContent = `${gameTitle} bewerten`;
-    
-    // Formular zurücksetzen
-    ratingForm.reset();
-    
-    // Vorhandene Bewertungen laden
-    await loadExistingRatings(gameId);
-    
-    // Popup anzeigen
-    ratingPopup.style.display = "flex";
-}
 
-// Vorhandene Bewertungen laden
-async function loadExistingRatings(gameId) {
-    try {
-        const res = await fetch(`/ratings/${gameId}`);
-        const ratings = await res.json();
-        
-        if (ratings.length > 0) {
-            ratingsList.innerHTML = "";
-            ratings.forEach(rating => {
-                const ratingDiv = document.createElement("div");
-                ratingDiv.className = "rating-item";
-                ratingDiv.innerHTML = `
-                    <strong>${rating.username}</strong>: ★ ${rating.rating}/10
-                    <br><em>${rating.comment || 'Kein Kommentar'}</em>
-                    <small> - ${new Date(rating.created_at).toLocaleDateString()}</small>
-                    <hr>
-                `;
-                ratingsList.appendChild(ratingDiv);
-            });
-            existingRatings.style.display = "block";
-        } else {
-            existingRatings.style.display = "none";
-        }
-    } catch (error) {
-        console.error("Fehler beim Laden der Bewertungen:", error);
-        existingRatings.style.display = "none";
-    }
-}
+    const titleText = (targetGame && (targetGame.title || targetGame.name)) || link.label || `Game ${link.id}`;
+    const titleEl = document.createElement("div");
+    titleEl.className = "game-title";
+    titleEl.textContent = titleText;
 
-// Bewertung absenden
-ratingForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    
-    console.log("Bewertung wird abgesendet...");
-    
-    const formData = new FormData(ratingForm);
-    const ratingData = {
-        game_id: currentGameForRating,
-        rating: parseInt(formData.get("rating")),
-        comment: formData.get("comment")
-    };
-    
-    console.log("Rating Data:", ratingData);
-    
-    try {
-        const res = await fetch("/rating", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify(ratingData)
-        });
-        
-        console.log("Response Status:", res.status);
-        console.log("Response OK:", res.ok);
-        
-        const data = await res.json();
-        console.log("Response Data:", data);
-        
-        if (res.ok) {
-            alert("Bewertung erfolgreich abgegeben!");
-            ratingPopup.style.display = "none";
-            fetchGames(tagSelect.value);
-        } else {
-            alert(data.error || "Fehler beim Speichern der Bewertung");
-        }
-        
-    } catch (error) {
-        console.error("Detailierter Fehler:", error);
-        console.error("Error Name:", error.name);
-        console.error("Error Message:", error.message);
-        
-        alert("Netzwerkfehler - bitte versuche es erneut");
-    }
-});
-
-// Bewertungs-Popup schließen
-closeRatingPopup.addEventListener("click", () => {
-    ratingPopup.style.display = "none";
-});
-
-// Popup schließen bei Klick außerhalb
-ratingPopup.addEventListener("click", (e) => {
-    if (e.target === ratingPopup) {
-        ratingPopup.style.display = "none";
-    }
-});
-
-// Login/Registrierung Popup Elemente
-const loginPopup = document.getElementById("loginPopup");
-const formTitle = document.getElementById("formTitle");
-const formArea = document.getElementById("formArea");
-const registerArea = document.getElementById("registerArea");
-const showRegister = document.getElementById("showRegister");
-const showLogin = document.getElementById("showLogin");
-const closeLoginPopup = document.getElementById("closeLoginPopup");
-
-// Formular-Wechsel
-showRegister.addEventListener("click", (e) => {
-    e.preventDefault();
-    formArea.style.display = "none";
-    registerArea.style.display = "block";
-    formTitle.textContent = "Registrieren";
-    clearErrors();
-});
-
-showLogin.addEventListener("click", (e) => {
-    e.preventDefault();
-    formArea.style.display = "block";
-    registerArea.style.display = "none";
-    formTitle.textContent = "Anmelden";
-    clearErrors();
-});
-
-// Fehler löschen
-function clearErrors() {
-    document.getElementById("errorMsg").textContent = "";
-    document.getElementById("regError").textContent = "";
-}
-
-// Enter-Taste unterstützen
-function setupEnterKey(inputs, button) {
-    inputs.forEach(input => {
-        input.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                button.click();
-            }
-        });
+    const rateBtn = document.createElement("button");
+    rateBtn.className = "rate-btn rate-btn-corner";
+    rateBtn.textContent = "★ Bewerten";
+    rateBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openRatingPopup(link.id, titleText);
     });
+
+    tile.append(titleEl, rateBtn);
+
+    tile.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const tg = targetGame || games.find((g) => (g.game_id || g.id || g.gameId) == link.id);
+      if (tg) {
+        const td = document.querySelector(`.game-box[data-game-id="${link.id}"]`);
+        if (td) {
+          selectGame(tg, td);
+          td.scrollIntoView({ behavior: "smooth", block: "center" });
+          overlay.remove();
+          return;
+        }
+      }
+      fetchGames();
+      setTimeout(() => {
+        const td = document.querySelector(`.game-box[data-game-id="${link.id}"]`);
+        const tg2 = games.find((g) => (g.game_id || g.id || g.gameId) == link.id);
+        if (td && tg2) selectGame(tg2, td);
+        overlay.remove();
+      }, 400);
+    });
+
+    grid.appendChild(tile);
+  });
+
+  popup.appendChild(grid);
+
+  const close = document.createElement("button");
+  close.textContent = "Close";
+  Object.assign(close.style, {
+    marginTop: "12px",
+    background: "rgba(255,255,255,0.08)",
+    color: "#fff",
+    border: "none",
+    padding: "8px 12px",
+    borderRadius: "6px",
+    cursor: "pointer"
+  });
+  close.addEventListener("click", () => overlay.remove());
+  popup.appendChild(close);
+
+  overlay.appendChild(popup);
+  document.body.appendChild(overlay);
 }
 
-// Login
-const loginBtn = document.getElementById("loginBtn");
-const loginInputs = [
-    document.getElementById("identifier"),
-    document.getElementById("password")
-];
-
-setupEnterKey(loginInputs, loginBtn);
-
-loginBtn.addEventListener("click", async () => {
-    const identifier = document.getElementById("identifier").value.trim();
-    const password = document.getElementById("password").value;
-    const error = document.getElementById("errorMsg");
-    error.textContent = "";
-
-    if (!identifier || !password) {
-        error.textContent = "Bitte Benutzername/E-Mail und Passwort eingeben.";
-        return;
-    }
-
-    loginBtn.disabled = true;
-    loginBtn.textContent = "Wird angemeldet...";
-
-    const res = await postJson("/login", { identifier, password });
-    
-    loginBtn.disabled = false;
-    loginBtn.textContent = "Anmelden";
-
-    if (res.ok) {
-        alert("Du bist jetzt eingeloggt!");
-        loginPopup.style.display = "none";
-        checkLoginStatus(); // Status aktualisieren
-    } else {
-        error.textContent = res.data?.error || "Login fehlgeschlagen";
-    }
-});
-
-// Registrierung
-const registerBtn = document.getElementById("registerBtn");
-const registerInputs = [
-    document.getElementById("reg_username"),
-    document.getElementById("reg_email"),
-    document.getElementById("reg_password")
-];
-
-setupEnterKey(registerInputs, registerBtn);
-
-registerBtn.addEventListener("click", async () => {
-    const username = document.getElementById("reg_username").value.trim();
-    const email = document.getElementById("reg_email").value.trim();
-    const password = document.getElementById("reg_password").value;
-    const error = document.getElementById("regError");
-    error.textContent = "";
-
-    if (!username || !email || !password) {
-        error.textContent = "Bitte alle Felder ausfüllen.";
-        return;
-    }
-
-    if (password.length < 6) {
-        error.textContent = "Passwort muss mindestens 6 Zeichen lang sein.";
-        return;
-    }
-
-    registerBtn.disabled = true;
-    registerBtn.textContent = "Wird registriert...";
-
-    const res = await postJson("/register", { username, email, password });
-    
-    registerBtn.disabled = false;
-    registerBtn.textContent = "Registrieren";
-
-    if (res.ok) {
-        alert("Registrierung erfolgreich! Du bist jetzt eingeloggt.");
-        loginPopup.style.display = "none";
-        checkLoginStatus(); // Status aktualisieren
-    } else {
-        error.textContent = res.data?.error || "Registrierung fehlgeschlagen";
-    }
-});
-
-// Popup schließen
-closeLoginPopup.addEventListener("click", () => {
-    loginPopup.style.display = "none";
-});
-
-// JavaScript für loginbutton
-document.getElementById("btnlogin").addEventListener("click", function() {
-    if (isLoggedIn) {
-        // Vielleicht Logout-Option hinzufügen
-        alert("Du bist bereits eingeloggt!");
-    } else {
-        loginPopup.style.display = "flex";
-        formArea.style.display = "block";
-        registerArea.style.display = "none";
-        formTitle.textContent = "Anmelden";
-        clearErrors();
-    }
-});
-
- // JavaScript für unique games button
- document.getElementById("btnUniqueGames").addEventListener("click", function() {
-  window.location.href = "/our_unique_games.html";
-});
+checkLoginStatus();
+fetchGames();
