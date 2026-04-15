@@ -1,3 +1,5 @@
+const { createElement } = require("react");
+
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -907,3 +909,24 @@ function openLinkedGamesPopup(linkedGames) {
 
 checkLoginStatus();
 fetchGames();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function function1() {
+  blablablabla
+}
