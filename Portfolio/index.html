@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Portfolio</title>
+    <title>Rick - Web Developer & Programmer</title>
     <link rel="stylesheet" href="extra_zeug.css"/>
     <script src="code.js" defer></script>
 </head>
@@ -15,62 +15,150 @@
             <div class="logo-tooltip">I created this logo myself, which is based on the "Praise the Sun" meme, and all credit goes to the creators of the pose, FromSoftware.</div>
         </div>
 
-        <nav>
-            <h1 class="logo">PRAISE THE PROGRAM<span>PORTFOLIO</span></h1>
-            <ul>
-                <li><a href="About-me.html">about me</a></li>
-                <li><a href="#projects">Projekte</a></li>
-            </ul>
+        <nav class="navbar">
+            <div class="nav-container">
+                <h1 class="logo">PRAISE THE PROGRAM<span>PORTFOLIO</span></h1>
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="#about">About me</a></li>
+                    <li><a href="#skills">Skills</a></li>
+                    <li><a href="#projects">Projekte</a></li>
+                    <li><a href="#gallery">Galerie</a></li>
+                </ul>
+            </div>
         </nav>
 
         <div class="hero-content">
-            <h2>Hallo, I am  <span class="accent">RICK</span></h2>
+            <h2>Hallo, ich bin <span class="accent">RICK</span></h2>
             <p>Web Developer • Programmer • Tech-Enthusiast</p>
-            <button type="button" class="btn" onclick="scrollToProjects()">View projects</button>
+            <div class="hero-buttons">
+                <button type="button" class="btn btn-primary" onclick="scrollToProjects()">View projects</button>
+                <a href="About-me.html" class="btn btn-secondary">About me</a>
+            </div>
         </div>
     </header>
 
-    <!-- ABOUT -->
-    <a id="about-btn" class="btn" href="About-me.html">About me</a>
-
-    <button id="toggle-gallery" class="btn" aria-expanded="false" aria-controls="gallery-wrapper">View gallery</button>
-
-    <div id="gallery-wrapper">
-        <section id="gallery" class="gallery-section fade-in">
-    <h2>Galerie</h2>
-
-    <div class="carousel">
-        <img src="Bär.JPG" alt="">
-        <img src="Blume.JPG" alt="">
-        <img src="Blumen-viele.JPG" alt="">
-        <img src="Brunnen.JPG" alt="">
-        <img src="theteam.JPG" alt="">
-    </div>
+    <!-- SKILLS SECTION -->
+    <section id="skills" class="skills-section">
+        <div class="skills-container">
+            <h2>Technical Skills</h2>
+            <p class="section-subtitle">Meine Expertise und Technologien</p>
+            
+            <div class="skills-grid">
+                <div class="skill-category">
+                    <h3>Frontend</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">HTML5</span>
+                        <span class="skill-tag">CSS3</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Responsive Design</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Languages</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">German</span>
+                        <span class="skill-tag">Norwegian</span>
+                        <span class="skill-tag">English</span>
+                    </div>
+                </div>
+                
+                <div class="skill-category">
+                    <h3>Tools & Platforms</h3>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Git</span>
+                        <span class="skill-tag">GitHub</span>
+                        <span class="skill-tag">VS Code</span>
+                    </div>
+                </div>
+            </div>
+        </div>
     </section>
+
+    <!-- GALLERY SECTION -->
+    <div id="gallery" class="gallery-wrapper">
+        <button id="toggle-gallery" class="btn btn-primary" aria-expanded="false" aria-controls="gallery-content">View gallery</button>
+        
+        <div id="gallery-content" class="gallery-content">
+            <section class="gallery-section fade-in">
+                <h2>Galerie</h2>
+                <p class="section-subtitle">Impressionen aus meinem Leben</p>
+
+                <div class="carousel">
+                    <img src="Bär.JPG" alt="Galerie Bild 1">
+                    <img src="Blume.JPG" alt="Galerie Bild 2">
+                    <img src="Blumen-viele.JPG" alt="Galerie Bild 3">
+                    <img src="Brunnen.JPG" alt="Galerie Bild 4">
+                    <img src="theteam.JPG" alt="Galerie Bild 5">
+                </div>
+            </section>
+        </div>
     </div>
 
     <!-- PROJECTS -->
     <section id="projects" class="projects-section">
-        <h2>My GitHub projects</h2>
+        <div class="projects-container">
+            <h2>Meine Projekte</h2>
+            <p class="section-subtitle">Eine Auswahl meiner besten Arbeiten</p>
 
-        <div class="project-grid">
+            <div class="project-grid">
 
-            <!-- PROJECT CARD -->
-            <div class="project-card" onclick="openProject(1)">
-                <h3>Guide to New Zealand</h3>
-                <p>An old, rather poor site that serves as an information website for New Zealand tourists.</p>
+                <!-- PROJECT CARD -->
+                <div class="project-card fade-in" onclick="openProject(1)">
+                    <div class="project-header">
+                        <h3>Guide to New Zealand</h3>
+                        <span class="project-tag">Beginner</span>
+                    </div>
+                    <p>An old, rather poor site that serves as an information website for New Zealand tourists.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">CSS</span>
+                    </div>
+                </div>
+
+                <div class="project-card fade-in" onclick="openProject(2)">
+                    <div class="project-header">
+                        <h3>Game rating Website</h3>
+                        <span class="project-tag">Active</span>
+                    </div>
+                    <p>Small ratings website inspired by crazy games, allowing users to share game experiences with friends.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">HTML</span>
+                        <span class="tech-tag">CSS</span>
+                        <span class="tech-tag">JavaScript</span>
+                    </div>
+                </div>
+
+                <div class="project-card fade-in" onclick="openProject(3)">
+                    <div class="project-header">
+                        <h3>Projekt 3</h3>
+                        <span class="project-tag">Coming Soon</span>
+                    </div>
+                    <p>Ausführliche Beschreibung von Projekt 3.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">TBD</span>
+                    </div>
+                </div>
+
             </div>
+        </div>
+    </section>
 
-            <div class="project-card" onclick="openProject(2)">
-                <h3>Game rating Website</h3>
-                <p>small ratings website inspired by crazy games</p>
+    <!-- ABOUT SECTION -->
+    <section id="about" class="about-section">
+        <div class="about-container">
+            <h2>Über mich</h2>
+            <p class="section-subtitle">Erfahre mehr über meinen Hintergrund</p>
+            
+            <div class="about-content">
+                <p>Ich bin in Deutschland geboren und habe dort die Schule besucht, bis zur 7. Klasse. Danach bin ich nach Norwegen gezogen und habe eine Ausbildung an der Amalie Skram im Bereich Informationstechnologie und Medien begonnen. Ich spezialisierte mich auf den technischen Programmierzweig dieser Ausbildung. Ich kann Deutsch, Norwegisch und Englisch fließend verstehen und sprechen.</p>
+                <a href="About-me.html" class="btn btn-secondary">Mehr erfahren</a>
             </div>
-
-            <div class="project-card" onclick="openProject(3)">
-                <h3>Project 3</h3>
-                <p>Kurzbeschreibung...</p>
-            </div>
-
         </div>
     </section>
 
@@ -86,8 +174,29 @@
         </div>
     </div>
 
+    <!-- FOOTER -->
     <footer class="footer">
-        <p>© 2025 – praise the program</p>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Praise the Program</h3>
+                <p>Mein persönliches Portfolio & Blog</p>
+            </div>
+            <div class="footer-section">
+                <h3>Links</h3>
+                <ul>
+                    <li><a href="#projects">Projekte</a></li>
+                    <li><a href="About-me.html">Über mich</a></li>
+                    <li><a href="#gallery">Galerie</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Kontakt</h3>
+                <p>GitHub: <a href="https://github.com/Praisetheprogramm" target="_blank">Praisetheprogramm</a></p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 – Praise the Program. Alle Rechte vorbehalten.</p>
+        </div>
     </footer>
 </body>
 </html>

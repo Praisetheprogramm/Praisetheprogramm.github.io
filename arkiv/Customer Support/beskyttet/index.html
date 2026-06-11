@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Min profil - Kundesupportportal</title>
+    <link rel="stylesheet" href="beskyttet.css">
+    <script src="beskyttet.js" defer></script>
+</head>
+<body>
+    <h1>Kundesupportportal - Min profil</h1>
+    <main>
+        <section id="brukerInfo">
+            <h2>Din profil</h2>
+            <div id="brukerData">
+                <!-- Brukerdata lastes her -->
+            </div>
+            <button id="slettKontoButton" type="button" style="display:none;">Slett min konto</button>
+            <p id="slettKontoHint" class="hint"></p>
+        </section>
+
+        <section id="kundeProblemerSeksjon" style="display:none;">
+            <h2>Vanlige problemer</h2>
+            <label for="problemSelect">Velg et problem:</label>
+            <select id="problemSelect">
+                <option value="">Velg et problem</option>
+                <option value="/problem-1.html">Jeg får ikke logget inn</option>
+                <option value="/problem-2.html">Passord gjenkjennes ikke</option>
+                <option value="/problem-3.html">Min konto viser feil informasjon</option>
+            </select>
+            <p class="hint">Velg et problem for mer informasjon og løsninger.</p>
+
+            <h3>Opprett et nytt problem</h3>
+            <label for="meldingTittel">Emne</label>
+            <input type="text" id="meldingTittel" placeholder="Kort beskrivelse" />
+            <label for="meldingTekst">Beskrivelse</label>
+            <textarea id="meldingTekst" rows="4" placeholder="Beskriv problemet ditt"></textarea>
+            <fieldset>
+                <legend>Synlig for</legend>
+                <label><input type="checkbox" name="visibleTo" value="customer support" checked> Kundesupport</label>
+                <label><input type="checkbox" name="visibleTo" value="utvikling"> Utvikling</label>
+                <label><input type="checkbox" name="visibleTo" value="drift"> Drift</label>
+                <p class="hint">Velg hvilke team som skal se dette problemet.</p>
+            </fieldset>
+            <button id="sendMeldingButton" type="button">Opprett problem</button>
+            <p id="meldingSvar" class="hint"></p>
+
+            <h3>Mine åpne problemer</h3>
+            <div id="mineProblemer">
+                <!-- Liste over kundens problemer -->
+            </div>
+        </section>
+
+        <!-- Felles chat for både kunder og support -->
+        <section id="problemChatSeksjon" style="display:none;">
+            <h3>Chat</h3>
+            <div id="problemChat">
+                <h4 id="chatTittel">Samtale</h4>
+                <div id="chatMeldinger">
+                    <!-- Meldinger vises her -->
+                </div>
+                <label for="chatTekst">Skriv svar</label>
+                <textarea id="chatTekst" rows="3"></textarea>
+                <button id="sendChatButton" type="button">Send</button>
+                <div id="problemActions"></div>
+            </div>
+        </section>
+
+        <!-- Vises kun for kundesupport-brukere -->
+        <section id="customerSupportSeksjon" style="display:none;">
+            <h2>Kundeliste</h2>
+            <div id="customerSupportData">
+                <!-- Kundeliste lastes her -->
+            </div>
+        </section>
+
+        <section id="supportMeldingerSeksjon" style="display:none;">
+            <h2>Supportmeldinger</h2>
+            <div id="supportMeldingerData">
+                <!-- Supportmeldinger lastes her -->
+            </div>
+        </section>
+
+        <!-- Vises kun for admin-brukere -->        <section id="adminSeksjon" style="display:none;">
+            <h2>Administrasjon - Komplett brukeroversikt</h2>
+            <div id="adminData">
+                <!-- Admin-data lastes her -->
+            </div>
+        </section>
+    </main>
+    <button id="logoutButton">Logg ut</button>
+</body>
+</html>

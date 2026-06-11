@@ -1,29 +1,169 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Über mich - Rick's Portfolio</title>
     <link rel="stylesheet" href="About-me.css">
 </head>
 <body>
-     <section id="about" class="about-section">
-            <a class="btn" href="index.html">About me</a>
-        <h2 id="h2About">About Me</h2>
-        <p>
-            I was born in Germany and attended secondary school there until the seventh grade. After that, I moved to Norway and began an apprenticeship at Amalie Skram in the field of information technology and media. I specialized in the technical programming branch of this apprenticeship. I can understand and speak German, Norwegian, and English fluently.
-        </p>
-    </section>
-    <section class="about-section">
-        <h3 id="h3About">My training</h3>
-        <div class="school-section">
-            <p></p>
-            <p>Os ungdomsskule 10th year 2022/2023</p>
-            <p>Sandsli extra year to learn better Norwegian 2023/2024</p>
-            <p>Amalie skram VG1 Informationstechnology og media 2024/2025</p>
-            <p>Amalie skram VG2 Informationstechnology 2025/2026</p>
+    <!-- HEADER/NAVIGATION -->
+    <header class="header">
+        <nav class="navbar">
+            <div class="nav-container">
+                <a href="index.html" class="logo">PRAISE THE PROGRAM<span>PORTFOLIO</span></a>
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="index.html#projects">Projekte</a></li>
+                    <li><a href="index.html#skills">Skills</a></li>
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ABOUT SECTION -->
+    <main>
+        <section class="about-section">
+            <div class="about-container">
+                <div class="about-header">
+                    <h1>Über mich</h1>
+                    <p class="subtitle">Mein Weg in die Programmierung</p>
+                </div>
+
+                <div class="about-content">
+                    <p class="intro-text">
+                        Ich bin in Deutschland geboren und habe dort die Schule besucht, bis zur 7. Klasse. Nach meinem Umzug nach Norwegen begann ich eine Ausbildung an der <strong>Amalie Skram</strong> im Bereich <strong>Informationstechnologie und Medien</strong>. Ich spezialisierte mich auf den technischen Programmierzweig dieser Ausbildung.
+                    </p>
+                    <p>
+                        Mit fließenden Kenntnissen in Deutsch, Norwegisch und Englisch bin ich optimal aufgestellt, um in einem internationalen Umfeld zu arbeiten. Meine Leidenschaft für Technologie und Programmierung treibt mich an, ständig Neues zu lernen und meine Fähigkeiten zu verbessern.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- EDUCATION SECTION -->
+        <section class="education-section">
+            <div class="education-container">
+                <h2>Meine Ausbildung</h2>
+                <p class="section-subtitle">Bildungsweg und Entwicklung</p>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3>Os ungdomsskule</h3>
+                            <p class="timeline-date">10th year 2022/2023</p>
+                            <p>Schulabschluss in Norwegen, Fokus auf allgemeine Bildung und Fächervielfalt.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3>Sandsli - Norwegischkurs</h3>
+                            <p class="timeline-date">Zusatzjahr 2023/2024</p>
+                            <p>Intensives Programm zur Verbesserung meiner norwegischen Sprachkenntnisse und kulturellen Integration.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3>Amalie Skram - VG1</h3>
+                            <p class="timeline-date">Informationstechnologie & Medien 2024/2025</p>
+                            <p>Grundlagen in IT und Medienproduktion mit Spezialisierung auf Programmierung.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <div class="timeline-content">
+                            <h3>Amalie Skram - VG2</h3>
+                            <p class="timeline-date">Informationstechnologie 2025/2026</p>
+                            <p>Vertiefung in Programmierung und technischer Entwicklung mit praktischen Projekten.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SKILLS SECTION -->
+        <section class="skills-section">
+            <div class="skills-container">
+                <h2>Meine Fähigkeiten</h2>
+                <p class="section-subtitle">Technische und persönliche Kompetenzen</p>
+
+                <div class="skills-grid">
+                    <div class="skill-box">
+                        <h3>Frontend Development</h3>
+                        <ul>
+                            <li>HTML5</li>
+                            <li>CSS3 & SCSS</li>
+                            <li>JavaScript</li>
+                            <li>Responsive Design</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill-box">
+                        <h3>Sprachen</h3>
+                        <ul>
+                            <li>Deutsch (Muttersprache)</li>
+                            <li>Norwegisch (Fließend)</li>
+                            <li>Englisch (Fließend)</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill-box">
+                        <h3>Tools & Plattformen</h3>
+                        <ul>
+                            <li>Git & GitHub</li>
+                            <li>Visual Studio Code</li>
+                            <li>Browser Developer Tools</li>
+                            <li>Command Line</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill-box">
+                        <h3>Persönliche Stärken</h3>
+                        <ul>
+                            <li>Problem Solving</li>
+                            <li>Teamarbeit</li>
+                            <li>Kommunikation</li>
+                            <li>Lernfähigkeit</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Navigation</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="index.html#projects">Projekte</a></li>
+                    <li><a href="index.html#gallery">Galerie</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Kontakt</h3>
+                <p>GitHub: <a href="https://github.com/Praisetheprogramm" target="_blank">Praisetheprogramm</a></p>
+            </div>
         </div>
-    </section>
+        <div class="footer-bottom">
+            <p>&copy; 2025 – Praise the Program. Alle Rechte vorbehalten.</p>
+        </div>
+    </footer>
+
+    <script src="code.js"></script>
 </body>
 </html>
 

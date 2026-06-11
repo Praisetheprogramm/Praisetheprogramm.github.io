@@ -1,9 +1,36 @@
+// ===== MOBILE NAVIGATION =====
+const navToggle = document.getElementById('nav-toggle');
+const navMenu = document.getElementById('nav-menu');
+
+if (navToggle) {
+    navToggle.addEventListener('click', () => {
+        navToggle.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
+
+    // Close menu when a link is clicked
+    document.querySelectorAll('.nav-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            navToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
+}
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.nav-container')) {
+        navToggle?.classList.remove('active');
+        navMenu?.classList.remove('active');
+    }
+});
+
+// ===== SCROLL TO PROJECTS =====
 function scrollToProjects() {
     console.log('scrollToProjects() called');
     const projectsSection = document.getElementById("projects");
     if (projectsSection) {
-        // calculate offset to account for any fixed header height if needed
-        const headerOffset = 0; // adjust if you have a fixed header
+        const headerOffset = 80;
         const targetPosition = projectsSection.getBoundingClientRect().top + window.pageYOffset - headerOffset;
         window.scrollTo({
             top: targetPosition,
@@ -14,7 +41,7 @@ function scrollToProjects() {
     }
 }
 
-// Projekt-Daten
+// ===== PROJECT DATA =====
 const projects = {
     1: {
         title: "Guide to New Zealand",
@@ -46,7 +73,7 @@ function closeModal() {
     document.getElementById("modal").style.display = "none";
 }
 
-// Klick außerhalb des Modals schließt es
+// Click outside modal to close
 window.onclick = function (e) {
     const modal = document.getElementById("modal");
     if (e.target === modal) {
@@ -54,7 +81,7 @@ window.onclick = function (e) {
     }
 };
 
-// Fade-In Scroll Effekt
+// ===== FADE-IN SCROLL EFFECT =====
 const fadeElements = document.querySelectorAll('.fade-in');
 
 function checkFade() {
@@ -69,29 +96,23 @@ function checkFade() {
 window.addEventListener('scroll', checkFade);
 window.addEventListener('load', checkFade);
 
-// ---- Gallery toggle: Hide until button pressed ----
+// ===== GALLERY TOGGLE =====
 const toggleBtn = document.getElementById('toggle-gallery');
-const galleryWrapper = document.getElementById('gallery-wrapper');
+const galleryContent = document.getElementById('gallery-content');
 
 function toggleGallery() {
-    if (!galleryWrapper || !toggleBtn) return;
-    const isOpen = galleryWrapper.classList.toggle('open');
+    if (!galleryContent || !toggleBtn) return;
+    const isOpen = galleryContent.classList.toggle('open');
     toggleBtn.textContent = isOpen ? 'Hide gallery' : 'View gallery';
     toggleBtn.setAttribute('aria-expanded', isOpen);
-    galleryWrapper.setAttribute('aria-hidden', !isOpen);
 
     if (isOpen) {
-        // wait for the CSS transition to finish before scrolling and running fade
-        function onGalleryTransition(e) {
-            if (e.propertyName !== 'max-height') return;
-            const top = toggleBtn.getBoundingClientRect().bottom + window.pageYOffset - 8;
+        setTimeout(() => {
+            const top = toggleBtn.getBoundingClientRect().bottom + window.pageYOffset - 20;
             window.scrollTo({ top, behavior: 'smooth' });
             checkFade();
-            galleryWrapper.removeEventListener('transitionend', onGalleryTransition);
-        }
-        galleryWrapper.addEventListener('transitionend', onGalleryTransition);
+        }, 100);
     }
 }
 
 if (toggleBtn) toggleBtn.addEventListener('click', toggleGallery);
-

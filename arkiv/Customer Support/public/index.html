@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kundesupportportal</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="index.js" defer></script>
+</head>
+<body>
+    <h1>Kundesupportportal</h1>
+    
+    <h2>Opprett ny kundekonto</h2>
+    <form id="formNyKunde">
+        <label for="fornavn">Fornavn:</label>
+        <input type="text" id="fornavn" name="fornavn" required>
+
+        <label for="etternavn">Etternavn:</label>
+        <input type="text" id="etternavn" name="etternavn" required>
+
+        <label for="passord">Passord:</label>
+        <input type="password" id="passord" name="passord" required>
+
+        <p class="hint">Du registrerer deg som Kunde. En Administrator kan deg senere promotere til en annen rolle.</p>
+        <button type="submit">Opprett konto</button>
+    </form>
+
+    <h2>Logg inn</h2>
+    <form id="formLoggInn">
+        <label for="fornavnLogin">Fornavn:</label>
+        <input type="text" id="fornavnLogin" name="fornavnLogin" required>
+
+        <label for="passordLogin">Passord:</label>
+        <input type="password" id="passordLogin" name="passordLogin" required>
+
+        <button type="submit">Logg inn</button>
+    </form>
+</body>
+</html>
