@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Advanced Calculator</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- math.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mathjs@11.8.0/lib/browser/math.js"></script>
+</head>
+<body>
+  <div class="calculator">
+    <header><h1>Advanced Calculator</h1><p class="subtitle">Scientific, complex, matrix & unit calculations</p></header>
+    <main>
+      <div class="display">
+        <input id="expr" placeholder="Type an expression, e.g. sin(pi/4)*sqrt(2) or 2+3i" autocomplete="off" aria-label="Expression input">
+        <div id="result" aria-live="polite"></div>
+      </div>
+      <div class="controls">
+        <button id="eval">Evaluate</button>
+        <button id="clear">Clear</button>
+        <button id="ans">ANS</button>
+        <button id="degRad">RAD</button>
+      </div>
+      <div class="pad" id="pad">
+        <!-- quick buttons -->
+        <button class="tok">7</button><button class="tok">8</button><button class="tok">9</button><button class="tok">/</button>
+        <button class="tok">4</button><button class="tok">5</button><button class="tok">6</button><button class="tok">*</button>
+        <button class="tok">1</button><button class="tok">2</button><button class="tok">3</button><button class="tok">-</button>
+        <button class="tok">0</button><button class="tok">.</button><button class="tok">(</button><button class="tok">)</button>
+        <button class="fun">sin</button><button class="fun">cos</button><button class="fun">tan</button><button class="fun">sqrt</button>
+        <button class="fun">log</button><button class="fun">exp</button><button class="fun">^</button><button class="fun">pi</button>
+      </div>
+    </main>
+    <aside class="side">
+      <h2>History</h2>
+      <ul id="history"></ul>
+    </aside>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

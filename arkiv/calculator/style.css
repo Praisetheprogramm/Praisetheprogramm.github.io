@@ -1,0 +1,29 @@
+*{box-sizing:border-box;font-family:Inter,Segoe UI,Arial,Helvetica,sans-serif}
+:root{
+	--bg:#0f172a;
+	--panel:#0f172a0a;
+	--card:#ffffff;
+	--accent:#2563eb;
+	--muted:#6b7280;
+}
+body{margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;background:linear-gradient(180deg,#eef2ff 0%, #f8fafc 100%);padding:24px}
+.calculator{width:960px;max-width:96%;display:grid;grid-template-columns:1fr 300px;gap:20px;padding:20px}
+header{grid-column:1/-1}
+header h1{margin:0;font-size:1.4rem;color:var(--accent)}
+header .subtitle{margin:4px 0 0;color:var(--muted);font-size:0.95rem}
+.display{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.06);border:1px solid rgba(15,23,42,0.04)}
+#expr{width:100%;font-size:1.15rem;padding:12px;border:1px solid #e6eefc;border-radius:10px}
+#result{margin-top:10px;font-weight:700;color:#0b1220;min-height:1.4em;font-size:1.05rem}
+.controls{display:flex;gap:8px;margin-top:12px}
+.controls button{padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06);background:linear-gradient(180deg,#fff,#fbfdff);cursor:pointer;box-shadow:0 2px 6px rgba(16,24,40,0.04)}
+.controls button:hover{transform:translateY(-1px)}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.pad button{padding:14px;border-radius:10px;border:none;background:#fff;box-shadow:0 4px 10px rgba(16,24,40,0.05);cursor:pointer;font-weight:600}
+.pad button.fun{background:linear-gradient(180deg,#f1f5ff,#eef2ff);color:var(--accent)}
+.pad button:hover{transform:translateY(-2px)}
+.side{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(15,23,42,0.05);border:1px solid rgba(15,23,42,0.04);height:420px;overflow:auto}
+.side h2{margin:0 0 8px}
+#history{list-style:none;padding:0;margin:0}
+#history li{padding:8px;border-bottom:1px solid #f1f5f9;cursor:pointer}
+#history li:hover{background:#fbfdff}
+@media (max-width:900px){.calculator{grid-template-columns:1fr;}.side{height:auto}}

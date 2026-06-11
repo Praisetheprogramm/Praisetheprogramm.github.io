@@ -54,8 +54,8 @@ const projects = {
         link: "https://github.com/Praisetheprogramm/Praisetheprogramm.github.io/blob/main/arkiv/game-projekt2025/public/index.html"
     },
     3: {
-        title: "Projekt 3",
-        text: "Ausführliche Beschreibung von Projekt 3.",
+        title: "Customer support",
+        text: "A simple support website with login, different roles, and a minimal chat system.",
         link: "https://github.com/DEINNAME/Projekt3"
     }
 };

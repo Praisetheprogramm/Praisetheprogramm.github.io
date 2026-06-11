@@ -5,24 +5,44 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Top-Down Überlebensspiel</title>
 <link rel="stylesheet" href="brotato-clon.css">
-<script src="brotato-clon.js"></script>
 </head>
 <body>
 <div class="wrap">
 <div class="gamebox"> 
-<canvas id="game" width="800" height="600"></canvas>
-<div class="ui">
-<div class="card">
-<h1>Überlebensspiel — Demo</h1>
-<p class="small">Bewege den Spieler mit WASD oder Pfeiltasten. Schieße mit Maus (Klick) oder Leertaste. Drücke R zum Neustart.</p>
-</div>
+  <div id="shop-counter" class="shop-counter">Nächster Shop: 40</div>
+  <canvas id="game" width="800" height="600"></canvas>
+  <div class="ui">
+    <div class="card ui-header">
+      <h1>Überlebensspiel — Demo</h1>
+      <p class="small">Bewege den Spieler mit WASD oder Pfeiltasten. Schieße mit Maus (Klick) oder Leertaste. Drücke R zum Neustart. Alle 40 Sekunden öffnet der Shop.</p>
+      <div class="row" style="margin-top:10px;gap:8px;flex-wrap:wrap;">
+        <button id="toggle-info" class="btn">Infos ausblenden</button>
+        <button id="fullscreen" class="btn">Vollbild</button>
+      </div>
+    </div>
+    <div id="ui-info" class="ui-info">
+      <div class="card">
+        <div class="row"><span>Health</span><span id="health">100</span></div>
+        <div class="row"><span>Score</span><span id="score">0</span></div>
+        <div class="row"><span>Enemies</span><span id="enemies">0</span></div>
+        <div class="row"><span>Nächster Shop</span><span id="next-shop">40</span></div>
+      </div>
 
+      <div class="card">
+        <div class="muted">Tipps:</div>
+        <ul class="muted" style="margin:6px 0 0 16px;padding:0">
+          <li>Bewege dich, um nicht eingekreist zu werden.</li>
+          <li>Gegner verfolgen dich kontinuierlich.</li>
+          <li>Je länger du überlebst, desto mehr Gegner spawnen.</li>
+        </ul>
+      </div>
 
-<div class="card">
-<div class="row"><span>Health</span><span id="health">100</span></div>
-<div class="row"><span>Score</span><span id="score">0</span></div>
-<div class="row"><span>Enemies</span><span id="enemies">0</span></div>
-</div>
+      <div class="card" style="text-align:center">
+        <div class="row"><button id="restart" class="btn">Neustart (R)</button></div>
+        <footer>Erstellt mit HTML5 Canvas · Beispiel</footer>
+      </div>
+    </div>
+  </div>
 
 
 <div class="card">
@@ -43,5 +63,42 @@
 </div>
 </div>
 
+<div id="shop" class="shop hidden">
+  <div class="shop-panel card">
+    <h2>Shop</h2>
+    <p class="small">Alle 60 Sekunden stoppt der Kampf. Wähle ein Upgrade oder rüste ein Item aus.</p>
+    <div class="shop-inner">
+      <div class="shop-options">
+        <div class="row"><span>+20 Gesundheit</span><button id="buy-heal" class="btn">20 Punkte</button></div>
+        <div class="row"><span>+20 Geschwindigkeit</span><button id="buy-speed" class="btn">20 Punkte</button></div>
+        <div class="row"><span>+6 Waffenschaden</span><button id="buy-damage" class="btn">20 Punkte</button></div>
+        <div class="row"><button id="resume" class="btn">Weiter</button></div>
+      </div>
+      <div class="shop-equipment">
+        <div class="shop-figure">
+          <img id="siluette" src="siluet.jpg" alt="Siluette" />
+          <div class="equip-slot" id="slot-head" data-slot="head" title="Kopf"></div>
+          <div class="equip-slot" id="slot-torso" data-slot="torso" title="Torso"></div>
+          <div class="equip-slot" id="slot-hand-left" data-slot="handL" title="Linke Hand"></div>
+          <div class="equip-slot" id="slot-hand-right" data-slot="handR" title="Rechte Hand"></div>
+          <div class="equip-slot" id="slot-foot-left" data-slot="footL" title="Linker Fuß"></div>
+          <div class="equip-slot" id="slot-foot-right" data-slot="footR" title="Rechter Fuß"></div>
+        </div>
+        <div class="equip-area">
+          <div class="item-panel">
+            <strong>Items</strong>
+            <div id="item-slots" class="item-slots"></div>
+          </div>
+          <div class="item-panel">
+            <strong>Ausgerüstet</strong>
+            <div id="equip-slots" class="item-slots"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="brotato-clon.js"></script>
 </body>
 </html>
