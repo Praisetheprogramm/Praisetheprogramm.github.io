@@ -54,8 +54,8 @@ const projects = {
         link: "https://github.com/Praisetheprogramm/Praisetheprogramm.github.io/blob/main/arkiv/game-projekt2025/public/index.html"
     },
     3: {
-        title: "Customer support",
-        text: "A simple support website with login, different roles, and a minimal chat system.",
+        title: "Calculator",
+        text: "a simple calculator",
         link: "https://github.com/DEINNAME/Projekt3"
     }
 };
@@ -116,3 +116,181 @@ function toggleGallery() {
 }
 
 if (toggleBtn) toggleBtn.addEventListener('click', toggleGallery);
+
+// ===== ONE-TIME HERO INTRO VIDEO =====
+(() => {
+    const hero = document.getElementById('hero-intro');
+    const heroVideo = document.getElementById('hero-video');
+    if (!hero || !heroVideo) return;
+
+    const transitionToBlack = () => {
+        hero.classList.add('intro-finished');
+        hero.style.background = '#000000';
+        hero.style.transition = 'background 0.8s ease';
+        const title = document.querySelector('.hero-content h2');
+        const subtitle = document.querySelector('.hero-content p');
+        if (title) title.style.color = '#ffffff';
+        if (subtitle) subtitle.style.color = '#d9d9d9';
+    };
+
+    heroVideo.addEventListener('ended', transitionToBlack);
+
+    // if the video is already loaded and short, transition right after play finishes
+    heroVideo.addEventListener('loadedmetadata', () => {
+        if (heroVideo.duration < 1) {
+            heroVideo.currentTime = 0;
+        }
+    });
+})();
+
+// ===== VIDEO PLAY ON SCROLL (snap, lock, play, transition) =====
+(() => {
+    const section = document.getElementById('video-section');
+    const video = document.getElementById('bg-video');
+    const fallback = document.querySelector('.video-fallback');
+    const post = document.getElementById('post-video');
+    if (!section || !video || !post) return;
+
+    // track last scroll direction
+    let lastPos = window.pageYOffset;
+    window._lastScrollDir = null;
+    window.addEventListener('scroll', () => {
+        const y = window.pageYOffset;
+        window._lastScrollDir = y > lastPos ? 'down' : 'up';
+        lastPos = y;
+    }, { passive: true });
+
+    let started = false;
+    let lockedScrollY = 0;
+
+    // prevent default handlers while locked
+    function preventDefault(e){ e.preventDefault(); }
+    function preventKey(e){
+        const keys = ['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' '];
+        if (keys.includes(e.key)) e.preventDefault();
+    }
+
+    function addLockInputs(){
+        window.addEventListener('wheel', preventDefault, { passive: false });
+        window.addEventListener('touchmove', preventDefault, { passive: false });
+        window.addEventListener('keydown', preventKey, { passive: false });
+    }
+
+    function removeLockInputs(){
+        window.removeEventListener('wheel', preventDefault, { passive: false });
+        window.removeEventListener('touchmove', preventDefault, { passive: false });
+        window.removeEventListener('keydown', preventKey, { passive: false });
+    }
+
+    function lockScroll() {
+        lockedScrollY = window.pageYOffset;
+        // snap instantly to section top
+        window.scrollTo({ top: section.offsetTop, behavior: 'auto' });
+        // prevent further scrolling
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${lockedScrollY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        section.classList.add('fixed-playing');
+        addLockInputs();
+    }
+
+    function unlockScrollAndGoTo(targetY) {
+        // restore scrolling
+        removeLockInputs();
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        // restore previous scroll position then smooth-scroll to target
+        window.scrollTo(0, lockedScrollY);
+        window.setTimeout(() => {
+            window.scrollTo({ top: targetY, behavior: 'smooth' });
+        }, 50);
+    }
+
+    // fallback: play hexagon animation if autoplay blocked
+    function fallbackFlow(durationSeconds) {
+        if (started) return;
+        started = true;
+        // lock page and run hexagon ripple animation for duration
+        lockScroll();
+        section.classList.add('playing');
+        if (fallback) {
+            fallback.style.display = '';
+            fallback.classList.add('ripple');
+        }
+
+        const dur = (typeof durationSeconds === 'number' && isFinite(durationSeconds) && durationSeconds > 0) ? durationSeconds : 4;
+        setTimeout(() => {
+            // end fallback
+            if (fallback) {
+                fallback.classList.remove('ripple');
+            }
+            section.classList.remove('playing');
+            section.classList.add('ended');
+            const targetY = post.offsetTop || (window.pageYOffset + window.innerHeight);
+            setTimeout(() => {
+                unlockScrollAndGoTo(targetY);
+                setTimeout(() => section.classList.remove('fixed-playing'), 800);
+            }, 120);
+        }, dur * 1000 + 120);
+    }
+
+    const obs = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && !started && window._lastScrollDir === 'down') {
+                // snap instantly to the section and try to autoplay
+                window.scrollTo({ top: section.offsetTop, behavior: 'auto' });
+                // try autoplay; if blocked, show overlay but keep page locked so user must interact
+                const playPromise = video.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // autoplay succeeded
+                        started = true;
+                        lockScroll();
+                        section.classList.add('playing');
+                        if (fallback) fallback.style.display = 'none';
+                    }).catch(() => {
+                        // autoplay blocked: use hexagon fallback for video.duration
+                        if (video.readyState >= 1 && isFinite(video.duration)) {
+                            fallbackFlow(video.duration);
+                        } else {
+                            // wait for metadata then start fallback
+                            const onMeta = () => {
+                                video.removeEventListener('loadedmetadata', onMeta);
+                                fallbackFlow(isFinite(video.duration) ? video.duration : 4);
+                            };
+                            video.addEventListener('loadedmetadata', onMeta);
+                        }
+                    });
+                } else {
+                    // no promise returned, assume play started
+                    started = true;
+                    lockScroll();
+                    section.classList.add('playing');
+                    if (fallback) fallback.style.display = 'none';
+                }
+            }
+        });
+    }, { threshold: 0.6 });
+
+    obs.observe(section);
+
+    // when video ends, unlock and scroll to post-video (black) section
+    video.addEventListener('ended', () => {
+        section.classList.remove('playing');
+        section.classList.add('ended');
+        const targetY = post.offsetTop || (window.pageYOffset + window.innerHeight);
+        setTimeout(() => {
+            unlockScrollAndGoTo(targetY);
+            setTimeout(() => section.classList.remove('fixed-playing'), 800);
+        }, 120);
+    });
+
+    // if video can play before user interaction, hide fallback
+    video.addEventListener('canplay', () => {
+        if (!started && fallback) fallback.style.display = 'none';
+    });
+
+})();
